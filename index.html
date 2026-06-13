@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>前夜トレード計画＆撤退規律シート</title>
+<title>Trade plan</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #f5f4f0; color: #1a1a1a; padding: 16px; max-width: 900px; margin: 0 auto; line-height: 1.6; }
@@ -19,6 +19,27 @@
   .field input, .field select { width: 100%; padding: 9px 10px; font-size: 14px; border: 0.5px solid #ccc; border-radius: 8px; background: #fff; color: #1a1a1a; font-family: inherit; }
   .field input:focus, .field select:focus { outline: none; border-color: #888; }
   .hint { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .coderow { display: flex; gap: 6px; }
+  .coderow input { flex: 1; min-width: 0; }
+  .getbtn { padding: 9px 14px; font-size: 12px; border: none; border-radius: 8px; background: #0d0d0d; color: #c9a84c; cursor: pointer; white-space: nowrap; font-weight: 600; }
+  .getbtn:disabled { opacity: 0.5; }
+  .quoteinfo { font-size: 11px; color: #555; background: #fff; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 11px; margin-bottom: 10px; line-height: 1.8; }
+  .quoteinfo b { color: #1a1a1a; }
+  .candgrp { margin-bottom: 8px; }
+  .cg-t { font-size: 9px; letter-spacing: 0.12em; color: #888; margin-bottom: 5px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 6px 10px; border: 0.5px solid #ccc; border-radius: 20px; background: #fff; cursor: pointer; color: #333; }
+  .chip b { font-size: 12px; }
+  .chip .sub2 { font-size: 9px; color: #999; }
+  .chip.tpc { border-color: #1a7a4a; } .chip.tpc b { color: #1a7a4a; }
+  .chip.slc { border-color: #c02020; } .chip.slc b { color: #c02020; }
+  .mtxwrap { overflow-x: auto; margin-bottom: 12px; }
+  .mtx { width: 100%; border-collapse: collapse; font-size: 11px; background: #fff; border-radius: 8px; overflow: hidden; }
+  .mtx th, .mtx td { border: 0.5px solid #e5e3db; padding: 6px 5px; text-align: center; }
+  .mtx th { background: #f7f6f2; font-weight: 600; color: #555; font-size: 10px; }
+  .mtx td.rr { cursor: pointer; font-weight: 700; font-size: 13px; }
+  .rr.g { color: #1a7a4a; } .rr.a { color: #b5851a; } .rr.r { color: #c02020; }
+  .mtx .sub { display: block; font-weight: 400; color: #999; font-size: 9px; line-height: 1.4; }
   .readout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 4px 0 12px; }
   .stat { background: #fff; border: 0.5px solid #ddd; border-radius: 8px; padding: 9px 10px; text-align: center; }
   .stat .k { font-size: 9px; color: #888; letter-spacing: 0.1em; margin-bottom: 3px; }
@@ -86,15 +107,24 @@
 <body>
 
 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-  <h1>前夜トレード計画＆撤退規律シート</h1>
+  <h1>Trade plan</h1>
   <span id="syncStatus" style="font-size:10px;color:#888;">接続中…</span>
 </div>
 <p class="lede">利益確定は独立した技術ではなく<strong>「銘柄切替」</strong>の一形態。決めるのは「いくら乗ったか」ではなく<strong>点数とライン</strong>。場が引けた今夜のうちにTPと撤退ラインを数値で確定し、分割の指値・逆指値を発注しておく。場中の判断＝感情の引き金を、ここで先に消す。</p>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">今夜の計画</span> 1銘柄ずつ、数値で確定する</p>
+  <p class="sec-title"><span class="step">計画</span> 1銘柄ずつ、数値で確定する</p>
   <div class="grid">
-    <div class="field"><label>銘柄（コード／名称）</label><input id="f_name" placeholder="例）6178 郵船"></div>
+    <div class="field"><label>銘柄コード → 自動取得</label>
+      <div class="coderow">
+        <input id="f_code" inputmode="numeric" placeholder="7203" onkeydown="if(event.key==='Enter')fetchQuote()">
+        <button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button>
+      </div>
+    </div>
+    <div class="field"><label>銘柄名（自動取得・編集可）</label><input id="f_name" placeholder="例）7203 トヨタ自動車"></div>
+  </div>
+  <div class="quoteinfo" id="quoteInfo" style="display:none;"></div>
+  <div class="grid3">
     <div class="field"><label>鉄板パターン</label>
       <select id="f_pat">
         <option value="">— 選択 —</option>
@@ -106,8 +136,6 @@
         <option>⑯天井圏での出来高消滅</option><option>⑰長期上昇トレンド</option><option>⑱長期下落トレンド</option>
       </select>
     </div>
-  </div>
-  <div class="grid3">
     <div class="field"><label>点数（10点満点）</label>
       <select id="f_score" onchange="recalc()">
         <option value="">—</option>
@@ -118,16 +146,22 @@
         <option value="0">0 正直難しい</option>
       </select>
     </div>
-    <div class="field"><label>EN価格（成行/逆指値）</label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
     <div class="field"><label>株数</label><input id="f_qty" type="number" inputmode="numeric" placeholder="100" oninput="recalc()"></div>
   </div>
-  <div class="grid">
-    <div class="field"><label>TP価格</label><input id="f_tp" type="number" inputmode="decimal" placeholder="二倍価格・節目・直近高値" oninput="recalc()">
-      <div class="hint">②なら二倍価格。⑰なら2倍/節目。原則ここを超えても追わない。</div>
+  <div class="grid3">
+    <div class="field"><label>EN価格（現在値を自動入力・編集可）</label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
+    <div class="field"><label>TP価格</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()">
+      <div class="hint">②なら二倍価格。原則ここを超えても追わない。</div>
     </div>
-    <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="週足ATR位置・前日安値" oninput="recalc()">
+    <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()">
       <div class="hint">命綱としてのSL。利確の道具に使わない。</div>
     </div>
+  </div>
+  <div id="candPanel" style="display:none;">
+    <div class="candgrp"><div class="cg-t">TP候補（タップで入力）</div><div class="chips" id="tpChips"></div></div>
+    <div class="candgrp"><div class="cg-t">SL候補（タップで入力）</div><div class="chips" id="slChips"></div></div>
+    <div class="cg-t" style="margin-top:10px;">TP×SL 全組み合わせの比較（RR比／セルをタップで両方セット）</div>
+    <div class="mtxwrap"><table class="mtx" id="mtxTable"></table></div>
   </div>
   <div class="readout">
     <div class="stat"><div class="k">RR 比</div><div class="v" id="o_rr">—</div><div class="u">(TP−EN)/(EN−SL)</div></div>
@@ -180,18 +214,17 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxLLf5YuIhTuhQPa4C5OKgv8KmIzxFHbGzlFWmaMzDRpAlwCMdjyr4BSsZeg4BXj0nlzw/exec';
 const KEY = 'cleartrade_night_plans_v1';
 let plans = [];
+let quote = null; // 取得した株価データ
 
 function setSyncStatus(msg, color) {
   const el = document.getElementById('syncStatus');
   if (el) { el.textContent = msg; el.style.color = color || '#888'; }
 }
 
-// fetchを先に試し（iOSでも動く）、ダメならJSONPにフォールバック
 async function gasGet(params) {
   const qs = Object.entries(params).map(([k,v]) =>
     k + '=' + encodeURIComponent(typeof v === 'object' ? JSON.stringify(v) : v)).join('&');
   const url = GAS_URL + '?' + qs;
-  // 1) まず通常のfetch（リダイレクト追従）
   try {
     const res = await fetch(url, { method: 'GET', redirect: 'follow' });
     if (res.ok) {
@@ -199,7 +232,6 @@ async function gasGet(params) {
       return JSON.parse(txt);
     }
   } catch (e) { /* CORS等で失敗したらJSONPへ */ }
-  // 2) JSONPフォールバック
   return jsonpGet(params);
 }
 
@@ -221,6 +253,88 @@ function jsonpGet(params) {
     script.onerror = () => { cleanup(); reject(new Error('script error')); };
     document.body.appendChild(script);
   });
+}
+
+// ===== 株価自動取得 =====
+const fmt = n => (n == null || isNaN(n)) ? '—' : Math.round(n).toLocaleString('ja-JP');
+
+async function fetchQuote() {
+  const code = document.getElementById('f_code').value.trim();
+  if (!code) { alert('銘柄コードを入力してください（例：7203）'); return; }
+  const btn = document.getElementById('getBtn');
+  btn.disabled = true; btn.textContent = '取得中';
+  setSyncStatus('株価取得中…', '#b5851a');
+  try {
+    const data = await gasGet({ action: 'quote', code });
+    if (data.result !== 'ok' || !data.price) throw new Error(data.message || 'no data');
+    quote = data;
+    // ①銘柄名 ②現在値 ③EN=現在値（すべて編集可）
+    document.getElementById('f_name').value = code + ' ' + (data.name || '');
+    document.getElementById('f_en').value = data.price;
+    document.getElementById('quoteInfo').style.display = 'block';
+    document.getElementById('quoteInfo').innerHTML =
+      `<b>${data.name || code}</b>　現在値 <b>¥${fmt(data.price)}</b>（前日終値 ¥${fmt(data.prevClose)}）<br>` +
+      `3ヶ月高値 ¥${fmt(data.high3m)}／前日安値 ¥${fmt(data.prevDayLow)}／5日安値 ¥${fmt(data.low5)}` +
+      (data.atrW ? `／週足ATR ${data.atrW}` : '');
+    recalc();
+    setSyncStatus('✓ 株価取得', '#1a7a4a');
+  } catch(e) {
+    setSyncStatus('⚠ 取得失敗', '#c02020');
+    alert('株価を取得できませんでした。\n・銘柄コードを確認（東証上場の4桁コード）\n・GASに quote 機能が追加済みか確認');
+  }
+  btn.disabled = false; btn.textContent = '取得';
+}
+
+// ④TP候補：2倍価格・節目・直近高値
+function stepFor(p) { return p < 1000 ? 50 : p < 3000 ? 100 : p < 10000 ? 500 : p < 30000 ? 1000 : 5000; }
+function tpCands(en) {
+  const c = [{ label: '2倍価格', v: en * 2 }];
+  const st = stepFor(en);
+  c.push({ label: '節目', v: Math.ceil((en + 0.01) / st) * st });
+  if (quote && quote.high3m) c.push({ label: '直近高値', v: quote.high3m });
+  return c.map(x => ({ ...x, v: Math.round(x.v) }));
+}
+// ⑤SL候補：週足ATR・前日安値・5日安値
+function slCands(en) {
+  const c = [];
+  if (quote) {
+    if (quote.atrW) c.push({ label: '週足ATR', v: en - quote.atrW });
+    if (quote.prevDayLow) c.push({ label: '前日安値', v: quote.prevDayLow });
+    if (quote.low5) c.push({ label: '5日安値', v: quote.low5 });
+  }
+  return c.map(x => ({ ...x, v: Math.round(x.v) }));
+}
+function setVal(id, v) { document.getElementById(id).value = v; recalc(); }
+function setBoth(tp, sl) { document.getElementById('f_tp').value = tp; document.getElementById('f_sl').value = sl; recalc(); }
+
+// ⑥候補チップ＆RRマトリクス
+function renderCandidates() {
+  const panel = document.getElementById('candPanel');
+  if (!quote) { panel.style.display = 'none'; return; }
+  const en = numVal('f_en') || quote.price;
+  const qty = numVal('f_qty');
+  const tps = tpCands(en), sls = slCands(en);
+  document.getElementById('tpChips').innerHTML = tps.map(t =>
+    `<span class="chip tpc" onclick="setVal('f_tp',${t.v})">${t.label} <b>${t.v.toLocaleString()}</b>` +
+    (qty && t.v > en ? `<span class="sub2"> +${fmt((t.v - en) * qty)}円</span>` : '') + `</span>`).join('');
+  document.getElementById('slChips').innerHTML = sls.map(s =>
+    `<span class="chip slc" onclick="setVal('f_sl',${s.v})">${s.label} <b>${s.v.toLocaleString()}</b>` +
+    (qty && s.v < en ? `<span class="sub2"> −${fmt((en - s.v) * qty)}円</span>` : '') + `</span>`).join('');
+  let h = '<tr><th>TP＼SL</th>' + sls.map(s =>
+    `<th>${s.label}<span class="sub">${s.v.toLocaleString()}${qty && s.v < en ? '<br>損 −' + fmt((en - s.v) * qty) : ''}</span></th>`).join('') + '</tr>';
+  for (const t of tps) {
+    h += `<tr><th>${t.label}<span class="sub">${t.v.toLocaleString()}${qty && t.v > en ? '<br>利 +' + fmt((t.v - en) * qty) : ''}</span></th>`;
+    for (const s of sls) {
+      if (t.v > en && s.v < en) {
+        const rr = (t.v - en) / (en - s.v);
+        const cls = rr >= 2 ? 'g' : rr >= 1 ? 'a' : 'r';
+        h += `<td class="rr ${cls}" onclick="setBoth(${t.v},${s.v})">${rr.toFixed(2)}</td>`;
+      } else h += '<td>—</td>';
+    }
+    h += '</tr>';
+  }
+  document.getElementById('mtxTable').innerHTML = h;
+  panel.style.display = 'block';
 }
 
 async function loadFromSheets() {
@@ -297,6 +411,7 @@ function recalc() {
       `TP <b>${tp}</b> で <b>${half2}株</b> を利確（指値）→ 残り <b>${runner}株</b> はトレーリング（週足ATRをSLに）。点数が落ちたら残りも分散EX。`;
     splitWrap.style.display = 'block';
   } else { splitWrap.style.display = 'none'; }
+  renderCandidates();
 }
 function showFlag(id, on) { document.getElementById(id).classList.toggle('show', on); }
 
@@ -315,8 +430,11 @@ async function savePlan() {
   };
   plans.push(plan);
   persistLocal(); render();
-  ['f_name','f_en','f_qty','f_tp','f_sl'].forEach(id => document.getElementById(id).value = '');
+  ['f_code','f_name','f_en','f_qty','f_tp','f_sl'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f_pat').value = ''; document.getElementById('f_score').value = '';
+  quote = null;
+  document.getElementById('quoteInfo').style.display = 'none';
+  document.getElementById('candPanel').style.display = 'none';
   recalc();
   await saveToSheets(plan);
   window.scrollTo({ top: document.querySelector('#planList').offsetTop - 60, behavior: 'smooth' });
