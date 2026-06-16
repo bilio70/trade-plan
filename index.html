@@ -258,7 +258,7 @@ const GAS_URL='https://script.google.com/macros/s/AKfycbxLLf5YuIhTuhQPa4C5OKgv8K
 const KEY='cleartrade_plans_v3';
 let plans=[];let quote=null;
 const GRADES=['◎','○','△','×'];
-const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'全撤退',cls:'warn'}];
+const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'全撤退',cls:'warn'}];
 const CHECK_LABELS=['TPの指値（分割・半分）を発注した','撤退ラインの逆指値SLを発注した','これらを場中に動かさないと決めた'];
 let editingExit=null;
 
@@ -302,8 +302,8 @@ async function fetchQuote(){
     document.getElementById('quoteInfo').innerHTML=
       `<b>${d.name||code}</b>　現在値 <b>¥${fmt(d.price)}</b>（前日終値 ¥${fmt(d.prevClose)}）<br>`+
       `3ヶ月高値 ¥${fmt(d.high3m)}／前日安値 ¥${fmt(d.prevDayLow)}／5日安値 ¥${fmt(d.low5)}`+
-      (d.atrW?`／週足ATR <b>${d.atrW}</b>`:'')+
-      (d.atrD?`／日足ATR <b>${d.atrD}</b>`:'');
+      (d.atrW?`<br>週足ATR(3期間×2) <b>¥${fmt(d.atrW)}</b>`:'')+
+      (d.atrD?`／日足ATR(3期間×2) <b>¥${fmt(d.atrD)}</b>`:'');
     recalc();setSyncStatus('✓ 株価取得','#1a7a4a');
   }catch(e){
     setSyncStatus('⚠ 自動取得失敗','#c02020');
@@ -339,15 +339,21 @@ function onCodeInput(){
   }else{closeSuggest();}
 }
 async function searchByName(q){
+  const el=document.getElementById('suggestList');
+  el.innerHTML='<div class="suggest-item" style="color:#888;cursor:default;">検索中…</div>';
+  el.classList.add('show');
   try{
     const d=await gasGet({action:'search',q});
     if(d.result==='ok'&&d.items&&d.items.length>0){
-      const el=document.getElementById('suggestList');
-      el.innerHTML=d.items.map(it=>
-        `<div class="suggest-item" onclick="pickSuggest('${it.code}','${(it.name||'').replace(/'/g,"\\'")}')"><span class="si-code">${it.code}</span><span class="si-name">${it.name||''}</span></div>`
-      ).join('');
+      el.innerHTML=d.items.map(it=>{
+        const safeName=(it.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+        const label=it.name&&it.name!==it.code?`<span class="si-code">${it.code}</span><span class="si-name">${it.name}</span>`:`<span class="si-code">${it.code}</span><span class="si-name" style="color:#aaa;">タップで取得</span>`;
+        return `<div class="suggest-item" onclick="pickSuggest('${it.code}','${safeName}')">${label}</div>`;
+      }).join('');
       el.classList.add('show');
-    }else{closeSuggest();}
+    }else{
+      el.innerHTML='<div class="suggest-item" style="color:#aaa;cursor:default;">該当なし — コード直接入力で取得できます</div>';
+    }
   }catch(e){closeSuggest();}
 }
 function pickSuggest(code,name){
@@ -374,8 +380,8 @@ function slCands(en){
   const tp=numVal('f_tp');
   if(tp&&tp>en){const sl2=Math.round(en-(tp-en)/2);if(sl2>0&&sl2<en)c.push({label:'RR=2.0',v:sl2});}
   if(quote){
-    if(quote.atrW)c.push({label:'週足ATR',v:en-quote.atrW});
-    if(quote.atrD)c.push({label:'日足ATR',v:en-quote.atrD});
+    if(quote.atrW)c.push({label:'週足ATR(3×2)',v:en-quote.atrW});
+    if(quote.atrD)c.push({label:'日足ATR(3×2)',v:en-quote.atrD});
     if(quote.prevDayLow)c.push({label:'前日安値',v:quote.prevDayLow});
     if(quote.low5)c.push({label:'5日安値',v:quote.low5});
   }
@@ -579,7 +585,7 @@ function render(){
     let exListHtml='';
     if(p.exits.length){
       const rows=p.exits.map(e=>{
-        const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='全撤退')?'warn':'';
+        const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
         const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
         const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
         let row=`<div class="ex-row">
@@ -801,12 +807,12 @@ function renderTally(){
   }
   const n=allExits.length;
   const cnt=t=>allExits.filter(e=>e.exitType===t).length;
-  const sw=cnt('銘柄切替')+cnt('分散EX')+cnt('撤退(弱くなった)'),sl=cnt('SL撤退');
+  const sw=cnt('銘柄切替')+cnt('分散EX')+cnt('撤退(弱くなった)'),sl=cnt('SL撤退')+cnt('逆指値狩り');
   const swP=Math.round(sw/n*100),slP=Math.round(sl/n*100);
   const bar=(l,v,p2,c)=>'<div class="tally-bar"><div class="tl"><span>'+l+'</span><b>'+v+'件 / '+p2+'%</b></div><div class="track"><div class="fill '+c+'" style="width:'+p2+'%"></div></div></div>';
   html+='<div style="font-size:10px;letter-spacing:0.15em;color:#888;margin:14px 0 10px;">EX分布（全'+n+'件）</div>'
     +bar('①②③ 銘柄切替＋分散EX＋撤退（目標7割以上）',sw,swP,'green')
-    +bar('③ SL撤退（目標3割以下）',sl,slP,'red')
+    +bar('③④ SL撤退＋逆指値狩り（目標3割以下）',sl,slP,'red')
     +(swP>=70&&slP<=30?'<div class="tally-note ok">理想形。</div>':'<div class="tally-note ng">①②が7割に届かない／SLが3割超→改善すべきはEXではなくEN。</div>');
   el.innerHTML=html;
 }
