@@ -11,8 +11,15 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .lede{font-size:12px;color:#555;margin-bottom:16px;line-height:1.7}
 .lede strong{color:#1a1a1a}
 .sec{background:#f0efe9;border-radius:12px;padding:18px 20px;margin-bottom:14px}
-.sec-title{font-size:10px;letter-spacing:0.2em;color:#888;margin:0 0 14px;font-weight:500}
-.step{display:inline-block;background:#0d0d0d;color:#c9a84c;font-size:10px;padding:2px 8px;border-radius:4px;margin-right:6px;letter-spacing:normal}
+.sec-title{font-size:14px;letter-spacing:0.1em;color:#444;margin:0 0 14px;font-weight:700}
+.step{display:inline-block;background:#0d0d0d;color:#c9a84c;font-size:11px;padding:3px 10px;border-radius:4px;margin-right:8px;letter-spacing:normal}
+.subsec{margin-bottom:14px}
+.subsec-title{font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.subsec-title .cnt{font-size:10px;font-weight:400;color:#888}
+.subsec.draft .subsec-title{background:#f7f6f2;color:#888;border-left:3px solid #ccc}
+.subsec.armed .subsec-title{background:#e3f1ea;color:#1a7a4a;border-left:3px solid #1a7a4a}
+.subsec.partial .subsec-title{background:#fef3e0;color:#b5851a;border-left:3px solid #b5851a}
+.subsec.closed .subsec-title{background:#f0e9d8;color:#8a6d1a;border-left:3px solid #c9a84c}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
@@ -21,10 +28,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .field textarea{font-size:12px;resize:vertical;min-height:36px}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#888}
 .hint{font-size:10px;color:#aaa;margin-top:3px}
-.coderow{display:flex;gap:6px}.coderow input{flex:1;min-width:0}
+.coderow{display:flex;gap:6px}.coderow input{flex:1;min-width:90px;font-size:15px}
 .getbtn{padding:9px 14px;font-size:12px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;white-space:nowrap;font-weight:600}
 .getbtn:disabled{opacity:0.5}
-.resetbtn{padding:9px 10px;font-size:11px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#888;cursor:pointer;white-space:nowrap}
+.resetbtn{padding:7px 14px;font-size:11px;border:none;border-radius:8px;background:#c9a84c;color:#fff;cursor:pointer;white-space:nowrap;font-weight:600}
 .quoteinfo{font-size:11px;color:#555;background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:8px 11px;margin-bottom:10px;line-height:1.8}
 .quoteinfo b{color:#1a1a1a}
 .candgrp{margin-bottom:8px}
@@ -55,9 +62,18 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .flag.warn{background:#fbeede;color:#8a5a00}
 .flag.bad{background:#fce8e8;color:#c02020}
 .save-btn{width:100%;padding:11px;font-size:13px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;font-weight:600;letter-spacing:0.05em}
-.plan{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:14px;margin-bottom:10px}
+.plan{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:0;margin-bottom:10px;overflow:hidden}
 .plan.armed{border:1px solid #1a7a4a;box-shadow:0 0 0 3px rgba(26,122,74,0.07)}
-.plan.closed{opacity:0.62}
+.plan.closed{opacity:0.85}
+.plan-summary{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
+.plan-summary:hover{background:#fafaf8}
+.plan-summary .ps-toggle{font-size:11px;color:#aaa;transition:transform 0.2s;flex-shrink:0}
+.plan-summary.open .ps-toggle{transform:rotate(90deg)}
+.plan-summary .ps-date{font-size:10px;color:#999;min-width:42px}
+.plan-summary .ps-code{font-size:12px;font-weight:700;color:#1a1a1a}
+.plan-summary .ps-name{font-size:13px;color:#333;flex:1;min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-summary .ps-status{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.plan-body-wrap{padding:0 14px 14px;border-top:0.5px solid #f0f0f0}
 .plan-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .plan-name{font-size:15px;font-weight:700}
 .plan-pat{font-size:11px;color:#555}
@@ -81,8 +97,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .exb{font-size:11px;padding:6px 10px;border:0.5px solid #ccc;border-radius:20px;background:#fff;color:#555;cursor:pointer}
 .exb.good{border-color:#1a7a4a;color:#1a7a4a}.exb.warn{border-color:#c02020;color:#c02020}
 .exb.sel{background:#0d0d0d;color:#c9a84c;border-color:#0d0d0d}
-.del{font-size:10px;color:#c0392b;background:none;border:none;cursor:pointer;margin-left:8px}
-.edit-btn{font-size:10px;color:#1a7a4a;background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:8px}
+.del{font-size:11px;color:#c0392b;background:#fce8e8;border:0.5px solid #e8b4b4;border-radius:6px;cursor:pointer;padding:5px 10px}
+.edit-btn{font-size:11px;color:#1a7a4a;background:#e3f1ea;border:0.5px solid #b4d8c4;border-radius:6px;cursor:pointer;padding:5px 10px;text-decoration:none}
 .empty{font-size:12px;color:#aaa;text-align:center;padding:18px 0}
 .ex-list{margin:8px 0}
 .ex-row{display:flex;gap:8px;align-items:center;font-size:11px;color:#444;padding:5px 8px;background:#f7f6f2;border-radius:6px;margin-bottom:4px;flex-wrap:wrap}
@@ -94,7 +110,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .ex-row .ex-pnl{font-weight:700;margin-left:auto}
 .ex-row .ex-pnl.profit{color:#1a7a4a}.ex-row .ex-pnl.loss{color:#c02020}
 .ex-row .ex-grade{font-size:10px;color:#888}
-.ex-row .ex-del{font-size:10px;color:#c0392b;background:none;border:none;cursor:pointer;padding:2px 4px}
+.ex-row .ex-del{font-size:10px;color:#c0392b;background:#fce8e8;border:0.5px solid #e8b4b4;border-radius:5px;cursor:pointer;padding:3px 8px}
+.ex-row .ex-edit{font-size:10px;color:#1a7a4a;background:#e3f1ea;border:0.5px solid #b4d8c4;border-radius:5px;cursor:pointer;padding:3px 8px}
 .ex-row .ex-detail{font-size:10px;color:#888;width:100%;margin-top:2px}
 .ex-summary{font-size:12px;font-weight:600;padding:6px 8px;border-radius:6px;margin-top:4px}
 .ex-summary.profit{background:#e3f1ea;color:#1a7a4a}
@@ -164,15 +181,18 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 <p class="lede">利益確定は独立した技術ではなく<strong>「銘柄切替」</strong>の一形態。決めるのは「いくら乗ったか」ではなく<strong>点数とライン</strong>。場が引けた今夜のうちにTPと撤退ラインを数値で確定し、分割の指値・逆指値を発注しておく。場中の判断＝感情の引き金を、ここで先に消す。</p>
 
 <div class="sec" id="planForm">
-  <p class="sec-title"><span class="step">計画</span> 1銘柄ずつ、数値で確定する</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <p class="sec-title" style="margin:0"><span class="step">計画</span> 1銘柄ずつ、数値で確定する</p>
+    <button class="resetbtn" onclick="clearForm()">リセット</button>
+  </div>
   <div class="grid">
     <div class="field"><label>銘柄コード or 銘柄名 → 自動取得</label>
       <div class="suggest-box">
-        <div class="coderow"><input id="f_code" inputmode="text" placeholder="7203 or キオクシア" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button><button class="resetbtn" onclick="clearForm()">リセット</button></div>
+        <div class="coderow"><input id="f_code" inputmode="text" placeholder="285A or キオクシア" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button></div>
         <div class="suggest-list" id="suggestList"></div>
       </div>
     </div>
-    <div class="field"><label>銘柄名（自動取得・編集可）</label><input id="f_name" placeholder="例）7203 トヨタ自動車"></div>
+    <div class="field"><label>銘柄名（自動取得・編集可）</label><input id="f_name" placeholder="例）285A キオクシアホールディングス"></div>
   </div>
   <div class="quoteinfo" id="quoteInfo" style="display:none;"></div>
   <div class="grid3">
@@ -223,6 +243,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </div>
 
 <div class="sec">
+  <p class="sec-title"><span class="step">EX一覧</span> 全株EX済み（直近7日間）</p>
+  <div id="closedList"><div class="empty">直近7日間のEX完了銘柄はありません。</div></div>
+</div>
+
+<div class="sec">
   <p class="sec-title"><span class="step">撤退トリガー</span> EXのタイミングはこの4つだけ</p>
   <div class="ref-item">① <strong>銘柄切替</strong>　より点数の高い銘柄が現れた → そちらへ資金移動</div>
   <div class="ref-item">② <strong>分散EX</strong>　保有銘柄の点数が下がってきた → ポジションを軽くする</div>
@@ -261,6 +286,7 @@ const GRADES=['◎','○','△','×'];
 const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'全撤退',cls:'warn'}];
 const CHECK_LABELS=['TPの指値（分割・半分）を発注した','撤退ラインの逆指値SLを発注した','これらを場中に動かさないと決めた'];
 let editingExit=null;
+let expandedPlans={};
 
 function setSyncStatus(m,c){const e=document.getElementById('syncStatus');if(e){e.textContent=m;e.style.color=c||'#888';}}
 
@@ -561,128 +587,207 @@ function calcStatus(p){
 // ===== RENDER =====
 function render(){
   const list=document.getElementById('planList');
-  if(!plans.length){list.innerHTML='<div class="empty">まだ計画がありません。</div>';renderTally();renderAnalysis();return;}
-  list.innerHTML=plans.slice().reverse().map(p=>{
-    const en=p.en,sl=p.sl,tp=p.tp;
-    const rr=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'—';
-    const armed=p.checks&&p.checks.every(Boolean);
+  const closedListEl=document.getElementById('closedList');
+  if(!plans.length){list.innerHTML='<div class="empty">まだ計画がありません。</div>';if(closedListEl)closedListEl.innerHTML='<div class="empty">直近7日間のEX完了銘柄はありません。</div>';renderTally();renderAnalysis();return;}
+
+  const now=new Date();
+  const sevenDaysAgo=new Date(now.getTime()-7*864e5);
+
+  // 分類
+  const drafts=[],armeds=[],partials=[],closedRecent=[];
+  plans.forEach(p=>{
     const exd=exitedShares(p),rem=remainShares(p);
     const closed=rem<=0&&p.exits.length>0;
-    // ステータス同期
     const newStatus=calcStatus(p);
     if(p.status!==newStatus){p.status=newStatus;persistLocal();}
-
-    let pillHtml;
-    if(closed)pillHtml=`<span class="pill done">終了・全${p.qty}株EX済</span>`;
-    else if(p.exits.length)pillHtml=`<span class="pill partial">部分EX ${exd}/${p.qty}株済</span>`;
-    else if(armed)pillHtml='<span class="pill armed">🔒 発注済み</span>';
-    else pillHtml='<span class="pill draft">下書き</span>';
-
-    const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${p.en}</div></div><div><div class="lbl">TP</div><div class="val">${p.tp}</div></div><div><div class="lbl">SL</div><div class="val">${p.sl}</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
-    const patMemo=p.patMemo?`<div style="font-size:10px;color:#888;margin-bottom:6px;">📝 ${p.patMemo}</div>`:'';
-
-    // ── EX済みリスト ──
-    let exListHtml='';
-    if(p.exits.length){
-      const rows=p.exits.map(e=>{
-        const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
-        const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
-        const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
-        let row=`<div class="ex-row">
-          <span class="ex-date">${(e.date||'').slice(5)}</span>
-          <span class="ex-shares">${e.shares}株</span>
-          <span class="ex-price">EN¥${fmt(e.enPrice||p.en)}→EX¥${fmt(e.price)}</span>
-          <span class="ex-type ${tCls}">${e.exitType}</span>
-          <span class="ex-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
-          ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
-          <button class="ex-del" onclick="startEditExit(${p.id},${e.eid})" style="color:#1a7a4a;">編集</button>
-          <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
-          ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
-          ${e.memo?`<div class="ex-detail">${e.memo}</div>`:''}
-        </div>`;
-        if(isEditing){
-          row+=`<div class="ex-input" style="margin-top:4px;margin-bottom:8px;">
-            <div class="ct">EX記録を編集</div>
-            <div class="grid3">
-              <div class="field"><label>EN日付</label><input type="date" id="ee_enD_${e.eid}" value="${e.enDate||p.date}"></div>
-              <div class="field"><label>EN価格</label><input type="number" id="ee_enP_${e.eid}" inputmode="decimal" value="${e.enPrice||p.en}" oninput="calcEditPnl(${e.eid})"></div>
-              <div class="field"><label>EX日付</label><input type="date" id="ee_exD_${e.eid}" value="${e.date||''}"></div>
-            </div>
-            <div class="grid3">
-              <div class="field"><label>株数</label><input type="number" id="ee_sh_${e.eid}" inputmode="numeric" value="${e.shares}"></div>
-              <div class="field"><label>EX価格</label><input type="number" id="ee_exP_${e.eid}" inputmode="decimal" value="${e.price}" oninput="calcEditPnl(${e.eid})"></div>
-              <div class="field"><label>損益</label><input type="number" id="ee_pnl_${e.eid}" inputmode="decimal" value="${e.pnl}" step="100"></div>
-            </div>
-            <div class="grid4">
-              <div class="field"><label>EXタイプ</label><select id="ee_type_${e.eid}">${EX_TYPES.map(t=>`<option${e.exitType===t.k?' selected':''}>${t.k}</option>`).join('')}</select></div>
-              <div class="field"><label>EN採点</label><select id="ee_eng_${e.eid}">${gradeOpts(e.enGrade)}</select></div>
-              <div class="field"><label>EX採点</label><select id="ee_exg_${e.eid}">${gradeOpts(e.exGrade)}</select></div>
-              <div class="field"><label>反省メモ</label><textarea id="ee_mem_${e.eid}" rows="2">${e.memo||''}</textarea></div>
-            </div>
-            <div style="display:flex;gap:8px;">
-              <button class="ex-confirm-btn" style="flex:1;" onclick="saveEditExit(${p.id},${e.eid})">保存</button>
-              <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelEditExit()">キャンセル</button>
-            </div>
-          </div>`;
-        }
-        return row;
-      }).join('');
-      const tp2=totalPnl(p);const tCls=tp2>=0?'profit':'loss';
-      exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</div></div>`;
-    }
-
-    // ── 保有中 ──
-    let holdingHtml='';
-    if(!closed&&rem>0){
-      let pi='現在値を取得してください';
-      if(p.currentPrice){pi=`${rem}株 × 現在値 ¥${fmt(p.currentPrice)}`;}
-      holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>`;
-    }
-
-    let body;
     if(closed){
-      body=`${exListHtml}<div style="margin-top:6px;"><button class="del" onclick="reopenLastExit(${p.id})">最後のEXを取消</button></div>`;
-    }else{
-      const chks=CHECK_LABELS.map((l,i)=>`<label class="chk"><input type="checkbox" ${p.checks&&p.checks[i]?'checked':''} onchange="toggleCheck(${p.id},${i})"><span>${l}</span></label>`).join('');
-      const today=new Date().toISOString().slice(0,10);
-      const selType=selectedExType[p.id]||'';
+      const lastExDate=p.exits.reduce((d,e)=>e.date&&e.date>d?e.date:d,'');
+      if(lastExDate&&new Date(lastExDate)>=sevenDaysAgo){closedRecent.push(p);}
+    }else if(p.status==='partial'){partials.push(p);}
+    else if(p.status==='armed'){armeds.push(p);}
+    else{drafts.push(p);}
+  });
 
-      const exBtns=EX_TYPES.map(t=>`<button class="exb ${t.cls}${selType===t.k?' sel':''}" onclick="selectExType(${p.id},'${t.k}')">${t.k}</button>`).join('');
+  // ── 計画一覧を描画 ──
+  let html='';
+  if(drafts.length){
+    html+=`<div class="subsec draft"><div class="subsec-title">📝 未発注 <span class="cnt">${drafts.length}件</span></div>`;
+    html+=drafts.slice().reverse().map(p=>renderPlanCard(p,false)).join('');
+    html+=`</div>`;
+  }
+  if(armeds.length){
+    html+=`<div class="subsec armed"><div class="subsec-title">🔒 発注済み <span class="cnt">${armeds.length}件</span></div>`;
+    html+=armeds.slice().reverse().map(p=>renderPlanCard(p,false)).join('');
+    html+=`</div>`;
+  }
+  if(partials.length){
+    html+=`<div class="subsec partial"><div class="subsec-title">📊 部分EX <span class="cnt">${partials.length}件</span></div>`;
+    html+=partials.slice().reverse().map(p=>renderPlanCard(p,false)).join('');
+    html+=`</div>`;
+  }
+  list.innerHTML=html||'<div class="empty">アクティブな計画はありません。</div>';
 
-      let detailForm='';
-      if(selType){
-        detailForm=`<div class="ex-input" style="margin-top:8px;">
-          <div class="ct">「${selType}」の詳細を入力</div>
+  // ── EX完了（7日以内）を描画 ──
+  if(closedListEl){
+    if(!closedRecent.length){closedListEl.innerHTML='<div class="empty">直近7日間のEX完了銘柄はありません。</div>';}
+    else{
+      let chtml=`<div class="subsec closed"><div class="subsec-title">✅ EX完了 <span class="cnt">${closedRecent.length}件・7日以内</span></div>`;
+      chtml+=closedRecent.slice().reverse().map(p=>renderPlanCard(p,true)).join('');
+      chtml+=`</div>`;
+      closedListEl.innerHTML=chtml;
+    }
+  }
+  renderTally();renderAnalysis();
+}
+
+function renderPlanCard(p,isClosed){
+  const en=p.en,sl=p.sl,tp=p.tp;
+  const rr=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'—';
+  const armed=p.checks&&p.checks.every(Boolean);
+  const exd=exitedShares(p),rem=remainShares(p);
+  const closed=rem<=0&&p.exits.length>0;
+
+  let pillHtml;
+  if(closed)pillHtml=`<span class="pill done">終了・全${p.qty}株EX済</span>`;
+  else if(p.exits.length)pillHtml=`<span class="pill partial">部分EX ${exd}/${p.qty}株済</span>`;
+  else if(armed)pillHtml='<span class="pill armed">🔒 発注済み</span>';
+  else pillHtml='<span class="pill draft">下書き</span>';
+
+  const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${p.en}</div></div><div><div class="lbl">TP</div><div class="val">${p.tp}</div></div><div><div class="lbl">SL</div><div class="val">${p.sl}</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
+  const patMemo=p.patMemo?`<div style="font-size:10px;color:#888;margin-bottom:6px;">📝 ${p.patMemo}</div>`:'';
+
+  // ── EX済みリスト ──
+  let exListHtml='';
+  if(p.exits.length){
+    const rows=p.exits.map(e=>{
+      const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
+      const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
+      const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
+      let row=`<div class="ex-row">
+        <span class="ex-date">${(e.date||'').slice(5)}</span>
+        <span class="ex-shares">${e.shares}株</span>
+        <span class="ex-price">EN¥${fmt(e.enPrice||p.en)}→EX¥${fmt(e.price)}</span>
+        <span class="ex-type ${tCls}">${e.exitType}</span>
+        <span class="ex-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
+        ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
+        <button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button>
+        <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
+        ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
+        ${e.memo?`<div class="ex-detail">${e.memo}</div>`:''}
+      </div>`;
+      if(isEditing){
+        row+=`<div class="ex-input" style="margin-top:4px;margin-bottom:8px;">
+          <div class="ct">EX記録を修正</div>
           <div class="grid3">
-            <div class="field"><label>実際のEN日付</label><input type="date" id="exEnD_${p.id}" value="${p.date}"></div>
-            <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${p.en}" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>EX日付</label><input type="date" id="exd_${p.id}" value="${today}"></div>
+            <div class="field"><label>EN日付</label><input type="date" id="ee_enD_${e.eid}" value="${e.enDate||p.date}"></div>
+            <div class="field"><label>EN価格</label><input type="number" id="ee_enP_${e.eid}" inputmode="decimal" value="${e.enPrice||p.en}" oninput="calcEditPnl(${e.eid})"></div>
+            <div class="field"><label>EX日付</label><input type="date" id="ee_exD_${e.eid}" value="${e.date||''}"></div>
           </div>
           <div class="grid3">
-            <div class="field"><label>株数（残${rem}株）</label><input type="number" id="exs_${p.id}" inputmode="numeric" placeholder="${rem}" max="${rem}" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>EX価格</label><input type="number" id="exp_${p.id}" inputmode="decimal" placeholder="約定単価" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>損益（自動／上書可）</label><input type="number" id="exPnlO_${p.id}" inputmode="decimal" placeholder="自動" step="100"></div>
+            <div class="field"><label>株数</label><input type="number" id="ee_sh_${e.eid}" inputmode="numeric" value="${e.shares}"></div>
+            <div class="field"><label>EX価格</label><input type="number" id="ee_exP_${e.eid}" inputmode="decimal" value="${e.price}" oninput="calcEditPnl(${e.eid})"></div>
+            <div class="field"><label>損益</label><input type="number" id="ee_pnl_${e.eid}" inputmode="decimal" value="${e.pnl}" step="100"></div>
           </div>
-          <div class="ex-calc" id="exCalc_${p.id}">損益（自動計算）: —</div>
           <div class="grid4">
-            <div class="field"><label>EN採点</label><select id="eng_${p.id}">${gradeOpts('')}</select></div>
-            <div class="field"><label>EX採点</label><select id="exg_${p.id}">${gradeOpts('')}</select></div>
-            <div class="field" style="grid-column:span 2;"><label>反省メモ</label><textarea id="mem_${p.id}" rows="2" placeholder="振り返り"></textarea></div>
+            <div class="field"><label>EXタイプ</label><select id="ee_type_${e.eid}">${EX_TYPES.map(t=>`<option${e.exitType===t.k?' selected':''}>${t.k}</option>`).join('')}</select></div>
+            <div class="field"><label>EN採点</label><select id="ee_eng_${e.eid}">${gradeOpts(e.enGrade)}</select></div>
+            <div class="field"><label>EX採点</label><select id="ee_exg_${e.eid}">${gradeOpts(e.exGrade)}</select></div>
+            <div class="field"><label>反省メモ</label><textarea id="ee_mem_${e.eid}" rows="2">${e.memo||''}</textarea></div>
           </div>
-          <button class="ex-confirm-btn" onclick="confirmExit(${p.id})">このEXを確定する</button>
+          <div style="display:flex;gap:8px;">
+            <button class="ex-confirm-btn" style="flex:1;" onclick="saveEditExit(${p.id},${e.eid})">保存</button>
+            <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelEditExit()">キャンセル</button>
+          </div>
         </div>`;
       }
+      return row;
+    }).join('');
+    const tp2=totalPnl(p);const tCls=tp2>=0?'profit':'loss';
+    exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</div></div>`;
+  }
 
-      body=`${exListHtml}${holdingHtml}
-        <div class="checks"><div class="ct">発注チェック</div>${chks}
-        ${armed?'<div class="armed-banner">この計画は発注済み。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
-        <div class="closebar"><div class="ct">EXタイプを選択してから詳細を入力</div>
-        <div class="exbtns">${exBtns}</div>${detailForm}
-        <div style="margin-top:8px;"><button class="edit-btn" onclick="editPlan(${p.id})">計画を編集</button><button class="del" onclick="delPlan(${p.id})">削除</button></div></div>`;
+  // ── 保有中 ──
+  let holdingHtml='';
+  if(!closed&&rem>0){
+    let pi='現在値を取得してください';
+    if(p.currentPrice){pi=`${rem}株 × 現在値 ¥${fmt(p.currentPrice)}`;}
+    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>`;
+  }
+
+  let body;
+  if(closed){
+    body=`${exListHtml}`;
+  }else{
+    const chks=CHECK_LABELS.map((l,i)=>`<label class="chk"><input type="checkbox" ${p.checks&&p.checks[i]?'checked':''} onchange="toggleCheck(${p.id},${i})"><span>${l}</span></label>`).join('');
+    const today=new Date().toISOString().slice(0,10);
+    const selType=selectedExType[p.id]||'';
+    const exBtns=EX_TYPES.map(t=>`<button class="exb ${t.cls}${selType===t.k?' sel':''}" onclick="selectExType(${p.id},'${t.k}')">${t.k}</button>`).join('');
+
+    let detailForm='';
+    if(selType){
+      detailForm=`<div class="ex-input" style="margin-top:8px;">
+        <div class="ct">「${selType}」の詳細を入力</div>
+        <div class="grid3">
+          <div class="field"><label>実際のEN日付</label><input type="date" id="exEnD_${p.id}" value="${p.date}"></div>
+          <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${p.en}" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>EX日付</label><input type="date" id="exd_${p.id}" value="${today}"></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>株数（残${rem}株）</label><input type="number" id="exs_${p.id}" inputmode="numeric" placeholder="${rem}" max="${rem}" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>EX価格</label><input type="number" id="exp_${p.id}" inputmode="decimal" placeholder="約定単価" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>損益（自動／上書可）</label><input type="number" id="exPnlO_${p.id}" inputmode="decimal" placeholder="自動" step="100"></div>
+        </div>
+        <div class="ex-calc" id="exCalc_${p.id}">損益（自動計算）: —</div>
+        <div class="grid4">
+          <div class="field"><label>EN採点</label><select id="eng_${p.id}">${gradeOpts('')}</select></div>
+          <div class="field"><label>EX採点</label><select id="exg_${p.id}">${gradeOpts('')}</select></div>
+          <div class="field" style="grid-column:span 2;"><label>反省メモ</label><textarea id="mem_${p.id}" rows="2" placeholder="振り返り"></textarea></div>
+        </div>
+        <button class="ex-confirm-btn" onclick="confirmExit(${p.id})">このEXを確定する</button>
+      </div>`;
     }
-    return `<div class="plan ${armed&&!closed?'armed':''} ${closed?'closed':''}"><div class="plan-head"><span class="plan-name">${p.name}</span><span class="plan-pat">${p.pat||''}${p.score?' ・'+p.score+'点':''}</span>${pillHtml}<span class="plan-date">${p.date}</span></div>${patMemo}${nums}${body}</div>`;
-  }).join('');
-  renderTally();renderAnalysis();
+
+    body=`${exListHtml}${holdingHtml}
+      <div class="checks"><div class="ct">発注チェック</div>${chks}
+      ${armed?'<div class="armed-banner">この計画は発注済み。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
+      <div class="closebar"><div class="ct">EXタイプを選択してから詳細を入力</div>
+      <div class="exbtns">${exBtns}</div>${detailForm}
+      <div style="margin-top:10px;display:flex;gap:8px;"><button class="edit-btn" onclick="editPlan(${p.id})">計画を編集</button><button class="del" onclick="delPlan(${p.id})">削除</button></div></div>`;
+  }
+  // 折りたたみ見出し用の情報
+  const code=(p.name||'').match(/^([0-9A-Za-z]+)/);
+  const codeStr=code?code[1]:'';
+  const nameOnly=(p.name||'').replace(/^[0-9A-Za-z]+\s*/,'');
+  // 状態ラベル
+  let statusLabel,statusCls;
+  if(closed){statusLabel=`終了・全${p.qty}株EX済`;statusCls='done';}
+  else if(p.exits.length){statusLabel=`部分EX ${exd}株EX済／${p.qty}株`;statusCls='partial';}
+  else if(armed){statusLabel='発注済';statusCls='armed';}
+  else{statusLabel='発注前';statusCls='draft';}
+  // EN日付 or 最終EX日付
+  let dispDate=p.date;
+  if(closed||p.exits.length){const lastEx=p.exits.reduce((d,e)=>e.date&&e.date>d?e.date:d,'');if(lastEx)dispDate=lastEx;}
+
+  const isOpen=!!expandedPlans[p.id];
+  const summary=`<div class="plan-summary ${isOpen?'open':''}" onclick="togglePlan(${p.id})">
+    <span class="ps-toggle">▶</span>
+    <span class="ps-date">${(dispDate||'').slice(5)}</span>
+    <span class="ps-code">${codeStr}</span>
+    <span class="ps-name">${nameOnly||p.name}</span>
+    <span class="ps-status pill ${statusCls}">${statusLabel}</span>
+  </div>`;
+
+  const fullBody=`<div class="plan-body-wrap">
+    <div class="plan-head" style="border:none;padding-top:10px;"><span class="plan-pat">${p.pat||''}${p.score?' ・'+p.score+'点':''}</span></div>
+    ${patMemo}${nums}${body}
+  </div>`;
+
+  return `<div class="plan ${armed&&!closed?'armed':''} ${closed?'closed':''}">${summary}${isOpen?fullBody:''}</div>`;
+}
+
+function togglePlan(id){
+  expandedPlans[id]=!expandedPlans[id];
+  render();
 }
 
 // ===== ACTIONS =====
