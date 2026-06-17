@@ -11,136 +11,167 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .lede{font-size:12px;color:#555;margin-bottom:16px;line-height:1.7}
 .lede strong{color:#1a1a1a}
 .sec{background:#f0efe9;border-radius:12px;padding:18px 20px;margin-bottom:14px}
-.sec-title{font-size:10px;letter-spacing:0.2em;color:#888;margin:0 0 14px;font-weight:500}
-.step{display:inline-block;background:#0d0d0d;color:#c9a84c;font-size:10px;padding:2px 8px;border-radius:4px;margin-right:6px;letter-spacing:normal}
+.sec-title{font-size:14px;letter-spacing:0.1em;color:#444;margin:0 0 14px;font-weight:700}
+.step{display:inline-block;background:#0d0d0d;color:#c9a84c;font-size:12px;padding:3px 10px;border-radius:4px;margin-right:8px;letter-spacing:normal}
+.subsec{margin-bottom:14px}
+.subsec-title{font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.subsec-title .cnt{font-size:12px;font-weight:400;color:#444}
+.subsec.draft .subsec-title{background:#f7f6f2;color:#444;border-left:3px solid #ccc}
+.subsec.armed .subsec-title{background:#e3f1ea;color:#1a7a4a;border-left:3px solid #1a7a4a}
+.subsec.partial .subsec-title{background:#fef3e0;color:#b5851a;border-left:3px solid #b5851a}
+.subsec.closed .subsec-title{background:#f0e9d8;color:#8a6d1a;border-left:3px solid #c9a84c}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
-.field label{display:block;font-size:10px;color:#888;margin-bottom:4px;letter-spacing:0.08em}
+.field label{display:block;font-size:12px;color:#444;margin-bottom:4px;letter-spacing:0.08em}
 .field input,.field select,.field textarea{width:100%;padding:9px 10px;font-size:14px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit}
 .field textarea{font-size:12px;resize:vertical;min-height:36px}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#888}
-.hint{font-size:10px;color:#aaa;margin-top:3px}
-.coderow{display:flex;gap:6px}.coderow input{flex:1;min-width:0}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#444}
+.hint{font-size:12px;color:#444;margin-top:3px}
+.coderow{display:flex;gap:6px}.coderow input{flex:1;min-width:90px;font-size:15px}
 .getbtn{padding:9px 14px;font-size:12px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;white-space:nowrap;font-weight:600}
 .getbtn:disabled{opacity:0.5}
-.resetbtn{padding:9px 10px;font-size:11px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#888;cursor:pointer;white-space:nowrap}
-.quoteinfo{font-size:11px;color:#555;background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:8px 11px;margin-bottom:10px;line-height:1.8}
+.resetbtn{padding:7px 14px;font-size:12px;border:none;border-radius:8px;background:#c9a84c;color:#fff;cursor:pointer;white-space:nowrap;font-weight:600}
+.quoteinfo{font-size:12px;color:#555;background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:8px 11px;margin-bottom:10px;line-height:1.8}
 .quoteinfo b{color:#1a1a1a}
 .candgrp{margin-bottom:8px}
-.cg-t{font-size:9px;letter-spacing:0.12em;color:#888;margin-bottom:5px}
+.cg-t{font-size:12px;letter-spacing:0.12em;color:#444;margin-bottom:5px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-size:11px;padding:6px 10px;border:0.5px solid #ccc;border-radius:20px;background:#fff;cursor:pointer;color:#333}
-.chip b{font-size:12px}.chip .sub2{font-size:9px;color:#999}
+.chip{font-size:12px;padding:6px 10px;border:0.5px solid #ccc;border-radius:20px;background:#fff;cursor:pointer;color:#333}
+.chip b{font-size:12px}.chip .sub2{font-size:12px;color:#444}
 .chip.tpc{border-color:#1a7a4a}.chip.tpc b{color:#1a7a4a}
 .chip.slc{border-color:#c02020}.chip.slc b{color:#c02020}
 .chip.rrc{border-color:#b5851a}.chip.rrc b{color:#b5851a}
 .mtxwrap{overflow-x:auto;margin-bottom:12px}
-.mtx{width:100%;border-collapse:collapse;font-size:11px;background:#fff;border-radius:8px;overflow:hidden}
+.mtx{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:8px;overflow:hidden}
 .mtx th,.mtx td{border:0.5px solid #e5e3db;padding:6px 5px;text-align:center}
-.mtx th{background:#f7f6f2;font-weight:600;color:#555;font-size:10px}
+.mtx th{background:#f7f6f2;font-weight:600;color:#555;font-size:12px}
 .mtx td.rr{cursor:pointer;font-weight:700;font-size:13px}
 .rr.g{color:#1a7a4a}.rr.a{color:#b5851a}.rr.r{color:#c02020}
-.mtx .sub{display:block;font-weight:400;color:#999;font-size:9px;line-height:1.4}
+.mtx .sub{display:block;font-weight:400;color:#444;font-size:12px;line-height:1.4}
 .readout{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:4px 0 12px}
 .stat{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:9px 10px;text-align:center}
-.stat .k{font-size:9px;color:#888;letter-spacing:0.1em;margin-bottom:3px}
+.stat .k{font-size:12px;color:#444;letter-spacing:0.1em;margin-bottom:3px}
 .stat .v{font-size:17px;font-weight:700;color:#1a1a1a}
 .stat .v.green{color:#1a7a4a}.stat .v.amber{color:#b5851a}.stat .v.red{color:#c02020}
-.stat .u{font-size:9px;color:#aaa}
+.stat .u{font-size:12px;color:#444}
 .splitline{background:#fff;border-left:3px solid #c9a84c;border-radius:0 8px 8px 0;padding:9px 12px;font-size:12px;color:#1a1a1a;margin-bottom:12px}
-.splitline .t{font-size:9px;letter-spacing:0.15em;color:#c9a84c;margin-bottom:4px}
-.flag{font-size:11px;padding:7px 11px;border-radius:8px;margin-bottom:10px;display:none}
+.splitline .t{font-size:12px;letter-spacing:0.15em;color:#c9a84c;margin-bottom:4px}
+.flag{font-size:12px;padding:7px 11px;border-radius:8px;margin-bottom:10px;display:none}
 .flag.show{display:block}
 .flag.warn{background:#fbeede;color:#8a5a00}
 .flag.bad{background:#fce8e8;color:#c02020}
 .save-btn{width:100%;padding:11px;font-size:13px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;font-weight:600;letter-spacing:0.05em}
-.plan{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:14px;margin-bottom:10px}
+.plan{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:0;margin-bottom:10px;overflow:hidden}
 .plan.armed{border:1px solid #1a7a4a;box-shadow:0 0 0 3px rgba(26,122,74,0.07)}
-.plan.closed{opacity:0.62}
+.plan.closed{opacity:0.85}
+.plan-summary{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
+.plan-summary:hover{background:#fafaf8}
+.plan-summary .ps-toggle{font-size:13px;color:#666;transition:transform 0.2s;flex-shrink:0}
+.plan-summary.open .ps-toggle{transform:rotate(90deg)}
+.plan-summary .ps-date{font-size:13px;color:#1a1a1a;font-weight:700;min-width:48px}
+.plan-summary .ps-code{font-size:13px;font-weight:700;color:#1a1a1a}
+.plan-summary .ps-name{font-size:13px;color:#1a1a1a;flex:1;min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-summary .ps-pnl{font-size:13px;font-weight:700;white-space:nowrap}
+.plan-summary .ps-pnl.profit{color:#1a7a4a}
+.plan-summary .ps-pnl.loss{color:#c02020}
+.plan-summary .ps-status{font-size:12px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.plan-body-wrap{padding:0 14px 14px;border-top:0.5px solid #f0f0f0}
 .plan-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .plan-name{font-size:15px;font-weight:700}
-.plan-pat{font-size:11px;color:#555}
-.plan-date{font-size:10px;color:#aaa;margin-left:auto}
-.pill{font-size:10px;padding:2px 8px;border-radius:20px}
-.pill.draft{background:#eee;color:#888}
+.plan-pat{font-size:12px;color:#555}
+.plan-date{font-size:12px;color:#444;margin-left:auto}
+.pill{font-size:12px;padding:2px 8px;border-radius:20px}
+.pill.draft{background:#eee;color:#444}
 .pill.armed{background:#e3f1ea;color:#1a7a4a}
 .pill.partial{background:#fef3e0;color:#b5851a}
 .pill.done{background:#f0e9d8;color:#8a6d1a}
-.plan-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;font-size:11px}
+.plan-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;font-size:12px}
 .plan-nums div{background:#f7f6f2;border-radius:6px;padding:6px 8px}
-.plan-nums .lbl{font-size:9px;color:#999}.plan-nums .val{font-size:13px;font-weight:600;color:#1a1a1a}
+.plan-nums .lbl{font-size:12px;color:#444}.plan-nums .val{font-size:13px;font-weight:600;color:#1a1a1a}
 .checks{border-top:0.5px solid #eee;padding-top:10px;margin-bottom:4px}
-.checks .ct{font-size:9px;letter-spacing:0.12em;color:#888;margin-bottom:7px}
+.checks .ct{font-size:12px;letter-spacing:0.12em;color:#444;margin-bottom:7px}
 .chk{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#333;margin-bottom:7px;cursor:pointer}
 .chk input{margin-top:2px;width:15px;height:15px;accent-color:#1a7a4a;flex-shrink:0}
-.armed-banner{font-size:11px;color:#1a7a4a;font-weight:600;background:#e3f1ea;border-radius:8px;padding:8px 11px;margin-top:6px}
+.armed-banner{font-size:12px;color:#1a7a4a;font-weight:600;background:#e3f1ea;border-radius:8px;padding:8px 11px;margin-top:6px}
 .closebar{border-top:0.5px solid #eee;padding-top:10px;margin-top:4px}
-.closebar .ct{font-size:9px;letter-spacing:0.12em;color:#888;margin-bottom:7px}
+.closebar .ct{font-size:12px;letter-spacing:0.12em;color:#444;margin-bottom:7px}
 .exbtns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.exb{font-size:11px;padding:6px 10px;border:0.5px solid #ccc;border-radius:20px;background:#fff;color:#555;cursor:pointer}
+.exb{font-size:12px;padding:6px 10px;border:0.5px solid #ccc;border-radius:20px;background:#fff;color:#555;cursor:pointer}
 .exb.good{border-color:#1a7a4a;color:#1a7a4a}.exb.warn{border-color:#c02020;color:#c02020}
 .exb.sel{background:#0d0d0d;color:#c9a84c;border-color:#0d0d0d}
-.del{font-size:10px;color:#c0392b;background:none;border:none;cursor:pointer;margin-left:8px}
-.edit-btn{font-size:10px;color:#1a7a4a;background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:8px}
-.empty{font-size:12px;color:#aaa;text-align:center;padding:18px 0}
+.del{font-size:12px;color:#c0392b;background:#fce8e8;border:0.5px solid #e8b4b4;border-radius:6px;cursor:pointer;padding:5px 10px}
+.edit-btn{font-size:12px;color:#1a7a4a;background:#e3f1ea;border:0.5px solid #b4d8c4;border-radius:6px;cursor:pointer;padding:5px 10px;text-decoration:none}
+.empty{font-size:12px;color:#444;text-align:center;padding:18px 0}
 .ex-list{margin:8px 0}
-.ex-row{display:flex;gap:8px;align-items:center;font-size:11px;color:#444;padding:5px 8px;background:#f7f6f2;border-radius:6px;margin-bottom:4px;flex-wrap:wrap}
-.ex-row .ex-date{color:#888;min-width:52px}
+.ex-row{display:flex;gap:8px;align-items:center;font-size:12px;color:#444;padding:5px 8px;background:#f7f6f2;border-radius:6px;margin-bottom:4px;flex-wrap:wrap}
+.ex-row .ex-date{color:#444;min-width:52px}
 .ex-row .ex-shares{font-weight:600;min-width:50px}
 .ex-row .ex-price{color:#555}
-.ex-row .ex-type{font-size:10px;padding:1px 6px;border-radius:10px;background:#e3f1ea;color:#1a7a4a}
+.ex-row .ex-type{font-size:12px;padding:1px 6px;border-radius:10px;background:#e3f1ea;color:#1a7a4a}
 .ex-row .ex-type.warn{background:#fce8e8;color:#c02020}
 .ex-row .ex-pnl{font-weight:700;margin-left:auto}
 .ex-row .ex-pnl.profit{color:#1a7a4a}.ex-row .ex-pnl.loss{color:#c02020}
-.ex-row .ex-grade{font-size:10px;color:#888}
-.ex-row .ex-del{font-size:10px;color:#c0392b;background:none;border:none;cursor:pointer;padding:2px 4px}
-.ex-row .ex-detail{font-size:10px;color:#888;width:100%;margin-top:2px}
+.ex-row .ex-grade{font-size:12px;color:#444}
+.ex-row .ex-del{font-size:12px;color:#c0392b;background:#fce8e8;border:0.5px solid #e8b4b4;border-radius:5px;cursor:pointer;padding:3px 8px}
+.ex-row .ex-edit{font-size:12px;color:#1a7a4a;background:#e3f1ea;border:0.5px solid #b4d8c4;border-radius:5px;cursor:pointer;padding:3px 8px}
+.ex-row .ex-detail{font-size:12px;color:#444;width:100%;margin-top:2px}
 .ex-summary{font-size:12px;font-weight:600;padding:6px 8px;border-radius:6px;margin-top:4px}
 .ex-summary.profit{background:#e3f1ea;color:#1a7a4a}
 .ex-summary.loss{background:#fce8e8;color:#c02020}
 .holding{background:#fff;border:0.5px solid #c9a84c;border-radius:8px;padding:10px 12px;margin:8px 0}
-.holding .h-title{font-size:9px;letter-spacing:0.12em;color:#c9a84c;margin-bottom:4px}
+.holding .h-title{font-size:12px;letter-spacing:0.12em;color:#c9a84c;margin-bottom:4px}
 .holding .h-body{font-size:13px;font-weight:600;color:#1a1a1a}
 .holding .h-pnl{font-size:14px;font-weight:700;margin-left:8px}
 .holding .h-pnl.profit{color:#1a7a4a}.holding .h-pnl.loss{color:#c02020}
-.holding .h-update{font-size:10px;color:#888;cursor:pointer;text-decoration:underline;margin-left:8px}
-.holding .h-time{font-size:9px;color:#bbb;margin-top:2px}
+.holding .h-update{font-size:12px;color:#444;cursor:pointer;text-decoration:underline;margin-left:8px}
+.holding .h-time{font-size:12px;color:#444;margin-top:2px}
 .ex-input{background:#fafaf6;border:0.5px solid #e5e3db;border-radius:10px;padding:12px;margin-top:8px}
-.ex-input .ct{font-size:9px;letter-spacing:0.12em;color:#888;margin-bottom:7px}
+.ex-input .ct{font-size:12px;letter-spacing:0.12em;color:#444;margin-bottom:7px}
 .ex-input .field input,.ex-input .field select,.ex-input .field textarea{font-size:13px;padding:7px 9px}
 .ex-input .grid,.ex-input .grid3,.ex-input .grid4{margin-bottom:8px}
 .ex-calc{font-size:12px;font-weight:600;padding:4px 0 8px;color:#1a1a1a}
 .ex-calc.profit{color:#1a7a4a}.ex-calc.loss{color:#c02020}
 .ex-confirm-btn{width:100%;padding:9px;font-size:12px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;font-weight:600}
 .monthly-sec{margin-bottom:14px}
-.monthly-hdr{font-size:11px;font-weight:700;color:#444;background:#f0efe9;border-radius:8px;padding:7px 11px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.monthly-hdr{font-size:12px;font-weight:700;color:#444;background:#f0efe9;border-radius:8px;padding:7px 11px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .monthly-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px}
 .mstat{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:7px 9px;text-align:center}
-.mstat .mk{font-size:9px;color:#888;letter-spacing:0.08em;margin-bottom:2px}
+.mstat .mk{font-size:12px;color:#444;letter-spacing:0.08em;margin-bottom:2px}
 .mstat .mv{font-size:14px;font-weight:700;color:#1a1a1a}
 .mstat .mv.green{color:#1a7a4a}.mstat .mv.red{color:#c02020}.mstat .mv.amber{color:#b5851a}
 .ref-item{font-size:12px;color:#444;padding:8px 0;border-bottom:0.5px solid #eee;line-height:1.7}
 .ref-item:last-child{border-bottom:none}
 .signal{background:#fff;border-left:3px solid #c02020;border-radius:0 8px 8px 0;padding:10px 13px;margin-top:12px;font-size:12px;color:#1a1a1a;line-height:1.7}
-.signal .t{font-size:9px;letter-spacing:0.15em;color:#c02020;margin-bottom:5px}
+.signal .t{font-size:12px;letter-spacing:0.15em;color:#c02020;margin-bottom:5px}
 .iron{font-size:12px;color:#333;padding:7px 0 7px 18px;position:relative;line-height:1.6}
 .iron::before{content:'—';position:absolute;left:0;color:#c9a84c}
 .tally-bar{margin-bottom:12px}
-.tally-bar .tl{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:4px}
+.tally-bar .tl{display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px}
 .tally-bar .tl b{color:#1a1a1a}
 .track{height:10px;background:#e6e4dc;border-radius:6px;overflow:hidden}
 .fill{height:100%;border-radius:6px}.fill.green{background:#1a7a4a}.fill.red{background:#c02020}
-.tally-note{font-size:11px;padding:8px 11px;border-radius:8px;margin-top:4px}
+.tally-note{font-size:12px;padding:8px 11px;border-radius:8px;margin-top:4px}
 .tally-note.ok{background:#e3f1ea;color:#1a7a4a}
 .tally-note.ng{background:#fbeede;color:#8a5a00}
-.ana-card{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.ana-card{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:12px 14px;margin-bottom:10px}
 .ana-head{font-size:13px;font-weight:700;margin-bottom:4px}
-.ana-row{font-size:11px;color:#555;line-height:1.8}
-.ana-pnl{font-weight:700;font-size:13px}
+.ana-row{font-size:12px;color:#333;line-height:1.8}
+.ana-pnl{font-weight:700;font-size:15px}
 .ana-pnl.profit{color:#1a7a4a}.ana-pnl.loss{color:#c02020}
-.ana-grades{font-size:10px;color:#888;margin-top:2px}
-.ana-memo{font-size:10px;color:#555;background:#f7f6f2;border-radius:6px;padding:5px 8px;margin-top:4px;white-space:pre-wrap}
+.ana-grades{font-size:12px;color:#444;margin-top:6px}
+.ana-memo{font-size:12px;color:#333;background:#f7f6f2;border-radius:6px;padding:6px 9px;margin-top:6px;white-space:pre-wrap}
+.ana-card-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.ana-card-top .ana-code{font-size:13px;font-weight:700;color:#1a1a1a}
+.ana-card-top .ana-name{font-size:14px;font-weight:700;color:#1a1a1a;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ana-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ana-tag{font-size:12px;padding:3px 9px;border-radius:6px;background:#e3f1ea;color:#1a7a4a;font-weight:600}
+.ana-tag.warn{background:#fce8e8;color:#c02020}
+.ana-chip{font-size:12px;padding:3px 9px;border-radius:6px;background:#f0efe9;color:#444}
+.ana-detail{display:flex;flex-direction:column;gap:3px}
+.ana-line{display:flex;gap:10px;font-size:13px}
+.ana-line .ana-k{font-weight:700;color:#666;min-width:28px}
+.ana-line .ana-v{color:#1a1a1a}
 .suggest-box{position:relative}
 .suggest-list{position:absolute;top:100%;left:0;right:0;z-index:100;background:#fff;border:0.5px solid #ccc;border-radius:8px;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.1);display:none}
 .suggest-list.show{display:block}
@@ -149,7 +180,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .suggest-item:active,.suggest-item:hover{background:#f5f4f0}
 .suggest-item .si-code{font-weight:700;margin-right:8px;color:#1a1a1a}
 .suggest-item .si-name{color:#555}
-.reload-btn{font-size:10px;color:#888;background:none;border:0.5px solid #ccc;border-radius:6px;padding:3px 8px;cursor:pointer;margin-left:8px}
+.reload-btn{font-size:12px;color:#444;background:none;border:0.5px solid #ccc;border-radius:6px;padding:3px 8px;cursor:pointer;margin-left:8px}
 @media(max-width:600px){
   .grid,.grid3,.grid4,.readout{grid-template-columns:1fr 1fr}
   .plan-nums,.monthly-stats{grid-template-columns:1fr 1fr}
@@ -159,20 +190,23 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 <body>
 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
   <h1>Trade plan - 93</h1>
-  <span><span id="syncStatus" style="font-size:10px;color:#888;">接続中…</span><button class="reload-btn" onclick="loadFromSheets()">再読込</button></span>
+  <span><span id="syncStatus" style="font-size:12px;color:#444;">接続中…</span><button class="reload-btn" onclick="loadFromSheets()">再読込</button></span>
 </div>
 <p class="lede">利益確定は独立した技術ではなく<strong>「銘柄切替」</strong>の一形態。決めるのは「いくら乗ったか」ではなく<strong>点数とライン</strong>。場が引けた今夜のうちにTPと撤退ラインを数値で確定し、分割の指値・逆指値を発注しておく。場中の判断＝感情の引き金を、ここで先に消す。</p>
 
 <div class="sec" id="planForm">
-  <p class="sec-title"><span class="step">計画</span> 1銘柄ずつ、数値で確定する</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <p class="sec-title" style="margin:0"><span class="step">計画</span> 1銘柄ずつ、数値で確定する</p>
+    <button class="resetbtn" onclick="clearForm()">リセット</button>
+  </div>
   <div class="grid">
     <div class="field"><label>銘柄コード or 銘柄名 → 自動取得</label>
       <div class="suggest-box">
-        <div class="coderow"><input id="f_code" inputmode="text" placeholder="7203 or キオクシア" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button><button class="resetbtn" onclick="clearForm()">リセット</button></div>
+        <div class="coderow"><input id="f_code" inputmode="text" placeholder="285A or キオクシア" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button></div>
         <div class="suggest-list" id="suggestList"></div>
       </div>
     </div>
-    <div class="field"><label>銘柄名（自動取得・編集可）</label><input id="f_name" placeholder="例）7203 トヨタ自動車"></div>
+    <div class="field"><label>銘柄名（自動取得・編集可）</label><input id="f_name" placeholder="例）285A キオクシアホールディングス"></div>
   </div>
   <div class="quoteinfo" id="quoteInfo" style="display:none;"></div>
   <div class="grid3">
@@ -218,8 +252,23 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">計画一覧</span> 3つ全部チェックして初めて「発注済み」</p>
-  <div id="planList"><div class="empty">まだ計画がありません。</div></div>
+  <p class="sec-title"><span class="step">未発注</span> 発注チェック前の下書き</p>
+  <div id="draftList"><div class="empty">未発注の計画はありません。</div></div>
+</div>
+
+<div class="sec">
+  <p class="sec-title"><span class="step">発注済み</span> 3つチェック完了・場中は触らない</p>
+  <div id="armedList"><div class="empty">発注済みの計画はありません。</div></div>
+</div>
+
+<div class="sec">
+  <p class="sec-title"><span class="step">部分EX</span> 一部の玉をEX済み</p>
+  <div id="partialList"><div class="empty">部分EX中の銘柄はありません。</div></div>
+</div>
+
+<div class="sec">
+  <p class="sec-title"><span class="step">EX一覧</span> 全株EX済み（直近7日間）</p>
+  <div id="closedList"><div class="empty">直近7日間のEX完了銘柄はありません。</div></div>
 </div>
 
 <div class="sec">
@@ -231,7 +280,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   <div class="signal">
     <div class="t">天井のサイン＝撤退の引き金</div>
     出来高と価格の<strong>相関が崩れた＝変化</strong>。⑯天井圏での出来高消滅／オニールの3兆候。これが見えたら①②、あるいは④。
-    <div style="margin-top:8px;font-size:11px;color:#888;">目安：①＋②で全EXの約7割。SL撤退は3割以下に。</div>
+    <div style="margin-top:8px;font-size:12px;color:#444;">目安：①＋②で全EXの約7割。SL撤退は3割以下に。</div>
   </div>
 </div>
 
@@ -261,6 +310,7 @@ const GRADES=['◎','○','△','×'];
 const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'全撤退',cls:'warn'}];
 const CHECK_LABELS=['TPの指値（分割・半分）を発注した','撤退ラインの逆指値SLを発注した','これらを場中に動かさないと決めた'];
 let editingExit=null;
+let expandedPlans={};
 
 function setSyncStatus(m,c){const e=document.getElementById('syncStatus');if(e){e.textContent=m;e.style.color=c||'#888';}}
 
@@ -283,6 +333,14 @@ function jsonpGet(params){return new Promise((res,rej)=>{
 
 // ===== 株価取得 =====
 const fmt=n=>(n==null||isNaN(n))?'—':Math.round(n).toLocaleString('ja-JP');
+// 日付を「6月17日」形式に（YYYY-MM-DD や ISO文字列に対応）
+function fmtDate(s){
+  if(!s)return '—';
+  const str=String(s).slice(0,10); // T15:... 等を除去
+  const m=str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m)return parseInt(m[2])+'月'+parseInt(m[3])+'日';
+  return str;
+}
 async function fetchQuote(){
   const raw=document.getElementById('f_code').value.trim();
   if(!raw){alert('銘柄コードを入力してください');return;}
@@ -295,15 +353,16 @@ async function fetchQuote(){
     const d=await gasGet({action:'quote',code});
     if(d.result!=='ok'||!d.price)throw new Error(d.message||'no data');
     quote=d;
+    const cleanName=(d.name||'').replace(/Google Finance/ig,'').replace(/[-–—|｜].*$/,'').replace(/Stock Price.*$/i,'').trim();
     document.getElementById('f_code').value=code;
-    document.getElementById('f_name').value=code+' '+(d.name||'');
+    document.getElementById('f_name').value=code+' '+cleanName;
     document.getElementById('f_en').value=d.price;
     document.getElementById('quoteInfo').style.display='block';
     document.getElementById('quoteInfo').innerHTML=
-      `<b>${d.name||code}</b>　現在値 <b>¥${fmt(d.price)}</b>（前日終値 ¥${fmt(d.prevClose)}）<br>`+
+      `<b>${cleanName||code}</b>　現在値 <b>¥${fmt(d.price)}</b>（前日終値 ¥${fmt(d.prevClose)}）<br>`+
       `3ヶ月高値 ¥${fmt(d.high3m)}／前日安値 ¥${fmt(d.prevDayLow)}／5日安値 ¥${fmt(d.low5)}`+
-      (d.atrW?`<br>週足ATR(3期間×2) <b>¥${fmt(d.atrW)}</b>`:'')+
-      (d.atrD?`／日足ATR(3期間×2) <b>¥${fmt(d.atrD)}</b>`:'');
+      (d.atrW?`<br>週足ATR-SL <b>¥${fmt(d.price-d.atrW)}</b>（ATR幅 ¥${fmt(d.atrW)}）`:'')+
+      (d.atrD?`／日足ATR-SL <b>¥${fmt(d.price-d.atrD)}</b>（ATR幅 ¥${fmt(d.atrD)}）`:'');
     recalc();setSyncStatus('✓ 株価取得','#1a7a4a');
   }catch(e){
     setSyncStatus('⚠ 自動取得失敗','#c02020');
@@ -340,19 +399,19 @@ function onCodeInput(){
 }
 async function searchByName(q){
   const el=document.getElementById('suggestList');
-  el.innerHTML='<div class="suggest-item" style="color:#888;cursor:default;">検索中…</div>';
+  el.innerHTML='<div class="suggest-item" style="color:#444;cursor:default;">検索中…</div>';
   el.classList.add('show');
   try{
     const d=await gasGet({action:'search',q});
     if(d.result==='ok'&&d.items&&d.items.length>0){
       el.innerHTML=d.items.map(it=>{
         const safeName=(it.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-        const label=it.name&&it.name!==it.code?`<span class="si-code">${it.code}</span><span class="si-name">${it.name}</span>`:`<span class="si-code">${it.code}</span><span class="si-name" style="color:#aaa;">タップで取得</span>`;
+        const label=it.name&&it.name!==it.code?`<span class="si-code">${it.code}</span><span class="si-name">${it.name}</span>`:`<span class="si-code">${it.code}</span><span class="si-name" style="color:#444;">タップで取得</span>`;
         return `<div class="suggest-item" onclick="pickSuggest('${it.code}','${safeName}')">${label}</div>`;
       }).join('');
       el.classList.add('show');
     }else{
-      el.innerHTML='<div class="suggest-item" style="color:#aaa;cursor:default;">該当なし — コード直接入力で取得できます</div>';
+      el.innerHTML='<div class="suggest-item" style="color:#444;cursor:default;">該当なし — コード直接入力で取得できます</div>';
     }
   }catch(e){closeSuggest();}
 }
@@ -380,8 +439,8 @@ function slCands(en){
   const tp=numVal('f_tp');
   if(tp&&tp>en){const sl2=Math.round(en-(tp-en)/2);if(sl2>0&&sl2<en)c.push({label:'RR=2.0',v:sl2});}
   if(quote){
-    if(quote.atrW)c.push({label:'週足ATR(3×2)',v:en-quote.atrW});
-    if(quote.atrD)c.push({label:'日足ATR(3×2)',v:en-quote.atrD});
+    if(quote.atrW)c.push({label:'週足ATR-SL',v:en-quote.atrW});
+    if(quote.atrD)c.push({label:'日足ATR-SL',v:en-quote.atrD});
     if(quote.prevDayLow)c.push({label:'前日安値',v:quote.prevDayLow});
     if(quote.low5)c.push({label:'5日安値',v:quote.low5});
   }
@@ -439,7 +498,8 @@ async function saveToSheets(plan){
   }catch(e){setSyncStatus('⚠ ローカルのみ','#c02020');}
 }
 async function addExitToSheets(planId,exit){
-  try{await gasGet({action:'addExit',planId,eid:exit.eid,date:exit.date,enDate:exit.enDate||'',enPrice:exit.enPrice||'',shares:exit.shares,price:exit.price,pnl:exit.pnl,exitType:exit.exitType,enGrade:exit.enGrade||'',exGrade:exit.exGrade||'',memo:exit.memo||'',planStatus:plans.find(p=>p.id===planId).status});setSyncStatus('✓ EX記録保存','#1a7a4a');}catch(e){setSyncStatus('⚠ オフライン','#c02020');}
+  const p=plans.find(p=>p.id===planId);
+  try{await gasGet({action:'addExit',planId,planName:(p&&p.name)||'',eid:exit.eid,date:exit.date,enDate:exit.enDate||'',enPrice:exit.enPrice||'',shares:exit.shares,price:exit.price,pnl:exit.pnl,exitType:exit.exitType,enGrade:exit.enGrade||'',exGrade:exit.exGrade||'',memo:exit.memo||'',planStatus:(p&&p.status)||'partial'});setSyncStatus('✓ EX記録保存','#1a7a4a');}catch(e){setSyncStatus('⚠ オフライン','#c02020');}
 }
 async function removeExitFromSheets(planId,eid){
   try{await gasGet({action:'removeExit',planId,eid,planStatus:plans.find(p=>p.id===planId).status});setSyncStatus('✓','#1a7a4a');}catch(e){setSyncStatus('⚠','#c02020');}
@@ -499,7 +559,7 @@ async function savePlan(){
     await saveToSheets(plan);
   }
   clearForm();
-  window.scrollTo({top:document.querySelector('#planList').offsetTop-60,behavior:'smooth'});
+  window.scrollTo({top:document.querySelector('#draftList').offsetTop-60,behavior:'smooth'});
 }
 function clearForm(){
   ['f_code','f_name','f_en','f_qty','f_tp','f_sl'].forEach(id=>document.getElementById(id).value='');
@@ -560,129 +620,199 @@ function calcStatus(p){
 
 // ===== RENDER =====
 function render(){
-  const list=document.getElementById('planList');
-  if(!plans.length){list.innerHTML='<div class="empty">まだ計画がありません。</div>';renderTally();renderAnalysis();return;}
-  list.innerHTML=plans.slice().reverse().map(p=>{
-    const en=p.en,sl=p.sl,tp=p.tp;
-    const rr=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'—';
-    const armed=p.checks&&p.checks.every(Boolean);
+  const draftEl=document.getElementById('draftList');
+  const armedEl=document.getElementById('armedList');
+  const partialEl=document.getElementById('partialList');
+  const closedListEl=document.getElementById('closedList');
+
+  if(!plans.length){
+    if(draftEl)draftEl.innerHTML='<div class="empty">未発注の計画はありません。</div>';
+    if(armedEl)armedEl.innerHTML='<div class="empty">発注済みの計画はありません。</div>';
+    if(partialEl)partialEl.innerHTML='<div class="empty">部分EX中の銘柄はありません。</div>';
+    if(closedListEl)closedListEl.innerHTML='<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
+    renderTally();renderAnalysis();return;
+  }
+
+  const now=new Date();
+  const sevenDaysAgo=new Date(now.getTime()-7*864e5);
+
+  // 分類
+  const drafts=[],armeds=[],partials=[],closedRecent=[];
+  plans.forEach(p=>{
     const exd=exitedShares(p),rem=remainShares(p);
     const closed=rem<=0&&p.exits.length>0;
-    // ステータス同期
     const newStatus=calcStatus(p);
     if(p.status!==newStatus){p.status=newStatus;persistLocal();}
-
-    let pillHtml;
-    if(closed)pillHtml=`<span class="pill done">終了・全${p.qty}株EX済</span>`;
-    else if(p.exits.length)pillHtml=`<span class="pill partial">部分EX ${exd}/${p.qty}株済</span>`;
-    else if(armed)pillHtml='<span class="pill armed">🔒 発注済み</span>';
-    else pillHtml='<span class="pill draft">下書き</span>';
-
-    const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${p.en}</div></div><div><div class="lbl">TP</div><div class="val">${p.tp}</div></div><div><div class="lbl">SL</div><div class="val">${p.sl}</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
-    const patMemo=p.patMemo?`<div style="font-size:10px;color:#888;margin-bottom:6px;">📝 ${p.patMemo}</div>`:'';
-
-    // ── EX済みリスト ──
-    let exListHtml='';
-    if(p.exits.length){
-      const rows=p.exits.map(e=>{
-        const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
-        const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
-        const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
-        let row=`<div class="ex-row">
-          <span class="ex-date">${(e.date||'').slice(5)}</span>
-          <span class="ex-shares">${e.shares}株</span>
-          <span class="ex-price">EN¥${fmt(e.enPrice||p.en)}→EX¥${fmt(e.price)}</span>
-          <span class="ex-type ${tCls}">${e.exitType}</span>
-          <span class="ex-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
-          ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
-          <button class="ex-del" onclick="startEditExit(${p.id},${e.eid})" style="color:#1a7a4a;">編集</button>
-          <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
-          ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
-          ${e.memo?`<div class="ex-detail">${e.memo}</div>`:''}
-        </div>`;
-        if(isEditing){
-          row+=`<div class="ex-input" style="margin-top:4px;margin-bottom:8px;">
-            <div class="ct">EX記録を編集</div>
-            <div class="grid3">
-              <div class="field"><label>EN日付</label><input type="date" id="ee_enD_${e.eid}" value="${e.enDate||p.date}"></div>
-              <div class="field"><label>EN価格</label><input type="number" id="ee_enP_${e.eid}" inputmode="decimal" value="${e.enPrice||p.en}" oninput="calcEditPnl(${e.eid})"></div>
-              <div class="field"><label>EX日付</label><input type="date" id="ee_exD_${e.eid}" value="${e.date||''}"></div>
-            </div>
-            <div class="grid3">
-              <div class="field"><label>株数</label><input type="number" id="ee_sh_${e.eid}" inputmode="numeric" value="${e.shares}"></div>
-              <div class="field"><label>EX価格</label><input type="number" id="ee_exP_${e.eid}" inputmode="decimal" value="${e.price}" oninput="calcEditPnl(${e.eid})"></div>
-              <div class="field"><label>損益</label><input type="number" id="ee_pnl_${e.eid}" inputmode="decimal" value="${e.pnl}" step="100"></div>
-            </div>
-            <div class="grid4">
-              <div class="field"><label>EXタイプ</label><select id="ee_type_${e.eid}">${EX_TYPES.map(t=>`<option${e.exitType===t.k?' selected':''}>${t.k}</option>`).join('')}</select></div>
-              <div class="field"><label>EN採点</label><select id="ee_eng_${e.eid}">${gradeOpts(e.enGrade)}</select></div>
-              <div class="field"><label>EX採点</label><select id="ee_exg_${e.eid}">${gradeOpts(e.exGrade)}</select></div>
-              <div class="field"><label>反省メモ</label><textarea id="ee_mem_${e.eid}" rows="2">${e.memo||''}</textarea></div>
-            </div>
-            <div style="display:flex;gap:8px;">
-              <button class="ex-confirm-btn" style="flex:1;" onclick="saveEditExit(${p.id},${e.eid})">保存</button>
-              <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelEditExit()">キャンセル</button>
-            </div>
-          </div>`;
-        }
-        return row;
-      }).join('');
-      const tp2=totalPnl(p);const tCls=tp2>=0?'profit':'loss';
-      exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</div></div>`;
-    }
-
-    // ── 保有中 ──
-    let holdingHtml='';
-    if(!closed&&rem>0){
-      let pi='現在値を取得してください';
-      if(p.currentPrice){pi=`${rem}株 × 現在値 ¥${fmt(p.currentPrice)}`;}
-      holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>`;
-    }
-
-    let body;
     if(closed){
-      body=`${exListHtml}<div style="margin-top:6px;"><button class="del" onclick="reopenLastExit(${p.id})">最後のEXを取消</button></div>`;
-    }else{
-      const chks=CHECK_LABELS.map((l,i)=>`<label class="chk"><input type="checkbox" ${p.checks&&p.checks[i]?'checked':''} onchange="toggleCheck(${p.id},${i})"><span>${l}</span></label>`).join('');
-      const today=new Date().toISOString().slice(0,10);
-      const selType=selectedExType[p.id]||'';
+      const lastExDate=p.exits.reduce((d,e)=>e.date&&e.date>d?e.date:d,'');
+      const lastRecorded=p.exits.reduce((t,e)=>Math.max(t,e.eid||0),0);
+      const exDateOk=lastExDate&&new Date(lastExDate)>=sevenDaysAgo;
+      const recordedOk=lastRecorded&&lastRecorded>=now.getTime()-7*864e5;
+      const isEditingThis=editingExit&&editingExit.planId===p.id;
+      if(exDateOk||recordedOk||isEditingThis){closedRecent.push(p);}
+    }else if(p.status==='partial'){partials.push(p);}
+    else if(p.status==='armed'){armeds.push(p);}
+    else{drafts.push(p);}
+  });
 
-      const exBtns=EX_TYPES.map(t=>`<button class="exb ${t.cls}${selType===t.k?' sel':''}" onclick="selectExType(${p.id},'${t.k}')">${t.k}</button>`).join('');
+  // 各セクションに描画
+  if(draftEl)draftEl.innerHTML=drafts.length?drafts.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">未発注の計画はありません。</div>';
+  if(armedEl)armedEl.innerHTML=armeds.length?armeds.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">発注済みの計画はありません。</div>';
+  if(partialEl)partialEl.innerHTML=partials.length?partials.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">部分EX中の銘柄はありません。</div>';
+  if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.slice().reverse().map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
 
-      let detailForm='';
-      if(selType){
-        detailForm=`<div class="ex-input" style="margin-top:8px;">
-          <div class="ct">「${selType}」の詳細を入力</div>
+  renderTally();renderAnalysis();
+}
+
+function renderPlanCard(p,isClosed){
+  const en=p.en,sl=p.sl,tp=p.tp;
+  const rr=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'—';
+  const armed=p.checks&&p.checks.every(Boolean);
+  const exd=exitedShares(p),rem=remainShares(p);
+  const closed=rem<=0&&p.exits.length>0;
+
+  const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${p.en}</div></div><div><div class="lbl">TP</div><div class="val">${p.tp}</div></div><div><div class="lbl">SL</div><div class="val">${p.sl}</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
+  const patMemo=p.patMemo?`<div style="font-size:12px;color:#444;margin-bottom:6px;">📝 ${p.patMemo}</div>`:'';
+
+  // ── EX済みリスト ──
+  let exListHtml='';
+  if(p.exits.length){
+    const rows=p.exits.map(e=>{
+      const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
+      const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
+      const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
+      let row=`<div class="ex-row">
+        <span class="ex-date">${fmtDate(e.date)}</span>
+        <span class="ex-shares">${e.shares}株</span>
+        <span class="ex-price">EN¥${fmt(e.enPrice||p.en)}→EX¥${fmt(e.price)}</span>
+        <span class="ex-type ${tCls}">${e.exitType}</span>
+        <span class="ex-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
+        ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
+        <button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button>
+        <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
+        ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
+        ${e.memo?`<div class="ex-detail">${e.memo}</div>`:''}
+      </div>`;
+      if(isEditing){
+        row+=`<div class="ex-input" style="margin-top:4px;margin-bottom:8px;">
+          <div class="ct">EX記録を修正</div>
           <div class="grid3">
-            <div class="field"><label>実際のEN日付</label><input type="date" id="exEnD_${p.id}" value="${p.date}"></div>
-            <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${p.en}" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>EX日付</label><input type="date" id="exd_${p.id}" value="${today}"></div>
+            <div class="field"><label>EN日付</label><input type="date" id="ee_enD_${e.eid}" value="${e.enDate||p.date}"></div>
+            <div class="field"><label>EN価格</label><input type="number" id="ee_enP_${e.eid}" inputmode="decimal" value="${e.enPrice||p.en}" oninput="calcEditPnl(${e.eid})"></div>
+            <div class="field"><label>EX日付</label><input type="date" id="ee_exD_${e.eid}" value="${e.date||''}"></div>
           </div>
           <div class="grid3">
-            <div class="field"><label>株数（残${rem}株）</label><input type="number" id="exs_${p.id}" inputmode="numeric" placeholder="${rem}" max="${rem}" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>EX価格</label><input type="number" id="exp_${p.id}" inputmode="decimal" placeholder="約定単価" oninput="calcExPnl(${p.id})"></div>
-            <div class="field"><label>損益（自動／上書可）</label><input type="number" id="exPnlO_${p.id}" inputmode="decimal" placeholder="自動" step="100"></div>
+            <div class="field"><label>株数</label><input type="number" id="ee_sh_${e.eid}" inputmode="numeric" value="${e.shares}"></div>
+            <div class="field"><label>EX価格</label><input type="number" id="ee_exP_${e.eid}" inputmode="decimal" value="${e.price}" oninput="calcEditPnl(${e.eid})"></div>
+            <div class="field"><label>損益</label><input type="number" id="ee_pnl_${e.eid}" inputmode="decimal" value="${e.pnl}" step="100"></div>
           </div>
-          <div class="ex-calc" id="exCalc_${p.id}">損益（自動計算）: —</div>
           <div class="grid4">
-            <div class="field"><label>EN採点</label><select id="eng_${p.id}">${gradeOpts('')}</select></div>
-            <div class="field"><label>EX採点</label><select id="exg_${p.id}">${gradeOpts('')}</select></div>
-            <div class="field" style="grid-column:span 2;"><label>反省メモ</label><textarea id="mem_${p.id}" rows="2" placeholder="振り返り"></textarea></div>
+            <div class="field"><label>EXタイプ</label><select id="ee_type_${e.eid}">${EX_TYPES.map(t=>`<option${e.exitType===t.k?' selected':''}>${t.k}</option>`).join('')}</select></div>
+            <div class="field"><label>EN採点</label><select id="ee_eng_${e.eid}">${gradeOpts(e.enGrade)}</select></div>
+            <div class="field"><label>EX採点</label><select id="ee_exg_${e.eid}">${gradeOpts(e.exGrade)}</select></div>
+            <div class="field"><label>反省メモ</label><textarea id="ee_mem_${e.eid}" rows="2">${e.memo||''}</textarea></div>
           </div>
-          <button class="ex-confirm-btn" onclick="confirmExit(${p.id})">このEXを確定する</button>
+          <div style="display:flex;gap:8px;">
+            <button class="ex-confirm-btn" style="flex:1;" onclick="saveEditExit(${p.id},${e.eid})">保存</button>
+            <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelEditExit()">キャンセル</button>
+          </div>
         </div>`;
       }
+      return row;
+    }).join('');
+    const tp2=totalPnl(p);const tCls=tp2>=0?'profit':'loss';
+    exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</div></div>`;
+  }
 
-      body=`${exListHtml}${holdingHtml}
-        <div class="checks"><div class="ct">発注チェック</div>${chks}
-        ${armed?'<div class="armed-banner">この計画は発注済み。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
-        <div class="closebar"><div class="ct">EXタイプを選択してから詳細を入力</div>
-        <div class="exbtns">${exBtns}</div>${detailForm}
-        <div style="margin-top:8px;"><button class="edit-btn" onclick="editPlan(${p.id})">計画を編集</button><button class="del" onclick="delPlan(${p.id})">削除</button></div></div>`;
+  // ── 保有中 ──
+  let holdingHtml='';
+  if(!closed&&rem>0){
+    let pi='現在値を取得してください';
+    if(p.currentPrice){pi=`${rem}株 × 現在値 ¥${fmt(p.currentPrice)}`;}
+    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>`;
+  }
+
+  let body;
+  if(closed){
+    body=`${exListHtml}`;
+  }else{
+    const chks=CHECK_LABELS.map((l,i)=>`<label class="chk"><input type="checkbox" ${p.checks&&p.checks[i]?'checked':''} onchange="toggleCheck(${p.id},${i})"><span>${l}</span></label>`).join('');
+    const today=new Date().toISOString().slice(0,10);
+    const selType=selectedExType[p.id]||'';
+    const exBtns=EX_TYPES.map(t=>`<button class="exb ${t.cls}${selType===t.k?' sel':''}" onclick="selectExType(${p.id},'${t.k}')">${t.k}</button>`).join('');
+
+    let detailForm='';
+    if(selType){
+      detailForm=`<div class="ex-input" style="margin-top:8px;">
+        <div class="ct">「${selType}」の詳細を入力</div>
+        <div class="grid3">
+          <div class="field"><label>実際のEN日付</label><input type="date" id="exEnD_${p.id}" value="${p.date}"></div>
+          <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${p.en}" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>EX日付</label><input type="date" id="exd_${p.id}" value="${today}"></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>株数（残${rem}株）</label><input type="number" id="exs_${p.id}" inputmode="numeric" placeholder="${rem}" max="${rem}" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>EX価格</label><input type="number" id="exp_${p.id}" inputmode="decimal" placeholder="約定単価" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>損益（自動／上書可）</label><input type="number" id="exPnlO_${p.id}" inputmode="decimal" placeholder="自動" step="100"></div>
+        </div>
+        <div class="ex-calc" id="exCalc_${p.id}">損益（自動計算）: —</div>
+        <div class="grid4">
+          <div class="field"><label>EN採点</label><select id="eng_${p.id}">${gradeOpts('')}</select></div>
+          <div class="field"><label>EX採点</label><select id="exg_${p.id}">${gradeOpts('')}</select></div>
+          <div class="field" style="grid-column:span 2;"><label>反省メモ</label><textarea id="mem_${p.id}" rows="2" placeholder="振り返り"></textarea></div>
+        </div>
+        <button class="ex-confirm-btn" onclick="confirmExit(${p.id})">このEXを確定する</button>
+      </div>`;
     }
-    return `<div class="plan ${armed&&!closed?'armed':''} ${closed?'closed':''}"><div class="plan-head"><span class="plan-name">${p.name}</span><span class="plan-pat">${p.pat||''}${p.score?' ・'+p.score+'点':''}</span>${pillHtml}<span class="plan-date">${p.date}</span></div>${patMemo}${nums}${body}</div>`;
-  }).join('');
-  renderTally();renderAnalysis();
+
+    body=`${exListHtml}${holdingHtml}
+      <div class="checks"><div class="ct">発注チェック</div>${chks}
+      ${armed?'<div class="armed-banner">この計画は発注済み。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
+      <div class="closebar"><div class="ct">EXタイプを選択してから詳細を入力</div>
+      <div class="exbtns">${exBtns}</div>${detailForm}
+      <div style="margin-top:10px;display:flex;gap:8px;"><button class="edit-btn" onclick="editPlan(${p.id})">計画を編集</button><button class="del" onclick="delPlan(${p.id})">削除</button></div></div>`;
+  }
+  // 折りたたみ見出し用の情報
+  const code=(p.name||'').match(/^([0-9A-Za-z]+)/);
+  const codeStr=code?code[1]:'';
+  const nameOnly=(p.name||'').replace(/^[0-9A-Za-z]+\s*/,'');
+
+  // 表示日付: EX一覧はEX日、それ以外はEN日
+  let dispDate;
+  if(isClosed){
+    const lastEx=p.exits.reduce((d,e)=>e.date&&e.date>d?e.date:d,'');
+    dispDate=lastEx||p.date;
+  }else{
+    dispDate=p.date;
+  }
+
+  // EX一覧には損益を表示
+  let pnlHtml='';
+  if(isClosed){
+    const tp2=totalPnl(p);
+    pnlHtml=`<span class="ps-pnl ${tp2>=0?'profit':'loss'}">${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</span>`;
+  }
+
+  const isOpen=!!expandedPlans[p.id];
+  const summary=`<div class="plan-summary ${isOpen?'open':''}" onclick="togglePlan(${p.id})">
+    <span class="ps-toggle">▶</span>
+    <span class="ps-date">${fmtDate(dispDate)}</span>
+    <span class="ps-code">${codeStr}</span>
+    <span class="ps-name">${nameOnly||p.name}</span>
+    ${pnlHtml}
+  </div>`;
+
+  const fullBody=`<div class="plan-body-wrap">
+    <div class="plan-head" style="border:none;padding-top:10px;"><span class="plan-pat">${p.pat||''}${p.score?' ・'+p.score+'点':''}</span></div>
+    ${patMemo}${nums}${body}
+  </div>`;
+
+  return `<div class="plan ${armed&&!closed?'armed':''} ${closed?'closed':''}">${summary}${isOpen?fullBody:''}</div>`;
+}
+
+function togglePlan(id){
+  expandedPlans[id]=!expandedPlans[id];
+  render();
 }
 
 // ===== ACTIONS =====
@@ -786,7 +916,7 @@ function renderTally(){
   allExits.forEach(e=>{const ym=(e.date||'').slice(0,7)||'不明';if(!byMonth[ym])byMonth[ym]=[];byMonth[ym].push(e);});
   const months=Object.keys(byMonth).sort().reverse();
   const fmtY=v=>{const a=Math.abs(Math.round(v)).toLocaleString('ja-JP');return(v>=0?'+¥':'−¥')+a;};
-  let html='<div style="font-size:10px;letter-spacing:0.15em;color:#888;margin-bottom:10px;">月次集計（EX日ベース）</div>';
+  let html='<div style="font-size:12px;letter-spacing:0.15em;color:#444;margin-bottom:10px;">月次集計（EX日ベース）</div>';
   for(const ym of months){
     const mp=byMonth[ym];const mn=mp.length;
     const tp=mp.reduce((s,e)=>s+e.pnl,0);
@@ -797,7 +927,7 @@ function renderTally(){
     const avgHold=holdDays.length?Math.round(holdDays.reduce((s,d)=>s+d,0)/holdDays.length):null;
     const[y,m]=ym.split('-');const label=(y&&m)?y+'年'+parseInt(m)+'月':ym;
     const avgRR=mp.length?mp.reduce((s,e)=>s+(isFinite(e.planRR)?e.planRR:0),0)/mp.filter(e=>isFinite(e.planRR)).length:null;
-    html+='<div class="monthly-sec"><div class="monthly-hdr"><span>'+label+'</span><span style="font-size:10px;font-weight:400;color:#888;">'+mn+'件EX</span></div><div class="monthly-stats">'
+    html+='<div class="monthly-sec"><div class="monthly-hdr"><span>'+label+'</span><span style="font-size:12px;font-weight:400;color:#444;">'+mn+'件EX</span></div><div class="monthly-stats">'
       +'<div class="mstat"><div class="mk">勝率</div><div class="mv '+(winRate>=50?'green':'red')+'">'+winRate+'%</div></div>'
       +'<div class="mstat"><div class="mk">合計損益</div><div class="mv '+(tp>=0?'green':'red')+'">'+fmtY(tp)+'</div></div>'
       +'<div class="mstat"><div class="mk">平均損益</div><div class="mv '+(avgPnl>=0?'green':'red')+'">'+fmtY(avgPnl)+'</div></div>'
@@ -810,7 +940,7 @@ function renderTally(){
   const sw=cnt('銘柄切替')+cnt('分散EX')+cnt('撤退(弱くなった)'),sl=cnt('SL撤退')+cnt('逆指値狩り');
   const swP=Math.round(sw/n*100),slP=Math.round(sl/n*100);
   const bar=(l,v,p2,c)=>'<div class="tally-bar"><div class="tl"><span>'+l+'</span><b>'+v+'件 / '+p2+'%</b></div><div class="track"><div class="fill '+c+'" style="width:'+p2+'%"></div></div></div>';
-  html+='<div style="font-size:10px;letter-spacing:0.15em;color:#888;margin:14px 0 10px;">EX分布（全'+n+'件）</div>'
+  html+='<div style="font-size:12px;letter-spacing:0.15em;color:#444;margin:14px 0 10px;">EX分布（全'+n+'件）</div>'
     +bar('①②③ 銘柄切替＋分散EX＋撤退（目標7割以上）',sw,swP,'green')
     +bar('③④ SL撤退＋逆指値狩り（目標3割以下）',sl,slP,'red')
     +(swP>=70&&slP<=30?'<div class="tally-note ok">理想形。</div>':'<div class="tally-note ng">①②が7割に届かない／SLが3割超→改善すべきはEXではなくEN。</div>');
@@ -826,24 +956,37 @@ function renderAnalysis(){
   plans.forEach(p=>{p.exits.forEach(e=>{
     if((e.date||'').slice(0,7)===curYM){
       const code=(p.name||'').match(/^([0-9A-Za-z]+)/);
-      const holdD=e.date&&p.date?Math.round((new Date(e.date)-new Date(p.date))/864e5):null;
-      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:e.enDate||p.date,planEn:e.enPrice||p.en,holdDays:holdD});
+      const enDate=e.enDate||p.date;
+      const holdD=e.date&&enDate?Math.round((new Date(e.date)-new Date(enDate))/864e5):null;
+      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:enDate,planEn:e.enPrice||p.en,holdDays:holdD});
     }
   });});
   if(!monthExits.length){el.innerHTML='<div class="empty">今月（'+parseInt(curYM.split('-')[1])+'月）のEX記録がありません。</div>';return;}
   const[y,m]=curYM.split('-');
-  let html='<div style="font-size:10px;color:#888;margin-bottom:10px;">'+y+'年'+parseInt(m)+'月のエグジット一覧（'+monthExits.length+'件）</div>';
+  // 当月サマリー
+  const totalPnlM=monthExits.reduce((s,e)=>s+(Number(e.pnl)||0),0);
+  const wins=monthExits.filter(e=>e.pnl>0).length;
+  let html=`<div style="font-size:12px;color:#444;margin-bottom:12px;">${y}年${parseInt(m)}月 ・ ${monthExits.length}件EX ・ 勝率${Math.round(wins/monthExits.length*100)}% ・ 合計<b style="color:${totalPnlM>=0?'#1a7a4a':'#c02020'};">${totalPnlM>=0?'+':''}¥${fmt(Math.abs(totalPnlM))}</b></div>`;
   monthExits.forEach(e=>{
     const pCls=e.pnl>=0?'profit':'loss';
+    const nameClean=(e.planName||'').replace(/^[0-9A-Za-z]+\s*/,'').replace(/Google Finance/ig,'').replace(/[-–—|｜].*$/,'').trim();
+    const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
     html+=`<div class="ana-card">
-      <div class="ana-head">${e.code} ${e.planName.replace(/^[0-9A-Za-z]+\s*/,'')}</div>
-      <div class="ana-row">
-        EN ${(e.enDate||e.planDate||'').slice(5)} ¥${fmt(e.enPrice||e.planEn)}
-        → EX ${(e.date||'').slice(5)} ¥${fmt(e.price)}　${e.shares}株
+      <div class="ana-card-top">
+        <span class="ana-code">${e.code}</span>
+        <span class="ana-name">${nameClean}</span>
         <span class="ana-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
-        　${e.exitType}${e.holdDays!=null?' ・'+e.holdDays+'日間':''}
       </div>
-      ${e.enGrade||e.exGrade?`<div class="ana-grades">EN採点: ${e.enGrade||'—'}　EX採点: ${e.exGrade||'—'}</div>`:''}
+      <div class="ana-meta">
+        <span class="ana-tag ${tCls}">${e.exitType}</span>
+        ${e.holdDays!=null?`<span class="ana-chip">保有 ${e.holdDays}日間</span>`:''}
+        <span class="ana-chip">${e.shares}株</span>
+      </div>
+      <div class="ana-detail">
+        <div class="ana-line"><span class="ana-k">EN</span><span class="ana-v">${fmtDate(e.planDate)} ・ ¥${fmt(e.planEn)}</span></div>
+        <div class="ana-line"><span class="ana-k">EX</span><span class="ana-v">${fmtDate(e.date)} ・ ¥${fmt(e.price)}</span></div>
+      </div>
+      ${e.enGrade||e.exGrade?`<div class="ana-grades">EN採点 ${e.enGrade||'—'} ／ EX採点 ${e.exGrade||'—'}</div>`:''}
       ${e.memo?`<div class="ana-memo">${e.memo}</div>`:''}
     </div>`;
   });
