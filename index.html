@@ -73,6 +73,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .plan-summary .ps-code{font-size:13px;font-weight:700;color:#1a1a1a}
 .plan-summary .ps-name{font-size:13px;color:#1a1a1a;flex:1;min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .plan-summary .ps-pnl{font-size:13px;font-weight:700;white-space:nowrap}
+.plan-summary .ps-chart{font-size:15px;cursor:pointer;padding:0 4px;flex-shrink:0;opacity:0.8}
+.plan-summary .ps-chart:active{opacity:0.5}
 .plan-summary .ps-pnl.profit{color:#1a7a4a}
 .plan-summary .ps-pnl.loss{color:#c02020}
 .plan-summary .ps-status{font-size:12px;padding:2px 8px;border-radius:20px;white-space:nowrap}
@@ -198,6 +200,21 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   .grid,.grid3,.grid4,.readout{grid-template-columns:1fr 1fr}
   .plan-nums,.monthly-stats{grid-template-columns:1fr 1fr}
 }
+.ana-chartlink{cursor:pointer;color:#2a5599;text-decoration:underline;text-decoration-color:#bcd;text-underline-offset:2px}
+.ana-chartlink:active{color:#1a3a7a}
+.chart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:12px}
+.chart-modal.show{display:flex}
+.chart-box{background:#fff;border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.chart-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:0.5px solid #ddd;position:sticky;top:0;background:#fff;border-radius:14px 14px 0 0}
+.chart-head span{font-size:15px;font-weight:700;color:#1a1a1a}
+.chart-close{border:none;background:#f0efe9;color:#444;font-size:15px;border-radius:8px;width:34px;height:34px;cursor:pointer}
+.chart-close:active{background:#e0ded6}
+.chart-body{padding:10px 8px}
+.chart-body svg{width:100%;height:auto;display:block}
+.chart-legend{padding:4px 16px 16px;font-size:12px;color:#444;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.chart-legend .lg{display:flex;align-items:center;gap:5px}
+.chart-legend .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+.chart-loading{padding:40px;text-align:center;color:#888;font-size:13px}
 </style>
 </head>
 <body>
@@ -313,6 +330,18 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 <div class="sec">
   <p class="sec-title"><span class="step">今月のEX分析</span> 振り返りと自己採点</p>
   <div id="analysis"><div class="empty">今月エグジットした記録がありません。</div></div>
+</div>
+
+<!-- 株価チャート モーダル -->
+<div id="chartModal" class="chart-modal" onclick="if(event.target===this)closeChart()">
+  <div class="chart-box">
+    <div class="chart-head">
+      <span id="chartTitle">チャート</span>
+      <button class="chart-close" onclick="closeChart()">✕</button>
+    </div>
+    <div id="chartBody" class="chart-body"></div>
+    <div id="chartLegend" class="chart-legend"></div>
+  </div>
 </div>
 
 <script>
@@ -788,11 +817,17 @@ function renderPlanCard(p,isClosed){
   }
 
   const isOpen=!!expandedPlans[p.id];
+  // チャート用マーカー: EX記録があれば最初のENと最後のEXを使う。なければ素のチャート。
+  const firstEx=p.exits&&p.exits.length?p.exits[0]:null;
+  const lastEx=p.exits&&p.exits.length?p.exits[p.exits.length-1]:null;
+  const chartMarks=firstEx?`{enDate:'${firstEx.enDate||p.date||''}',enPrice:${Number(firstEx.enPrice||p.en)||'null'},exDate:'${lastEx.date||''}',exPrice:${Number(lastEx.price)||'null'}}`:`{}`;
+  const chartCode=(codeStr||'').trim();
   const summary=`<div class="plan-summary ${isOpen?'open':''}" onclick="togglePlan(${p.id})">
     <span class="ps-toggle">▶</span>
     <span class="ps-date">${fmtDate(dispDate)}</span>
     <span class="ps-code">${codeStr}</span>
     <span class="ps-name">${nameOnly||p.name}</span>
+    <span class="ps-chart" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈</span>
     ${pnlHtml}
   </div>`;
 
@@ -1016,6 +1051,8 @@ function renderAnalysis(){
     }
   });});
   if(!monthExits.length){el.innerHTML='<div class="empty">今月（'+parseInt(curYM.split('-')[1])+'月）のEX記録がありません。</div>';return;}
+  // EX日の新しいものから上に並べる（同日は登録の新しい順）
+  monthExits.sort((a,b)=>{const c=String(b.date).localeCompare(String(a.date));return c!==0?c:(Number(b.eid)||0)-(Number(a.eid)||0);});
   const[y,m]=curYM.split('-');
   // 当月サマリー
   const totalPnlM=monthExits.reduce((s,e)=>s+(Number(e.pnl)||0),0);
@@ -1030,7 +1067,7 @@ function renderAnalysis(){
       <div class="ana-line1">
         <span class="ana-exdate">${fmtDate(e.date)}</span>
         <span class="ana-code">${e.code}</span>
-        <span class="ana-name">${nameClean}</span>
+        <span class="ana-name ana-chartlink" onclick="openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">${nameClean} 📈</span>
         <span class="ana-pnl ${pCls}">${pnlStr(e.pnl)}</span>
       </div>
       <div class="ana-line2">
@@ -1041,6 +1078,100 @@ function renderAnalysis(){
     </div>`;
   });
   el.innerHTML=html;
+}
+
+// ===== 株価チャート（日足3ヶ月・出来高・EN/EXマーカー） =====
+let chartCache={};
+function closeChart(){document.getElementById('chartModal').classList.remove('show');}
+async function openChart(code,name,marks){
+  marks=marks||{};
+  const modal=document.getElementById('chartModal');
+  document.getElementById('chartTitle').textContent=code+' '+(name||'');
+  document.getElementById('chartBody').innerHTML='<div class="chart-loading">チャート取得中…</div>';
+  document.getElementById('chartLegend').innerHTML='';
+  modal.classList.add('show');
+  try{
+    let data=chartCache[code];
+    if(!data){data=await gasGet({action:'chart',code});if(data&&data.result==='ok')chartCache[code]=data;}
+    if(!data||data.result!=='ok'||!data.bars||!data.bars.length){
+      document.getElementById('chartBody').innerHTML='<div class="chart-loading">チャートを取得できませんでした。</div>';return;
+    }
+    drawChart(data.bars,marks);
+  }catch(e){
+    document.getElementById('chartBody').innerHTML='<div class="chart-loading">チャートを取得できませんでした。</div>';
+  }
+}
+function drawChart(bars,marks){
+  // レイアウト
+  const W=720,H=440,padL=8,padR=58,padT=14;
+  const priceH=270,volH=90,gap=24;
+  const volTop=padT+priceH+gap, axisY=volTop+volH+16;
+  const n=bars.length;
+  const cw=(W-padL-padR)/n; // 1本あたりの幅
+  const bodyW=Math.max(1.5,cw*0.62);
+  // 価格レンジ
+  let pMin=Infinity,pMax=-Infinity,vMax=0;
+  bars.forEach(b=>{if(b.l!=null)pMin=Math.min(pMin,b.l);if(b.h!=null)pMax=Math.max(pMax,b.h);vMax=Math.max(vMax,b.v||0);});
+  // EN/EX価格もレンジに含める
+  [marks.enPrice,marks.exPrice].forEach(v=>{if(v!=null&&isFinite(v)){pMin=Math.min(pMin,v);pMax=Math.max(pMax,v);}});
+  const pPad=(pMax-pMin)*0.06||1; pMin-=pPad; pMax+=pPad;
+  const yP=v=>padT+priceH-(v-pMin)/(pMax-pMin)*priceH;
+  const yV=v=>volTop+volH-(v/(vMax||1))*volH;
+  const xC=i=>padL+cw*i+cw/2;
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,sans-serif">`;
+  // 価格グリッド＋右軸ラベル（5分割）
+  for(let g=0;g<=4;g++){
+    const val=pMin+(pMax-pMin)*g/4;const yy=yP(val);
+    svg+=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="#eee" stroke-width="1"/>`;
+    svg+=`<text x="${W-padR+4}" y="${(yy+3).toFixed(1)}" font-size="10" fill="#888">${Math.round(val).toLocaleString('ja-JP')}</text>`;
+  }
+  // ローソク足
+  bars.forEach((b,i)=>{
+    if(b.c==null)return;
+    const up=b.c>=b.o;const col=up?'#1a7a4a':'#c02020';
+    const x=xC(i);
+    if(b.h!=null&&b.l!=null)svg+=`<line x1="${x.toFixed(1)}" y1="${yP(b.h).toFixed(1)}" x2="${x.toFixed(1)}" y2="${yP(b.l).toFixed(1)}" stroke="${col}" stroke-width="1"/>`;
+    const yo=yP(b.o),yc=yP(b.c);const top=Math.min(yo,yc),hgt=Math.max(1,Math.abs(yc-yo));
+    svg+=`<rect x="${(x-bodyW/2).toFixed(1)}" y="${top.toFixed(1)}" width="${bodyW.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${col}"/>`;
+    // 出来高
+    const vh=volTop+volH-yV(b.v||0);
+    svg+=`<rect x="${(x-bodyW/2).toFixed(1)}" y="${yV(b.v||0).toFixed(1)}" width="${bodyW.toFixed(1)}" height="${Math.max(0,vh).toFixed(1)}" fill="${col}" opacity="0.5"/>`;
+  });
+  // 出来高ラベル
+  svg+=`<text x="${W-padR+4}" y="${(volTop+10).toFixed(1)}" font-size="10" fill="#888">${vMax>=1e6?(vMax/1e6).toFixed(1)+'M':Math.round(vMax/1e3)+'k'}</text>`;
+  svg+=`<text x="${padL}" y="${(volTop-4).toFixed(1)}" font-size="10" fill="#aaa">出来高</text>`;
+  // 日付軸（左・中央・右）
+  const idxs=[0,Math.floor(n/2),n-1];
+  idxs.forEach(i=>{if(bars[i]){const md=bars[i].d.slice(5).replace('-','/');svg+=`<text x="${xC(i).toFixed(1)}" y="${axisY}" font-size="10" fill="#888" text-anchor="middle">${md}</text>`;}});
+
+  // EN/EXマーカー（日付で最も近いバーに合わせる）
+  function nearestX(ds){if(!ds)return null;let bi=-1;for(let i=0;i<n;i++){if(bars[i].d<=ds)bi=i;else break;}if(bi<0)bi=0;return xC(bi);}
+  function marker(ds,price,label,color){
+    if(price==null||!isFinite(price))return '';
+    const yy=yP(price);const xx=nearestX(ds);
+    let s=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="${color}" stroke-width="1.2" stroke-dasharray="5,3"/>`;
+    // ラベル（左側）
+    const txt=label+' ¥'+Math.round(price).toLocaleString('ja-JP');
+    s+=`<rect x="${padL}" y="${(yy-13).toFixed(1)}" width="${(txt.length*6.6+10).toFixed(0)}" height="15" rx="3" fill="${color}"/>`;
+    s+=`<text x="${(padL+5).toFixed(1)}" y="${(yy-2).toFixed(1)}" font-size="10.5" fill="#fff" font-weight="700">${txt}</text>`;
+    // エントリー/エグジット点（縦線）
+    if(xx!=null){s+=`<line x1="${xx.toFixed(1)}" y1="${padT}" x2="${xx.toFixed(1)}" y2="${(padT+priceH).toFixed(1)}" stroke="${color}" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>`;
+      s+=`<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="4" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;}
+    return s;
+  }
+  svg+=marker(marks.enDate,marks.enPrice,'EN','#1769aa');
+  svg+=marker(marks.exDate,marks.exPrice,'EX','#d98c00');
+  svg+=`</svg>`;
+  document.getElementById('chartBody').innerHTML=svg;
+
+  // 凡例
+  let lg='<div class="lg"><span class="sw" style="background:#1a7a4a"></span>陽線</div>'
+    +'<div class="lg"><span class="sw" style="background:#c02020"></span>陰線</div>'
+    +'<div class="lg"><span class="sw" style="background:#1769aa"></span>EN（エントリー）</div>'
+    +'<div class="lg"><span class="sw" style="background:#d98c00"></span>EX（エグジット）</div>'
+    +'<div class="lg" style="color:#888">日足・3ヶ月・出来高付き</div>';
+  document.getElementById('chartLegend').innerHTML=lg;
 }
 
 recalc();loadFromSheets();
