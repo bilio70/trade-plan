@@ -154,24 +154,20 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .tally-note{font-size:12px;padding:8px 11px;border-radius:8px;margin-top:4px}
 .tally-note.ok{background:#e3f1ea;color:#1a7a4a}
 .tally-note.ng{background:#fbeede;color:#8a5a00}
-.ana-card{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:12px 14px;margin-bottom:10px}
-.ana-head{font-size:13px;font-weight:700;margin-bottom:4px}
-.ana-row{font-size:12px;color:#333;line-height:1.8}
-.ana-pnl{font-weight:700;font-size:15px}
+.ana-card{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:9px 12px;margin-bottom:7px}
+.ana-pnl{font-weight:700;font-size:14px}
 .ana-pnl.profit{color:#1a7a4a}.ana-pnl.loss{color:#c02020}
-.ana-grades{font-size:12px;color:#444;margin-top:6px}
 .ana-memo{font-size:12px;color:#333;background:#f7f6f2;border-radius:6px;padding:6px 9px;margin-top:6px;white-space:pre-wrap}
-.ana-card-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.ana-card-top .ana-code{font-size:13px;font-weight:700;color:#1a1a1a}
-.ana-card-top .ana-name{font-size:14px;font-weight:700;color:#1a1a1a;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ana-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.ana-tag{font-size:12px;padding:3px 9px;border-radius:6px;background:#e3f1ea;color:#1a7a4a;font-weight:600}
-.ana-tag.warn{background:#fce8e8;color:#c02020}
-.ana-chip{font-size:12px;padding:3px 9px;border-radius:6px;background:#f0efe9;color:#444}
-.ana-detail{display:flex;flex-direction:column;gap:3px}
-.ana-line{display:flex;gap:10px;font-size:13px}
-.ana-line .ana-k{font-weight:700;color:#666;min-width:28px}
-.ana-line .ana-v{color:#1a1a1a}
+/* コンパクト1行ヘッダー：コード・銘柄名・損益 */
+.ana-line1{display:flex;align-items:baseline;gap:8px}
+.ana-line1 .ana-code{font-size:13px;font-weight:700;color:#1a1a1a;white-space:nowrap}
+.ana-line1 .ana-name{font-size:14px;font-weight:700;color:#1a1a1a;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ana-line1 .ana-pnl{margin-left:auto;white-space:nowrap}
+/* コンパクト2行目：EXタイプ・保有・株数・EN/EXを横一列に */
+.ana-line2{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:#444}
+.ana-line2 .ana-tag{padding:2px 8px;border-radius:6px;background:#e3f1ea;color:#1a7a4a;font-weight:600}
+.ana-line2 .ana-tag.warn{background:#fce8e8;color:#c02020}
+.ana-line2 .ana-sep{color:#bbb}
 .suggest-box{position:relative}
 .suggest-list{position:absolute;top:100%;left:0;right:0;z-index:100;background:#fff;border:0.5px solid #ccc;border-radius:8px;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.1);display:none}
 .suggest-list.show{display:block}
@@ -514,6 +510,8 @@ function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans));}cat
 
 // ===== RECALC =====
 const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+// 損益用：プラスは「+¥」、マイナスは「−¥」を付ける
+const pnlStr=n=>(n>=0?'+¥':'−¥')+fmt(Math.abs(n));
 const numVal=id=>parseFloat(document.getElementById(id).value);
 function recalc(){
   const en=numVal('f_en'),qty=numVal('f_qty'),tp=numVal('f_tp'),sl=numVal('f_sl');
@@ -549,7 +547,8 @@ async function savePlan(){
     document.getElementById('f_editId').value='';
     document.getElementById('saveBtn').textContent='この計画を保存する';
     persistLocal();render();
-    if(p){await deletePlanFromSheets(p.id);await saveToSheets(p);}
+    // upsert保存（既存行を上書き。delete+saveだとEX記録が消え重複も発生するため廃止）
+    if(p)await saveToSheets(p);
   }else{
     const plan={id:Date.now(),date:new Date().toISOString().slice(0,10),name,
       pat:document.getElementById('f_pat').value,patMemo:document.getElementById('f_patMemo').value.trim(),
@@ -686,7 +685,7 @@ function renderPlanCard(p,isClosed){
         <span class="ex-shares">${e.shares}株</span>
         <span class="ex-price">EN¥${fmt(e.enPrice||p.en)}→EX¥${fmt(e.price)}</span>
         <span class="ex-type ${tCls}">${e.exitType}</span>
-        <span class="ex-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
+        <span class="ex-pnl ${pCls}">${pnlStr(e.pnl)}</span>
         ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
         <button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button>
         <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
@@ -721,7 +720,7 @@ function renderPlanCard(p,isClosed){
       return row;
     }).join('');
     const tp2=totalPnl(p);const tCls=tp2>=0?'profit':'loss';
-    exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</div></div>`;
+    exListHtml=`<div class="ex-list"><div class="cg-t">EX済み（${p.exits.length}回）</div>${rows}<div class="ex-summary ${tCls}">確定損益合計: ${pnlStr(tp2)}</div></div>`;
   }
 
   // ── 保有中 ──
@@ -790,7 +789,7 @@ function renderPlanCard(p,isClosed){
   let pnlHtml='';
   if(isClosed){
     const tp2=totalPnl(p);
-    pnlHtml=`<span class="ps-pnl ${tp2>=0?'profit':'loss'}">${tp2>=0?'+':''}¥${fmt(Math.abs(tp2))}</span>`;
+    pnlHtml=`<span class="ps-pnl ${tp2>=0?'profit':'loss'}">${pnlStr(tp2)}</span>`;
   }
 
   const isOpen=!!expandedPlans[p.id];
@@ -966,27 +965,22 @@ function renderAnalysis(){
   // 当月サマリー
   const totalPnlM=monthExits.reduce((s,e)=>s+(Number(e.pnl)||0),0);
   const wins=monthExits.filter(e=>e.pnl>0).length;
-  let html=`<div style="font-size:12px;color:#444;margin-bottom:12px;">${y}年${parseInt(m)}月 ・ ${monthExits.length}件EX ・ 勝率${Math.round(wins/monthExits.length*100)}% ・ 合計<b style="color:${totalPnlM>=0?'#1a7a4a':'#c02020'};">${totalPnlM>=0?'+':''}¥${fmt(Math.abs(totalPnlM))}</b></div>`;
+  let html=`<div style="font-size:12px;color:#444;margin-bottom:12px;">${y}年${parseInt(m)}月 ・ ${monthExits.length}件EX ・ 勝率${Math.round(wins/monthExits.length*100)}% ・ 合計<b style="color:${totalPnlM>=0?'#1a7a4a':'#c02020'};">${pnlStr(totalPnlM)}</b></div>`;
   monthExits.forEach(e=>{
     const pCls=e.pnl>=0?'profit':'loss';
     const nameClean=(e.planName||'').replace(/^[0-9A-Za-z]+\s*/,'').replace(/Google Finance/ig,'').replace(/[-–—|｜].*$/,'').trim();
     const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
+    const grades=(e.enGrade||e.exGrade)?`<span class="ana-sep">|</span>EN${e.enGrade||'—'}/EX${e.exGrade||'—'}`:'';
     html+=`<div class="ana-card">
-      <div class="ana-card-top">
+      <div class="ana-line1">
         <span class="ana-code">${e.code}</span>
         <span class="ana-name">${nameClean}</span>
-        <span class="ana-pnl ${pCls}">${e.pnl>=0?'+':''}¥${fmt(Math.abs(e.pnl))}</span>
+        <span class="ana-pnl ${pCls}">${pnlStr(e.pnl)}</span>
       </div>
-      <div class="ana-meta">
+      <div class="ana-line2">
         <span class="ana-tag ${tCls}">${e.exitType}</span>
-        ${e.holdDays!=null?`<span class="ana-chip">保有 ${e.holdDays}日間</span>`:''}
-        <span class="ana-chip">${e.shares}株</span>
+        ${e.holdDays!=null?`${e.holdDays}日<span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>${fmtDate(e.planDate)}¥${fmt(e.planEn)}→${fmtDate(e.date)}¥${fmt(e.price)}${grades}
       </div>
-      <div class="ana-detail">
-        <div class="ana-line"><span class="ana-k">EN</span><span class="ana-v">${fmtDate(e.planDate)} ・ ¥${fmt(e.planEn)}</span></div>
-        <div class="ana-line"><span class="ana-k">EX</span><span class="ana-v">${fmtDate(e.date)} ・ ¥${fmt(e.price)}</span></div>
-      </div>
-      ${e.enGrade||e.exGrade?`<div class="ana-grades">EN採点 ${e.enGrade||'—'} ／ EX採点 ${e.exGrade||'—'}</div>`:''}
       ${e.memo?`<div class="ana-memo">${e.memo}</div>`:''}
     </div>`;
   });
