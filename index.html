@@ -445,9 +445,8 @@ async function onCodeInput(){
   const v=document.getElementById('f_code').value.trim();
   clearTimeout(searchTimer);
   if(v.length<2){closeSuggest();return;}
-  // 完全な日本株コード（4桁数字）が入りきったら候補不要（取得ボタンで取得）
-  // ※ 285A等の英字入り4桁、米国ティッカー、カタカナ・社名は候補検索する
-  if(/^[0-9]{4}$/.test(v)){closeSuggest();return;}
+  // コード・カタカナ・社名・英字ティッカーいずれも候補検索する
+  // （4桁数字コードでも、その銘柄をコード＋名前で候補表示する）
   searchTimer=setTimeout(()=>searchByName(v),350);
 }
 async function searchByName(q){
