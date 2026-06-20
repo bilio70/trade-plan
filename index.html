@@ -1134,9 +1134,13 @@ async function openChart(code,name,marks){
 function drawChart(bars,marks,cur){
   cur=cur||'¥';
   // レイアウト
-  const W=720,H=440,padL=8,padR=58,padT=14;
+  const hasMarks=(marks.enPrice!=null&&isFinite(marks.enPrice))||(marks.exPrice!=null&&isFinite(marks.exPrice));
+  const dateBand=hasMarks?40:0;        // 出来高の下：EN/EX日付ラベル用の余白
+  const W=720,padL=8,padR=58,padT=14;
   const priceH=270,volH=90,gap=24;
   const volTop=padT+priceH+gap, axisY=volTop+volH+16;
+  const dateBandTop=axisY+8;           // 日付ラベル帯の開始Y
+  const H=dateBandTop+dateBand+6;      // 全体の高さ（マーカーありなら帯ぶん拡張）
   const n=bars.length;
   const cw=(W-padL-padR)/n; // 1本あたりの幅
   const bodyW=Math.max(1.5,cw*0.62);
@@ -1210,29 +1214,34 @@ function drawChart(bars,marks,cur){
     svg+=`<rect x="${padL}" y="${(o.labelY-LBL_H/2).toFixed(1)}" width="${lw.toFixed(0)}" height="${LBL_H}" rx="3" fill="${o.color}"/>`;
     svg+=`<text x="${(padL+5).toFixed(1)}" y="${(o.labelY+4).toFixed(1)}" font-size="10.5" fill="#fff" font-weight="700">${txt}</text>`;
   });
-  // 3) 日付の縦線＋点、日付ラベルは最下部に。EN/EXのxが近い場合は左右にずらす
+  // 3) 日付の縦線＋点（縦線は価格〜出来高を貫通、ローソク足には重ねるが点線で控えめに）
   const dmk=[];
   mk.forEach(o=>{const bi=nearestIdx(o.date);if(bi!=null)dmk.push({...o,bi,x:xC(bi)});});
   dmk.forEach(o=>{
-    svg+=`<line x1="${o.x.toFixed(1)}" y1="${padT}" x2="${o.x.toFixed(1)}" y2="${(padT+priceH).toFixed(1)}" stroke="${o.color}" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>`;
+    svg+=`<line x1="${o.x.toFixed(1)}" y1="${padT}" x2="${o.x.toFixed(1)}" y2="${axisY.toFixed(1)}" stroke="${o.color}" stroke-width="1" stroke-dasharray="2,3" opacity="0.55"/>`;
     svg+=`<circle cx="${o.x.toFixed(1)}" cy="${o.lineY.toFixed(1)}" r="4" fill="${o.color}" stroke="#fff" stroke-width="1.5"/>`;
   });
-  // 日付ラベル（価格軸の少し下、チャート内上部に色付きで表示。重なる場合は片方を下段へ）
+  // 日付ラベルは「出来高の下の余白（dateBand）」に配置。ローソク足に重ならない。
+  // EN/EXのxが近い場合は上下2段に分けて重なりを回避し、引き出し線でつなぐ。
   if(dmk.length){
-    let dlabels=dmk.map(o=>({...o,labelText:o.key+' '+(o.date?o.date.slice(5).replace('-','/'):''),ty:padT+12}));
+    let dlabels=dmk.map(o=>({...o,labelText:o.key+' '+(o.date?o.date.slice(5).replace('-','/'):''),ty:dateBandTop+12}));
     if(dlabels.length===2){
       const gapX=Math.abs(dlabels[0].x-dlabels[1].x);
-      if(gapX<70){ // 近すぎ → 段をずらす
-        const lower=dlabels[0].x<=dlabels[1].x?dlabels[1]:dlabels[0];
-        lower.ty=padT+28;
+      if(gapX<90){ // 近すぎ → 段をずらす（上段・下段）
+        const left=dlabels[0].x<=dlabels[1].x?dlabels[0]:dlabels[1];
+        const right=dlabels[0].x<=dlabels[1].x?dlabels[1]:dlabels[0];
+        left.ty=dateBandTop+11;
+        right.ty=dateBandTop+29;
       }
     }
     dlabels.forEach(o=>{
       const lw=o.labelText.length*6.2+8;
       let lx=o.x-lw/2;
       lx=Math.max(padL,Math.min(lx,W-padR-lw));
-      svg+=`<rect x="${lx.toFixed(1)}" y="${(o.ty-11).toFixed(1)}" width="${lw.toFixed(0)}" height="14" rx="3" fill="${o.color}" opacity="0.92"/>`;
-      svg+=`<text x="${(lx+4).toFixed(1)}" y="${(o.ty-1).toFixed(1)}" font-size="9.5" fill="#fff" font-weight="700">${o.labelText}</text>`;
+      // 縦線の下端からラベルへ引き出し線
+      svg+=`<line x1="${o.x.toFixed(1)}" y1="${axisY.toFixed(1)}" x2="${(lx+lw/2).toFixed(1)}" y2="${(o.ty-11).toFixed(1)}" stroke="${o.color}" stroke-width="0.8" opacity="0.7"/>`;
+      svg+=`<rect x="${lx.toFixed(1)}" y="${(o.ty-11).toFixed(1)}" width="${lw.toFixed(0)}" height="15" rx="3" fill="${o.color}"/>`;
+      svg+=`<text x="${(lx+4).toFixed(1)}" y="${(o.ty).toFixed(1)}" font-size="10" fill="#fff" font-weight="700">${o.labelText}</text>`;
     });
   }
   svg+=`</svg>`;
