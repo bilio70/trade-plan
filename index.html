@@ -1149,35 +1149,63 @@ async function openChart(code,name,marks){
 }
 function drawChart(bars,marks,cur){
   cur=cur||'¥';
+  const n=bars.length;
+  if(!n){document.getElementById('chartBody').innerHTML='<div class="chart-loading">データがありません。</div>';return;}
   // レイアウト
   const hasMarks=(marks.enPrice!=null&&isFinite(marks.enPrice))||(marks.exPrice!=null&&isFinite(marks.exPrice));
-  const dateBand=hasMarks?40:0;        // 出来高の下：EN/EX日付ラベル用の余白
-  const W=720,padL=8,padR=58,padT=14;
-  const priceH=270,volH=90,gap=24;
-  const volTop=padT+priceH+gap, axisY=volTop+volH+16;
-  const dateBandTop=axisY+8;           // 日付ラベル帯の開始Y
-  const H=dateBandTop+dateBand+6;      // 全体の高さ（マーカーありなら帯ぶん拡張）
-  const n=bars.length;
-  const cw=(W-padL-padR)/n; // 1本あたりの幅
+  const W=720,padL=8,padR=64,padT=14;
+  const priceH=260,volH=70,gap=22;
+  const volTop=padT+priceH+gap, axisY=volTop+volH+15;
+  const dateBand=hasMarks?38:0;          // EN/EX日付ラベル帯
+  const dateBandTop=axisY+6;
+  const volNoteTop=dateBandTop+dateBand+4; // 出来高メモ欄の開始Y
+  const volNoteH=58;                       // 主要日の出来高メモ欄の高さ
+  const H=volNoteTop+volNoteH+4;
+  const cw=(W-padL-padR)/n;
   const bodyW=Math.max(1.5,cw*0.62);
+
   // 価格レンジ
   let pMin=Infinity,pMax=-Infinity,vMax=0;
-  bars.forEach(b=>{if(b.l!=null)pMin=Math.min(pMin,b.l);if(b.h!=null)pMax=Math.max(pMax,b.h);vMax=Math.max(vMax,b.v||0);});
-  // EN/EX価格もレンジに含める
+  let hiIdx=0,loIdx=0,hiVal=-Infinity,loVal=Infinity;
+  bars.forEach((b,i)=>{
+    if(b.h!=null){pMax=Math.max(pMax,b.h); if(b.h>hiVal){hiVal=b.h;hiIdx=i;}}
+    if(b.l!=null){pMin=Math.min(pMin,b.l); if(b.l<loVal){loVal=b.l;loIdx=i;}}
+    vMax=Math.max(vMax,b.v||0);
+  });
   [marks.enPrice,marks.exPrice].forEach(v=>{if(v!=null&&isFinite(v)){pMin=Math.min(pMin,v);pMax=Math.max(pMax,v);}});
-  const pPad=(pMax-pMin)*0.06||1; pMin-=pPad; pMax+=pPad;
-  const yP=v=>padT+priceH-(v-pMin)/(pMax-pMin)*priceH;
+  const pPad=(pMax-pMin)*0.06||1; let lo=pMin-pPad, hi=pMax+pPad;
+
+  // 節目ステップを決める（¥: 100/500/1000/5000/10000、$: 1/5/10/50）
+  function niceStep(range,isYen){
+    const steps=isYen?[100,500,1000,5000,10000,50000,100000]:[1,2,5,10,25,50,100,250];
+    const target=range/4; // グリッド4本程度
+    for(let s of steps){if(s>=target)return s;}
+    return steps[steps.length-1];
+  }
+  const isYen=(cur==='¥');
+  const step=niceStep(hi-lo,isYen);
+  // 軸の上下を節目に丸める
+  const gMin=Math.floor(lo/step)*step;
+  const gMax=Math.ceil(hi/step)*step;
+  lo=Math.min(lo,gMin); hi=Math.max(hi,gMax);
+
+  const yP=v=>padT+priceH-(v-lo)/(hi-lo)*priceH;
   const yV=v=>volTop+volH-(v/(vMax||1))*volH;
   const xC=i=>padL+cw*i+cw/2;
+  const fmtMoney=v=>cur+Math.round(v).toLocaleString('ja-JP');
+  const fmtVol=v=>v>=1e8?(v/1e8).toFixed(2)+'億':v>=1e4?Math.round(v/1e4)+'万':String(Math.round(v));
 
   let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,sans-serif">`;
-  // 価格グリッド＋右軸ラベル（5分割）
-  for(let g=0;g<=4;g++){
-    const val=pMin+(pMax-pMin)*g/4;const yy=yP(val);
+
+  // 価格グリッド＋右軸ラベル（節目価格のみ）
+  for(let val=gMin; val<=gMax+0.5; val+=step){
+    const yy=yP(val);
+    if(yy<padT-1||yy>padT+priceH+1)continue;
     svg+=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="#eee" stroke-width="1"/>`;
-    svg+=`<text x="${W-padR+4}" y="${(yy+3).toFixed(1)}" font-size="10" fill="#888">${Math.round(val).toLocaleString('ja-JP')}</text>`;
+    svg+=`<text x="${W-padR+4}" y="${(yy+3).toFixed(1)}" font-size="10" fill="#888">${fmtMoney(val)}</text>`;
   }
-  // ローソク足
+
+  // ローソク足＋出来高
   bars.forEach((b,i)=>{
     if(b.c==null)return;
     const up=b.c>=b.o;const col=up?'#1a7a4a':'#c02020';
@@ -1185,89 +1213,110 @@ function drawChart(bars,marks,cur){
     if(b.h!=null&&b.l!=null)svg+=`<line x1="${x.toFixed(1)}" y1="${yP(b.h).toFixed(1)}" x2="${x.toFixed(1)}" y2="${yP(b.l).toFixed(1)}" stroke="${col}" stroke-width="1"/>`;
     const yo=yP(b.o),yc=yP(b.c);const top=Math.min(yo,yc),hgt=Math.max(1,Math.abs(yc-yo));
     svg+=`<rect x="${(x-bodyW/2).toFixed(1)}" y="${top.toFixed(1)}" width="${bodyW.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${col}"/>`;
-    // 出来高
-    const vh=volTop+volH-yV(b.v||0);
-    svg+=`<rect x="${(x-bodyW/2).toFixed(1)}" y="${yV(b.v||0).toFixed(1)}" width="${bodyW.toFixed(1)}" height="${Math.max(0,vh).toFixed(1)}" fill="${col}" opacity="0.5"/>`;
+    svg+=`<rect x="${(x-bodyW/2).toFixed(1)}" y="${yV(b.v||0).toFixed(1)}" width="${bodyW.toFixed(1)}" height="${Math.max(0,volTop+volH-yV(b.v||0)).toFixed(1)}" fill="${col}" opacity="0.45"/>`;
   });
-  // 出来高ラベル
-  svg+=`<text x="${W-padR+4}" y="${(volTop+10).toFixed(1)}" font-size="10" fill="#888">${vMax>=1e6?(vMax/1e6).toFixed(1)+'M':Math.round(vMax/1e3)+'k'}</text>`;
   svg+=`<text x="${padL}" y="${(volTop-4).toFixed(1)}" font-size="10" fill="#aaa">出来高</text>`;
-  // 日付軸（左・中央・右）
-  const idxs=[0,Math.floor(n/2),n-1];
-  idxs.forEach(i=>{if(bars[i]){const md=bars[i].d.slice(5).replace('-','/');svg+=`<text x="${xC(i).toFixed(1)}" y="${axisY}" font-size="10" fill="#888" text-anchor="middle">${md}</text>`;}});
 
-  // EN/EXマーカー（日付で最も近いバーに合わせる）
+  // 日付軸（左・中央・右）
+  [0,Math.floor(n/2),n-1].forEach(i=>{if(bars[i]){const md=bars[i].d.slice(5).replace('-','/');svg+=`<text x="${xC(i).toFixed(1)}" y="${axisY}" font-size="10" fill="#888" text-anchor="middle">${md}</text>`;}});
+
   function nearestIdx(ds){if(!ds)return null;let bi=-1;for(let i=0;i<n;i++){if(bars[i].d<=ds)bi=i;else break;}if(bi<0)bi=0;return bi;}
 
-  // 1) 価格ラベルのY位置を計算し、近すぎる場合は上下に振り分ける
+  // ── 最高値・最安値マーカー（引き出し線つき）──
+  // 高値は上方向、安値は下方向にラベルを引き出してローソク足に重ねない
+  const hx=xC(hiIdx), hy=yP(hiVal);
+  const lx2=xC(loIdx), ly=yP(loVal);
+  svg+=`<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="3.5" fill="#c0392b" stroke="#fff" stroke-width="1.2"/>`;
+  svg+=`<circle cx="${lx2.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.5" fill="#1769aa" stroke="#fff" stroke-width="1.2"/>`;
+  // 高値ラベル（点の上）
+  (function(){
+    const txt='高値 '+fmtMoney(hiVal);const lw=txt.length*6.4+10;
+    let lxx=Math.max(padL,Math.min(hx-lw/2,W-padR-lw));
+    let ty=Math.max(padT+11,hy-14);
+    svg+=`<line x1="${hx.toFixed(1)}" y1="${hy.toFixed(1)}" x2="${(lxx+lw/2).toFixed(1)}" y2="${(ty+1).toFixed(1)}" stroke="#c0392b" stroke-width="0.8"/>`;
+    svg+=`<rect x="${lxx.toFixed(1)}" y="${(ty-10).toFixed(1)}" width="${lw.toFixed(0)}" height="14" rx="3" fill="#c0392b"/>`;
+    svg+=`<text x="${(lxx+5).toFixed(1)}" y="${(ty).toFixed(1)}" font-size="10" fill="#fff" font-weight="700">${txt}</text>`;
+  })();
+  // 安値ラベル（点の下）
+  (function(){
+    const txt='安値 '+fmtMoney(loVal);const lw=txt.length*6.4+10;
+    let lxx=Math.max(padL,Math.min(lx2-lw/2,W-padR-lw));
+    let ty=Math.min(padT+priceH-2,ly+18);
+    svg+=`<line x1="${lx2.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(lxx+lw/2).toFixed(1)}" y2="${(ty-11).toFixed(1)}" stroke="#1769aa" stroke-width="0.8"/>`;
+    svg+=`<rect x="${lxx.toFixed(1)}" y="${(ty-11).toFixed(1)}" width="${lw.toFixed(0)}" height="14" rx="3" fill="#1769aa"/>`;
+    svg+=`<text x="${(lxx+5).toFixed(1)}" y="${(ty-1).toFixed(1)}" font-size="10" fill="#fff" font-weight="700">${txt}</text>`;
+  })();
+
+  // ── EN/EXマーカー（価格水平線＋ラベル）──
   const mk=[];
   if(marks.enPrice!=null&&isFinite(marks.enPrice))mk.push({key:'EN',price:Number(marks.enPrice),date:marks.enDate,color:'#1769aa'});
   if(marks.exPrice!=null&&isFinite(marks.exPrice))mk.push({key:'EX',price:Number(marks.exPrice),date:marks.exDate,color:'#d98c00'});
   mk.forEach(o=>{o.lineY=yP(o.price);o.labelY=o.lineY;});
   const LBL_H=15;
   if(mk.length===2){
-    // ラベルが重なる場合、上側を上に・下側を下に分離
     const a=mk[0].labelY<=mk[1].labelY?mk[0]:mk[1];
     const b=mk[0].labelY<=mk[1].labelY?mk[1]:mk[0];
     if(b.labelY-a.labelY<LBL_H+3){
       const mid=(a.labelY+b.labelY)/2;
-      a.labelY=mid-(LBL_H+3)/2;
-      b.labelY=mid+(LBL_H+3)/2;
-      // 描画範囲内に収める
-      a.labelY=Math.max(padT+LBL_H/2,a.labelY);
-      b.labelY=Math.min(padT+priceH-2,b.labelY);
+      a.labelY=Math.max(padT+LBL_H/2,mid-(LBL_H+3)/2);
+      b.labelY=Math.min(padT+priceH-2,mid+(LBL_H+3)/2);
     }
   }
-  // 2) 価格の水平線＋ラベル（ラベルは引き出し位置labelYに、線はlineY）
   mk.forEach(o=>{
     svg+=`<line x1="${padL}" y1="${o.lineY.toFixed(1)}" x2="${W-padR}" y2="${o.lineY.toFixed(1)}" stroke="${o.color}" stroke-width="1.2" stroke-dasharray="5,3"/>`;
-    const txt=o.key+' '+cur+Math.round(o.price).toLocaleString('ja-JP');
-    const lw=txt.length*6.6+10;
-    // ラベルがline位置とずれた場合は引き出し線でつなぐ
-    if(Math.abs(o.labelY-o.lineY)>2){
-      svg+=`<line x1="${(padL+lw).toFixed(1)}" y1="${o.labelY.toFixed(1)}" x2="${(padL+lw+8).toFixed(1)}" y2="${o.lineY.toFixed(1)}" stroke="${o.color}" stroke-width="0.8"/>`;
-    }
+    const txt=o.key+' '+fmtMoney(o.price);const lw=txt.length*6.6+10;
+    if(Math.abs(o.labelY-o.lineY)>2)svg+=`<line x1="${(padL+lw).toFixed(1)}" y1="${o.labelY.toFixed(1)}" x2="${(padL+lw+8).toFixed(1)}" y2="${o.lineY.toFixed(1)}" stroke="${o.color}" stroke-width="0.8"/>`;
     svg+=`<rect x="${padL}" y="${(o.labelY-LBL_H/2).toFixed(1)}" width="${lw.toFixed(0)}" height="${LBL_H}" rx="3" fill="${o.color}"/>`;
     svg+=`<text x="${(padL+5).toFixed(1)}" y="${(o.labelY+4).toFixed(1)}" font-size="10.5" fill="#fff" font-weight="700">${txt}</text>`;
   });
-  // 3) 日付の縦線＋点（縦線は価格〜出来高を貫通、ローソク足には重ねるが点線で控えめに）
+  // 日付の縦線＋点
   const dmk=[];
   mk.forEach(o=>{const bi=nearestIdx(o.date);if(bi!=null)dmk.push({...o,bi,x:xC(bi)});});
   dmk.forEach(o=>{
     svg+=`<line x1="${o.x.toFixed(1)}" y1="${padT}" x2="${o.x.toFixed(1)}" y2="${axisY.toFixed(1)}" stroke="${o.color}" stroke-width="1" stroke-dasharray="2,3" opacity="0.55"/>`;
     svg+=`<circle cx="${o.x.toFixed(1)}" cy="${o.lineY.toFixed(1)}" r="4" fill="${o.color}" stroke="#fff" stroke-width="1.5"/>`;
   });
-  // 日付ラベルは「出来高の下の余白（dateBand）」に配置。ローソク足に重ならない。
-  // EN/EXのxが近い場合は上下2段に分けて重なりを回避し、引き出し線でつなぐ。
+  // 日付ラベル（出来高の下の帯）
   if(dmk.length){
-    let dlabels=dmk.map(o=>({...o,labelText:o.key+' '+(o.date?o.date.slice(5).replace('-','/'):''),ty:dateBandTop+12}));
-    if(dlabels.length===2){
-      const gapX=Math.abs(dlabels[0].x-dlabels[1].x);
-      if(gapX<90){ // 近すぎ → 段をずらす（上段・下段）
-        const left=dlabels[0].x<=dlabels[1].x?dlabels[0]:dlabels[1];
-        const right=dlabels[0].x<=dlabels[1].x?dlabels[1]:dlabels[0];
-        left.ty=dateBandTop+11;
-        right.ty=dateBandTop+29;
-      }
+    let dl=dmk.map(o=>({...o,labelText:o.key+' '+(o.date?o.date.slice(5).replace('-','/'):''),ty:dateBandTop+12}));
+    if(dl.length===2&&Math.abs(dl[0].x-dl[1].x)<90){
+      const left=dl[0].x<=dl[1].x?dl[0]:dl[1];const right=dl[0].x<=dl[1].x?dl[1]:dl[0];
+      left.ty=dateBandTop+11;right.ty=dateBandTop+29;
     }
-    dlabels.forEach(o=>{
-      const lw=o.labelText.length*6.2+8;
-      let lx=o.x-lw/2;
-      lx=Math.max(padL,Math.min(lx,W-padR-lw));
-      // 縦線の下端からラベルへ引き出し線
-      svg+=`<line x1="${o.x.toFixed(1)}" y1="${axisY.toFixed(1)}" x2="${(lx+lw/2).toFixed(1)}" y2="${(o.ty-11).toFixed(1)}" stroke="${o.color}" stroke-width="0.8" opacity="0.7"/>`;
-      svg+=`<rect x="${lx.toFixed(1)}" y="${(o.ty-11).toFixed(1)}" width="${lw.toFixed(0)}" height="15" rx="3" fill="${o.color}"/>`;
-      svg+=`<text x="${(lx+4).toFixed(1)}" y="${(o.ty).toFixed(1)}" font-size="10" fill="#fff" font-weight="700">${o.labelText}</text>`;
+    dl.forEach(o=>{
+      const lw=o.labelText.length*6.2+8;let lxx=Math.max(padL,Math.min(o.x-lw/2,W-padR-lw));
+      svg+=`<line x1="${o.x.toFixed(1)}" y1="${axisY.toFixed(1)}" x2="${(lxx+lw/2).toFixed(1)}" y2="${(o.ty-11).toFixed(1)}" stroke="${o.color}" stroke-width="0.8" opacity="0.7"/>`;
+      svg+=`<rect x="${lxx.toFixed(1)}" y="${(o.ty-11).toFixed(1)}" width="${lw.toFixed(0)}" height="15" rx="3" fill="${o.color}"/>`;
+      svg+=`<text x="${(lxx+4).toFixed(1)}" y="${(o.ty).toFixed(1)}" font-size="10" fill="#fff" font-weight="700">${o.labelText}</text>`;
     });
   }
+
+  // ── 主要日の出来高メモ欄（出来高の下、重ならない専用欄）──
+  // EN日・EX日・最高値日・最安値日 の出来高をまとめて記載
+  svg+=`<line x1="${padL}" y1="${(volNoteTop-2).toFixed(1)}" x2="${W-padR}" y2="${(volNoteTop-2).toFixed(1)}" stroke="#eee" stroke-width="1"/>`;
+  svg+=`<text x="${padL}" y="${(volNoteTop+10).toFixed(1)}" font-size="10" fill="#888" font-weight="700">主要日の出来高</text>`;
+  const notes=[];
+  if(dmk.length){dmk.forEach(o=>{const b=bars[o.bi];if(b)notes.push({c:o.color,t:o.key+'('+(b.d.slice(5).replace('-','/'))+') '+fmtVol(b.v||0)});});}
+  notes.push({c:'#c0392b',t:'高値('+bars[hiIdx].d.slice(5).replace('-','/')+') '+fmtVol(bars[hiIdx].v||0)});
+  notes.push({c:'#1769aa',t:'安値('+bars[loIdx].d.slice(5).replace('-','/')+') '+fmtVol(bars[loIdx].v||0)});
+  // 2列で配置
+  const colW=(W-padL-padR)/2;
+  notes.forEach((nt,i)=>{
+    const cx=padL+(i%2)*colW;
+    const cy=volNoteTop+24+Math.floor(i/2)*16;
+    svg+=`<rect x="${cx.toFixed(1)}" y="${(cy-8).toFixed(1)}" width="9" height="9" rx="2" fill="${nt.c}"/>`;
+    svg+=`<text x="${(cx+13).toFixed(1)}" y="${cy.toFixed(1)}" font-size="10.5" fill="#333">${nt.t}</text>`;
+  });
+
   svg+=`</svg>`;
   document.getElementById('chartBody').innerHTML=svg;
 
   // 凡例
   let lg='<div class="lg"><span class="sw" style="background:#1a7a4a"></span>陽線</div>'
     +'<div class="lg"><span class="sw" style="background:#c02020"></span>陰線</div>'
-    +'<div class="lg"><span class="sw" style="background:#1769aa"></span>EN（エントリー）</div>'
-    +'<div class="lg"><span class="sw" style="background:#d98c00"></span>EX（エグジット）</div>'
+    +(hasMarks?'<div class="lg"><span class="sw" style="background:#1769aa"></span>EN</div><div class="lg"><span class="sw" style="background:#d98c00"></span>EX</div>':'')
+    +'<div class="lg"><span class="sw" style="background:#c0392b"></span>高値</div>'
+    +'<div class="lg"><span class="sw" style="background:#1769aa"></span>安値</div>'
     +'<div class="lg" style="color:#888">日足・3ヶ月・出来高付き</div>';
   document.getElementById('chartLegend').innerHTML=lg;
 }
