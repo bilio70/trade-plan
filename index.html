@@ -29,6 +29,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#444}
 .hint{font-size:12px;color:#444;margin-top:3px}
 .coderow{display:flex;gap:6px}.coderow input{flex:1;min-width:90px;font-size:15px}
+.market-toggle{display:flex;gap:6px;margin-bottom:7px}
+.mkt-btn{flex:1;padding:7px 10px;font-size:13px;font-weight:700;border:1px solid #d8d4c4;border-radius:8px;background:#f4f2ea;color:#888;cursor:pointer}
+.mkt-btn.active{background:#0d0d0d;color:#c9a84c;border-color:#0d0d0d}
+.mkt-btn:active{opacity:0.85}
 .getbtn{padding:9px 14px;font-size:12px;border:none;border-radius:8px;background:#0d0d0d;color:#c9a84c;cursor:pointer;white-space:nowrap;font-weight:600}
 .getbtn:disabled{opacity:0.5}
 .resetbtn{padding:7px 14px;font-size:12px;border:none;border-radius:8px;background:#c9a84c;color:#fff;cursor:pointer;white-space:nowrap;font-weight:600}
@@ -234,8 +238,12 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   </div>
   <div class="grid">
     <div class="field"><label>銘柄コード or 銘柄名 → 自動取得</label>
+      <div class="market-toggle">
+        <button type="button" id="mkt_jp" class="mkt-btn active" onclick="setMarket('JP')">🇯🇵 日本株</button>
+        <button type="button" id="mkt_us" class="mkt-btn" onclick="setMarket('US')">🇺🇸 米国株</button>
+      </div>
       <div class="suggest-box">
-        <div class="coderow"><input id="f_code" inputmode="text" placeholder="285A or キオクシア" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button></div>
+        <div class="coderow"><input id="f_code" inputmode="text" placeholder="285A / トヨタ" oninput="onCodeInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();fetchQuote();}"><button class="getbtn" id="getBtn" onclick="fetchQuote()">取得</button></div>
         <div class="suggest-list" id="suggestList"></div>
       </div>
     </div>
@@ -441,12 +449,21 @@ async function refreshPrice(id){
 
 // ===== 銘柄名検索 =====
 let searchTimer=null;
+let currentMarket='JP';   // 'JP' or 'US'
+function setMarket(mkt){
+  currentMarket=mkt;
+  document.getElementById('mkt_jp').classList.toggle('active',mkt==='JP');
+  document.getElementById('mkt_us').classList.toggle('active',mkt==='US');
+  const inp=document.getElementById('f_code');
+  inp.placeholder=mkt==='JP'?'285A / トヨタ':'AAPL / アップル';
+  closeSuggest();
+  const v=inp.value.trim();
+  if(v.length>=2)searchByName(v);
+}
 async function onCodeInput(){
   const v=document.getElementById('f_code').value.trim();
   clearTimeout(searchTimer);
   if(v.length<2){closeSuggest();return;}
-  // コード・カタカナ・社名・英字ティッカーいずれも候補検索する
-  // （4桁数字コードでも、その銘柄をコード＋名前で候補表示する）
   searchTimer=setTimeout(()=>searchByName(v),350);
 }
 async function searchByName(q){
@@ -454,7 +471,7 @@ async function searchByName(q){
   el.innerHTML='<div class="suggest-item" style="color:#444;cursor:default;">検索中…</div>';
   el.classList.add('show');
   try{
-    const d=await gasGet({action:'search',q});
+    const d=await gasGet({action:'search',q,market:currentMarket});
     if(d.result==='ok'&&d.items&&d.items.length>0){
       el.innerHTML=d.items.map(it=>{
         const safeName=(it.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
