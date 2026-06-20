@@ -73,8 +73,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .plan-summary .ps-code{font-size:13px;font-weight:700;color:#1a1a1a}
 .plan-summary .ps-name{font-size:13px;color:#1a1a1a;flex:1;min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .plan-summary .ps-pnl{font-size:13px;font-weight:700;white-space:nowrap}
-.plan-summary .ps-chart{font-size:15px;cursor:pointer;padding:0 4px;flex-shrink:0;opacity:0.8}
-.plan-summary .ps-chart:active{opacity:0.5}
+.plan-summary .ps-chart{font-size:11px;font-weight:700;color:#2a5599;background:#e8eef7;border:0.5px solid #c5d4ea;border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.plan-summary .ps-chart:active{background:#d5e2f2}
 .plan-summary .ps-pnl.profit{color:#1a7a4a}
 .plan-summary .ps-pnl.loss{color:#c02020}
 .plan-summary .ps-status{font-size:12px;padding:2px 8px;border-radius:20px;white-space:nowrap}
@@ -200,8 +200,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   .grid,.grid3,.grid4,.readout{grid-template-columns:1fr 1fr}
   .plan-nums,.monthly-stats{grid-template-columns:1fr 1fr}
 }
-.ana-chartlink{cursor:pointer;color:#2a5599;text-decoration:underline;text-decoration-color:#bcd;text-underline-offset:2px}
-.ana-chartlink:active{color:#1a3a7a}
+.ana-chartlink{cursor:pointer;color:#1a1a1a;font-weight:700}
+.ana-chartbtn{display:inline-flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;font-weight:700;color:#2a5599;background:#e8eef7;border:0.5px solid #c5d4ea;border-radius:6px;padding:2px 8px;margin-left:6px;white-space:nowrap;vertical-align:middle}
+.ana-chartbtn:active{background:#d5e2f2}
+.chart-btn-sm{font-size:11px;font-weight:700;color:#2a5599;background:#e8eef7;border:0.5px solid #c5d4ea;border-radius:6px;padding:2px 8px;margin-left:6px;cursor:pointer;vertical-align:middle}
+.chart-btn-sm:active{background:#d5e2f2}
 .chart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:12px}
 .chart-modal.show{display:flex}
 .chart-box{background:#fff;border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,0.3)}
@@ -259,7 +262,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   </div>
   <div class="field" style="margin-bottom:10px;"><label>パターンメモ（任意）</label><textarea id="f_patMemo" rows="2" placeholder="パターンに関する補足メモ"></textarea></div>
   <div class="grid3">
-    <div class="field"><label>EN価格</label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
+    <div class="field"><label>EN価格 <button type="button" class="chart-btn-sm" onclick="openChartFromForm()">📈 チャート</button></label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
     <div class="field"><label>TP価格</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">②なら二倍価格。</div></div>
     <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">命綱としてのSL。</div></div>
   </div>
@@ -387,8 +390,11 @@ function fmtDate(s){
 async function fetchQuote(){
   const raw=document.getElementById('f_code').value.trim();
   if(!raw){alert('銘柄コードを入力してください');return;}
-  // コード部分を抽出（数字+アルファベットに対応）
-  const code=raw.match(/^[0-9A-Za-z]+/)?raw.match(/^[0-9A-Za-z]+/)[0]:raw;
+  // コード部分を抽出（数字+アルファベット、米国株のドット表記にも対応 例:BRK.B）
+  const cm=raw.match(/^[0-9A-Za-z]+(?:\.[A-Za-z]+)?/);
+  const code=cm?cm[0]:raw;
+  const isJp=/^[0-9]{4}[A-Za-z]?$/.test(code);
+  const cur=isJp?'¥':'$';
   closeSuggest();
   const btn=document.getElementById('getBtn');btn.disabled=true;btn.textContent='取得中';
   setSyncStatus('株価取得中…','#b5851a');
@@ -402,10 +408,10 @@ async function fetchQuote(){
     document.getElementById('f_en').value=d.price;
     document.getElementById('quoteInfo').style.display='block';
     document.getElementById('quoteInfo').innerHTML=
-      `<b>${cleanName||code}</b>　現在値 <b>¥${fmt(d.price)}</b>（前日終値 ¥${fmt(d.prevClose)}）<br>`+
-      `3ヶ月高値 ¥${fmt(d.high3m)}／前日安値 ¥${fmt(d.prevDayLow)}／5日安値 ¥${fmt(d.low5)}`+
-      (d.atrW?`<br>週足ATR-SL <b>¥${fmt(d.price-d.atrW)}</b>（ATR幅 ¥${fmt(d.atrW)}）`:'')+
-      (d.atrD?`／日足ATR-SL <b>¥${fmt(d.price-d.atrD)}</b>（ATR幅 ¥${fmt(d.atrD)}）`:'');
+      `<b>${cleanName||code}</b>　現在値 <b>${cur}${fmt(d.price)}</b>（前日終値 ${cur}${fmt(d.prevClose)}）<br>`+
+      `3ヶ月高値 ${cur}${fmt(d.high3m)}／前日安値 ${cur}${fmt(d.prevDayLow)}／5日安値 ${cur}${fmt(d.low5)}`+
+      (d.atrW?`<br>週足ATR-SL <b>${cur}${fmt(d.price-d.atrW)}</b>（ATR幅 ${cur}${fmt(d.atrW)}）`:'')+
+      (d.atrD?`／日足ATR-SL <b>${cur}${fmt(d.price-d.atrD)}</b>（ATR幅 ${cur}${fmt(d.atrD)}）`:'');
     recalc();setSyncStatus('✓ 株価取得','#1a7a4a');
   }catch(e){
     setSyncStatus('⚠ 自動取得失敗','#c02020');
@@ -700,11 +706,19 @@ function render(){
     else{drafts.push(p);}
   });
 
+  // 並び替え：いずれも新しい日付が上
+  const planDateKey=p=>String(p.date||'');
+  const lastExKey=p=>p.exits.reduce((d,e)=>(e.date&&e.date>d?e.date:d),'');
+  drafts.sort((a,b)=>planDateKey(b).localeCompare(planDateKey(a))||(b.id-a.id));
+  armeds.sort((a,b)=>planDateKey(b).localeCompare(planDateKey(a))||(b.id-a.id));
+  partials.sort((a,b)=>planDateKey(b).localeCompare(planDateKey(a))||(b.id-a.id));
+  closedRecent.sort((a,b)=>lastExKey(b).localeCompare(lastExKey(a))||(b.id-a.id));
+
   // 各セクションに描画
-  if(draftEl)draftEl.innerHTML=drafts.length?drafts.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">未発注の計画はありません。</div>';
-  if(armedEl)armedEl.innerHTML=armeds.length?armeds.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">発注済みの計画はありません。</div>';
-  if(partialEl)partialEl.innerHTML=partials.length?partials.slice().reverse().map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">部分EX中の銘柄はありません。</div>';
-  if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.slice().reverse().map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
+  if(draftEl)draftEl.innerHTML=drafts.length?drafts.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">未発注の計画はありません。</div>';
+  if(armedEl)armedEl.innerHTML=armeds.length?armeds.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">発注済みの計画はありません。</div>';
+  if(partialEl)partialEl.innerHTML=partials.length?partials.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">部分EX中の銘柄はありません。</div>';
+  if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
 
   renderTally();renderAnalysis();
 }
@@ -722,7 +736,8 @@ function renderPlanCard(p,isClosed){
   // ── EX済みリスト ──
   let exListHtml='';
   if(p.exits.length){
-    const rows=p.exits.map(e=>{
+    const sortedExits=p.exits.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||(Number(b.eid)||0)-(Number(a.eid)||0));
+    const rows=sortedExits.map(e=>{
       const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
       const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
       const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
@@ -827,7 +842,7 @@ function renderPlanCard(p,isClosed){
     <span class="ps-date">${fmtDate(dispDate)}</span>
     <span class="ps-code">${codeStr}</span>
     <span class="ps-name">${nameOnly||p.name}</span>
-    <span class="ps-chart" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈</span>
+    <button class="ps-chart" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈 チャート</button>
     ${pnlHtml}
   </div>`;
 
@@ -1067,7 +1082,8 @@ function renderAnalysis(){
       <div class="ana-line1">
         <span class="ana-exdate">${fmtDate(e.date)}</span>
         <span class="ana-code">${e.code}</span>
-        <span class="ana-name ana-chartlink" onclick="openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">${nameClean} 📈</span>
+        <span class="ana-name">${nameClean}</span>
+        <button class="ana-chartbtn" onclick="openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">📈 チャート</button>
         <span class="ana-pnl ${pCls}">${pnlStr(e.pnl)}</span>
       </div>
       <div class="ana-line2">
@@ -1083,6 +1099,14 @@ function renderAnalysis(){
 // ===== 株価チャート（日足3ヶ月・出来高・EN/EXマーカー） =====
 let chartCache={};
 function closeChart(){document.getElementById('chartModal').classList.remove('show');}
+// 計画フォームの銘柄コードでチャートを開く（EN/EXマーカーなしの素のチャート）
+function openChartFromForm(){
+  const raw=(document.getElementById('f_code').value||'').trim();
+  const m=raw.match(/^([0-9A-Za-z.]+)/);
+  if(!m){alert('銘柄コードを入力してください');return;}
+  const nm=(document.getElementById('f_name').value||'').replace(/^[0-9A-Za-z.]+\s*/,'').trim();
+  openChart(m[1],nm,{});
+}
 async function openChart(code,name,marks){
   marks=marks||{};
   const modal=document.getElementById('chartModal');
@@ -1096,12 +1120,13 @@ async function openChart(code,name,marks){
     if(!data||data.result!=='ok'||!data.bars||!data.bars.length){
       document.getElementById('chartBody').innerHTML='<div class="chart-loading">チャートを取得できませんでした。</div>';return;
     }
-    drawChart(data.bars,marks);
+    drawChart(data.bars,marks,/^[0-9]{4}[A-Za-z]?$/.test(code)?'¥':'$');
   }catch(e){
     document.getElementById('chartBody').innerHTML='<div class="chart-loading">チャートを取得できませんでした。</div>';
   }
 }
-function drawChart(bars,marks){
+function drawChart(bars,marks,cur){
+  cur=cur||'¥';
   // レイアウト
   const W=720,H=440,padL=8,padR=58,padT=14;
   const priceH=270,volH=90,gap=24;
@@ -1152,7 +1177,7 @@ function drawChart(bars,marks){
     const yy=yP(price);const xx=nearestX(ds);
     let s=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="${color}" stroke-width="1.2" stroke-dasharray="5,3"/>`;
     // ラベル（左側）
-    const txt=label+' ¥'+Math.round(price).toLocaleString('ja-JP');
+    const txt=label+' '+cur+Math.round(price).toLocaleString('ja-JP');
     s+=`<rect x="${padL}" y="${(yy-13).toFixed(1)}" width="${(txt.length*6.6+10).toFixed(0)}" height="15" rx="3" fill="${color}"/>`;
     s+=`<text x="${(padL+5).toFixed(1)}" y="${(yy-2).toFixed(1)}" font-size="10.5" fill="#fff" font-weight="700">${txt}</text>`;
     // エントリー/エグジット点（縦線）
