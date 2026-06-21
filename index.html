@@ -132,6 +132,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .holding .h-pnl.profit{color:#1a7a4a}.holding .h-pnl.loss{color:#c02020}
 .holding .h-update{font-size:12px;color:#444;cursor:pointer;text-decoration:underline;margin-left:8px}
 .holding .h-time{font-size:12px;color:#444;margin-top:2px}
+.review-box{background:#f7f6f2;border-left:3px solid #2a5599;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:10px}
+.review-row{font-size:12px;color:#1a1a1a;margin-bottom:6px;line-height:1.6}
+.review-row:last-child{margin-bottom:0}
+.review-row .review-k{display:block;font-size:12px;letter-spacing:0.05em;color:#2a5599;font-weight:700;margin-bottom:1px}
+.review-row .review-v{display:block;color:#333;white-space:pre-wrap}
 .ex-input{background:#fafaf6;border:0.5px solid #e5e3db;border-radius:10px;padding:12px;margin-top:8px}
 .ex-input .ct{font-size:12px;letter-spacing:0.12em;color:#444;margin-bottom:7px}
 .ex-input .field input,.ex-input .field select,.ex-input .field textarea{font-size:13px;padding:7px 9px}
@@ -260,6 +265,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
         <option>⑬IPOセカンダリー2日足陽線</option><option>⑭急落急騰再急落</option><option>⑮急落急騰50%ノックアウト</option>
         <option>⑯天井圏での出来高消滅</option><option>⑰長期上昇トレンド</option><option>⑱長期下落トレンド</option>
         <option>⑲上場来高値更新</option><option>⑳V字回復</option><option>㉑保ち合いブレイク</option>
+        <option>㉒売買代金ランキング上位</option>
       </select></div>
     <div class="field"><label>点数（10点満点）</label>
       <select id="f_score" onchange="recalc()"><option value="">—</option>
@@ -268,7 +274,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
         <option value="0">0 正直難しい</option></select></div>
     <div class="field"><label>株数</label><input id="f_qty" type="number" inputmode="numeric" placeholder="100" oninput="recalc()"></div>
   </div>
-  <div class="field" style="margin-bottom:10px;"><label>パターンメモ（任意）</label><textarea id="f_patMemo" rows="2" placeholder="パターンに関する補足メモ"></textarea></div>
+  <div class="field" style="margin-bottom:10px;"><label>エントリー理由（任意）</label><textarea id="f_patMemo" rows="2" placeholder="なぜこの銘柄・このタイミングでエントリーするのか"></textarea></div>
   <div class="grid3">
     <div class="field"><label>EN価格 <button type="button" class="chart-btn-sm" onclick="openChartFromForm()">📈 チャート</button></label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
     <div class="field"><label>TP価格</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">②なら二倍価格。</div></div>
@@ -298,18 +304,18 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">発注済み</span> 3つチェック完了・場中は触らない</p>
-  <div id="armedList"><div class="empty">発注済みの計画はありません。</div></div>
+  <p class="sec-title"><span class="step">保有株</span> 3つチェック完了・場中は触らない</p>
+  <div id="armedList"><div class="empty">保有株はありません。</div></div>
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">部分EX</span> 一部の玉をEX済み</p>
-  <div id="partialList"><div class="empty">部分EX中の銘柄はありません。</div></div>
+  <p class="sec-title"><span class="step">部分EX（保有中）</span> 一部の玉をEX済み</p>
+  <div id="partialList"><div class="empty">部分EX（保有中）の銘柄はありません。</div></div>
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">EX一覧</span> 全株EX済み（直近7日間）</p>
-  <div id="closedList"><div class="empty">直近7日間のEX完了銘柄はありません。</div></div>
+  <p class="sec-title"><span class="step">EX一覧</span> 全株EX済み（今月分）</p>
+  <div id="closedList"><div class="empty">今月のEX完了銘柄はありません。</div></div>
 </div>
 
 <div class="sec">
@@ -544,8 +550,8 @@ async function loadFromSheets(){
     if(d.result==='ok'&&Array.isArray(d.plans)){
       plans=d.plans.map(p=>({...p,id:Number(p.id),en:Number(p.en),qty:Number(p.qty),tp:Number(p.tp),sl:Number(p.sl),
         checks:p.status==='armed'?[true,true,true]:[false,false,false],
-        patMemo:p.patMemo||'',status:p.status||'draft',
-        exits:Array.isArray(p.exits)?p.exits.map(e=>({...e,shares:Number(e.shares),price:Number(e.price),pnl:Number(e.pnl),enPrice:e.enPrice?Number(e.enPrice):null,enDate:e.enDate||''})):[],
+        patMemo:p.patMemo||'',feeling:p.feeling||'',status:p.status||'draft',
+        exits:Array.isArray(p.exits)?p.exits.map(e=>({...e,shares:Number(e.shares),price:Number(e.price),pnl:Number(e.pnl),enPrice:e.enPrice?Number(e.enPrice):null,enDate:e.enDate||'',improve:e.improve||''})):[],
         currentPrice:null,priceTime:null
       })).filter(p=>p.name);
       // v2互換
@@ -562,13 +568,13 @@ async function saveToSheets(plan){
   try{
     const en=plan.en,sl=plan.sl,tp=plan.tp;
     const rrVal=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'0';
-    await gasGet({action:'save',id:plan.id,date:plan.date,name:plan.name,pat:plan.pat,patMemo:plan.patMemo||'',score:plan.score,en:plan.en,qty:plan.qty,tp:plan.tp,sl:plan.sl,rr:rrVal,status:plan.status});
+    await gasGet({action:'save',id:plan.id,date:plan.date,name:plan.name,pat:plan.pat,patMemo:plan.patMemo||'',feeling:plan.feeling||'',score:plan.score,en:plan.en,qty:plan.qty,tp:plan.tp,sl:plan.sl,rr:rrVal,status:plan.status});
     setSyncStatus('✓ 保存','#1a7a4a');
   }catch(e){setSyncStatus('⚠ ローカルのみ','#c02020');}
 }
 async function addExitToSheets(planId,exit){
   const p=plans.find(p=>p.id===planId);
-  try{await gasGet({action:'addExit',planId,planName:(p&&p.name)||'',eid:exit.eid,date:exit.date,enDate:exit.enDate||'',enPrice:exit.enPrice||'',shares:exit.shares,price:exit.price,pnl:exit.pnl,exitType:exit.exitType,enGrade:exit.enGrade||'',exGrade:exit.exGrade||'',memo:exit.memo||'',planStatus:(p&&p.status)||'partial'});setSyncStatus('✓ EX記録保存','#1a7a4a');}catch(e){setSyncStatus('⚠ オフライン','#c02020');}
+  try{await gasGet({action:'addExit',planId,planName:(p&&p.name)||'',eid:exit.eid,date:exit.date,enDate:exit.enDate||'',enPrice:exit.enPrice||'',shares:exit.shares,price:exit.price,pnl:exit.pnl,exitType:exit.exitType,enGrade:exit.enGrade||'',exGrade:exit.exGrade||'',memo:exit.memo||'',improve:exit.improve||'',planStatus:(p&&p.status)||'partial'});setSyncStatus('✓ EX記録保存','#1a7a4a');}catch(e){setSyncStatus('⚠ オフライン','#c02020');}
 }
 async function removeExitFromSheets(planId,eid){
   try{await gasGet({action:'removeExit',planId,eid,planStatus:plans.find(p=>p.id===planId).status});setSyncStatus('✓','#1a7a4a');}catch(e){setSyncStatus('⚠','#c02020');}
@@ -580,6 +586,13 @@ async function updateStatusToSheets(id,status){
   try{await gasGet({action:'updateStatus',id,status});}catch(e){}
 }
 function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans));}catch(e){}}
+async function saveFeeling(id){
+  const p=plans.find(x=>x.id===id);if(!p)return;
+  const el=document.getElementById('feel_'+id);if(!el)return;
+  p.feeling=el.value.trim();
+  persistLocal();
+  await saveToSheets(p);
+}
 
 // ===== RECALC =====
 const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
@@ -699,14 +712,20 @@ function render(){
 
   if(!plans.length){
     if(draftEl)draftEl.innerHTML='<div class="empty">未発注の計画はありません。</div>';
-    if(armedEl)armedEl.innerHTML='<div class="empty">発注済みの計画はありません。</div>';
-    if(partialEl)partialEl.innerHTML='<div class="empty">部分EX中の銘柄はありません。</div>';
-    if(closedListEl)closedListEl.innerHTML='<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
+    if(armedEl)armedEl.innerHTML='<div class="empty">保有株はありません。</div>';
+    if(partialEl)partialEl.innerHTML='<div class="empty">部分EX（保有中）の銘柄はありません。</div>';
+    if(closedListEl)closedListEl.innerHTML='<div class="empty">今月のEX完了銘柄はありません。</div>';
     renderTally();renderAnalysis();return;
   }
 
   const now=new Date();
-  const sevenDaysAgo=new Date(now.getTime()-7*864e5);
+  // EX一覧の表示範囲：当月分は常に表示。前月分は、月が替わってから7日以内のみ表示
+  // （例：7月8日以降は6月分のEX記録をEX一覧から消す）
+  const curYM=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const dayOfMonth=now.getDate();
+  const prevMonthDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const prevYM=prevMonthDate.getFullYear()+'-'+String(prevMonthDate.getMonth()+1).padStart(2,'0');
+  const showPrevMonth=dayOfMonth<=7;
 
   // 分類
   const drafts=[],armeds=[],partials=[],closedRecent=[];
@@ -717,11 +736,10 @@ function render(){
     if(p.status!==newStatus){p.status=newStatus;persistLocal();}
     if(closed){
       const lastExDate=p.exits.reduce((d,e)=>e.date&&e.date>d?e.date:d,'');
-      const lastRecorded=p.exits.reduce((t,e)=>Math.max(t,e.eid||0),0);
-      const exDateOk=lastExDate&&new Date(lastExDate)>=sevenDaysAgo;
-      const recordedOk=lastRecorded&&lastRecorded>=now.getTime()-7*864e5;
+      const lastExYM=lastExDate?lastExDate.slice(0,7):'';
       const isEditingThis=editingExit&&editingExit.planId===p.id;
-      if(exDateOk||recordedOk||isEditingThis){closedRecent.push(p);}
+      const inRange=lastExYM===curYM||(showPrevMonth&&lastExYM===prevYM);
+      if(inRange||isEditingThis){closedRecent.push(p);}
     }else if(p.status==='partial'){partials.push(p);}
     else if(p.status==='armed'){armeds.push(p);}
     else{drafts.push(p);}
@@ -737,9 +755,9 @@ function render(){
 
   // 各セクションに描画
   if(draftEl)draftEl.innerHTML=drafts.length?drafts.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">未発注の計画はありません。</div>';
-  if(armedEl)armedEl.innerHTML=armeds.length?armeds.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">発注済みの計画はありません。</div>';
-  if(partialEl)partialEl.innerHTML=partials.length?partials.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">部分EX中の銘柄はありません。</div>';
-  if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">直近7日間のEX完了銘柄はありません。</div>';
+  if(armedEl)armedEl.innerHTML=armeds.length?armeds.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">保有株はありません。</div>';
+  if(partialEl)partialEl.innerHTML=partials.length?partials.map(p=>renderPlanCard(p,false)).join(''):'<div class="empty">部分EX（保有中）の銘柄はありません。</div>';
+  if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">今月のEX完了銘柄はありません。</div>';
 
   renderTally();renderAnalysis();
 }
@@ -752,7 +770,7 @@ function renderPlanCard(p,isClosed){
   const closed=rem<=0&&p.exits.length>0;
 
   const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${p.en}</div></div><div><div class="lbl">TP</div><div class="val">${p.tp}</div></div><div><div class="lbl">SL</div><div class="val">${p.sl}</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
-  const patMemo=p.patMemo?`<div style="font-size:12px;color:#444;margin-bottom:6px;">📝 ${p.patMemo}</div>`:'';
+  const patMemo=p.patMemo?`<div style="font-size:12px;color:#444;margin-bottom:6px;">📝 エントリー理由：${p.patMemo}</div>`:'';
 
   // ── EX済みリスト ──
   let exListHtml='';
@@ -773,7 +791,8 @@ function renderPlanCard(p,isClosed){
         <button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button>
         <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
         ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
-        ${e.memo?`<div class="ex-detail">${e.memo}</div>`:''}
+        ${e.memo?`<div class="ex-detail">📝 反省: ${e.memo}</div>`:''}
+        ${e.improve?`<div class="ex-detail">🔧 改善点: ${e.improve}</div>`:''}
       </div>`;
       if(isEditing){
         row+=exitEditFormHtml(p,e);
@@ -789,12 +808,18 @@ function renderPlanCard(p,isClosed){
   if(!closed&&rem>0){
     let pi='現在値を取得してください';
     if(p.currentPrice){pi=`${rem}株 × 現在値 ${curOfPlan(p)}${fmt(p.currentPrice)}`;}
-    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>`;
+    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>
+    <div class="field" style="margin-top:8px;"><label>感情（保有中の心理状態を自由記述）</label><textarea id="feel_${p.id}" rows="2" placeholder="例）含み益が増えて早く利確したい焦りがある／予定通りで落ち着いている" onblur="saveFeeling(${p.id})">${p.feeling||''}</textarea></div>`;
   }
 
   let body;
   if(closed){
-    body=`${exListHtml}`;
+    const reviewItems=[];
+    if(p.patMemo)reviewItems.push(`<div class="review-row"><span class="review-k">📝 エントリー理由</span><span class="review-v">${p.patMemo}</span></div>`);
+    if(p.feeling)reviewItems.push(`<div class="review-row"><span class="review-k">💭 感情</span><span class="review-v">${p.feeling}</span></div>`);
+    const improves=p.exits.filter(e=>e.improve).map(e=>`<div class="review-row"><span class="review-k">🔧 改善点${fmtDate(e.date)?'（'+fmtDate(e.date)+'）':''}</span><span class="review-v">${e.improve}</span></div>`).join('');
+    const reviewHtml=(reviewItems.length||improves)?`<div class="review-box">${reviewItems.join('')}${improves}</div>`:'';
+    body=`${reviewHtml}${exListHtml}`;
   }else{
     const chks=CHECK_LABELS.map((l,i)=>`<label class="chk"><input type="checkbox" ${p.checks&&p.checks[i]?'checked':''} onchange="toggleCheck(${p.id},${i})"><span>${l}</span></label>`).join('');
     const today=new Date().toISOString().slice(0,10);
@@ -821,13 +846,14 @@ function renderPlanCard(p,isClosed){
           <div class="field"><label>EX採点</label><select id="exg_${p.id}">${gradeOpts('')}</select></div>
           <div class="field" style="grid-column:span 2;"><label>反省メモ</label><textarea id="mem_${p.id}" rows="2" placeholder="振り返り"></textarea></div>
         </div>
+        <div class="field" style="margin-bottom:0;"><label>改善点</label><textarea id="imp_${p.id}" rows="2" placeholder="次回に活かす改善点"></textarea></div>
         <button class="ex-confirm-btn" onclick="confirmExit(${p.id})">このEXを確定する</button>
       </div>`;
     }
 
     body=`${exListHtml}${holdingHtml}
       <div class="checks"><div class="ct">発注チェック</div>${chks}
-      ${armed?'<div class="armed-banner">この計画は発注済み。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
+      ${armed?'<div class="armed-banner">この計画は保有株。あとは計画を働かせるだけ。場中は触らない。</div>':''}</div>
       <div class="closebar"><div class="ct">EXタイプを選択してから詳細を入力</div>
       <div class="exbtns">${exBtns}</div>${detailForm}
       <div style="margin-top:10px;display:flex;gap:8px;"><button class="edit-btn" onclick="editPlan(${p.id})">計画を編集</button><button class="del" onclick="delPlan(${p.id})">削除</button></div></div>`;
@@ -915,7 +941,8 @@ async function confirmExit(planId){
   const enGrade=(document.getElementById('eng_'+planId)||{}).value||'';
   const exGrade=(document.getElementById('exg_'+planId)||{}).value||'';
   const memo=(document.getElementById('mem_'+planId)||{}).value||'';
-  const exit={eid:Date.now(),date:exDate,enDate,enPrice:enP,shares,price,pnl,exitType,enGrade,exGrade,memo};
+  const improve=(document.getElementById('imp_'+planId)||{}).value||'';
+  const exit={eid:Date.now(),date:exDate,enDate,enPrice:enP,shares,price,pnl,exitType,enGrade,exGrade,memo,improve};
   p.exits.push(exit);
   if(remainShares(p)<=0)p.status='closed';else p.status='partial';
   delete selectedExType[planId];
@@ -943,6 +970,7 @@ function exitEditFormHtml(p,e){
             <div class="field"><label>EX採点</label><select id="ee_exg_${e.eid}">${gradeOpts(e.exGrade)}</select></div>
             <div class="field"><label>反省メモ</label><textarea id="ee_mem_${e.eid}" rows="2">${e.memo||''}</textarea></div>
           </div>
+          <div class="field"><label>改善点</label><textarea id="ee_imp_${e.eid}" rows="2">${e.improve||''}</textarea></div>
           <div style="display:flex;gap:8px;">
             <button class="ex-confirm-btn" style="flex:1;" onclick="saveEditExit(${p.id},${e.eid})">保存</button>
             <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelEditExit()">キャンセル</button>
@@ -975,6 +1003,7 @@ async function saveEditExit(planId,eid){
   e.enGrade=(document.getElementById('ee_eng_'+eid)||{}).value||'';
   e.exGrade=(document.getElementById('ee_exg_'+eid)||{}).value||'';
   e.memo=(document.getElementById('ee_mem_'+eid)||{}).value||'';
+  e.improve=(document.getElementById('ee_imp_'+eid)||{}).value||'';
   if(remainShares(p)<=0)p.status='closed';
   else if(p.exits.length>0)p.status='partial';
   editingExit=null;
@@ -1084,7 +1113,7 @@ function renderAnalysis(){
       const code=(p.name||'').match(/^([0-9A-Za-z]+)/);
       const enDate=e.enDate||p.date;
       const holdD=e.date&&enDate?Math.round((new Date(e.date)-new Date(enDate))/864e5):null;
-      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:enDate,planEn:e.enPrice||p.en,holdDays:holdD});
+      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:enDate,planEn:e.enPrice||p.en,holdDays:holdD,patMemo:p.patMemo||'',feeling:p.feeling||''});
     }
   });});
   if(!monthExits.length){el.innerHTML='<div class="empty">今月（'+parseInt(curYM.split('-')[1])+'月）のEX記録がありません。</div>';return;}
@@ -1112,7 +1141,10 @@ function renderAnalysis(){
         <span class="ana-tag ${tCls}">${e.exitType}</span>
         ${e.holdDays!=null?`${e.holdDays}日<span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>EN ${fmtDate(e.planDate)}${curOfName(e.planName)}${fmt(e.planEn)}→EX ${curOfName(e.planName)}${fmt(e.price)}${grades}
       </div>
-      ${e.memo?`<div class="ana-memo">${e.memo}</div>`:''}
+      ${e.patMemo?`<div class="ana-memo">📝 エントリー理由: ${e.patMemo}</div>`:''}
+      ${e.feeling?`<div class="ana-memo">💭 感情: ${e.feeling}</div>`:''}
+      ${e.memo?`<div class="ana-memo">🗒️ 反省: ${e.memo}</div>`:''}
+      ${e.improve?`<div class="ana-memo">🔧 改善点: ${e.improve}</div>`:''}
     </div>`;
   });
   el.innerHTML=html;
