@@ -108,6 +108,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .exb.sel{background:#0d0d0d;color:#c9a84c;border-color:#0d0d0d}
 .del{font-size:12px;color:#c0392b;background:#fce8e8;border:0.5px solid #e8b4b4;border-radius:6px;cursor:pointer;padding:5px 10px}
 .edit-btn{font-size:12px;color:#1a7a4a;background:#e3f1ea;border:0.5px solid #b4d8c4;border-radius:6px;cursor:pointer;padding:5px 10px;text-decoration:none}
+.add-entry-btn{display:block;width:100%;margin-top:8px;padding:8px;font-size:13px;color:#0d0d0d;background:#fff;border:1px dashed #c9a84c;border-radius:8px;cursor:pointer;font-weight:600}
+.add-entry-btn:hover{background:#fdf8e8}
 .empty{font-size:12px;color:#444;text-align:center;padding:18px 0}
 .ex-list{margin:8px 0}
 .ex-row{display:flex;gap:8px;align-items:center;font-size:12px;color:#444;padding:5px 8px;background:#f7f6f2;border-radius:6px;margin-bottom:4px;flex-wrap:wrap}
@@ -370,6 +372,7 @@ const GRADES=['◎','○','△','×'];
 const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'全撤退',cls:'warn'}];
 const CHECK_LABELS=['TPの指値（分割・半分）を発注した','撤退ラインの逆指値SLを発注した','これらを場中に動かさないと決めた'];
 let editingExit=null;
+let addingEntry={};  // {planId: true} で追加購入フォーム表示中
 let expandedPlans={};
 let expandedMonths={};
 
@@ -553,6 +556,7 @@ async function loadFromSheets(){
         checks:p.status==='armed'?[true,true,true]:[false,false,false],
         patMemo:p.patMemo||'',feeling:p.feeling||'',status:p.status||'draft',
         exits:Array.isArray(p.exits)?p.exits.map(e=>({...e,shares:Number(e.shares),price:Number(e.price),pnl:Number(e.pnl),enPrice:e.enPrice?Number(e.enPrice):null,enDate:e.enDate||'',improve:e.improve||'',good:e.good||''})):[],
+        entries:Array.isArray(p.entries)?p.entries.map(en=>({eid:Number(en.eid)||en.eid,date:en.date||'',price:Number(en.price)||0,shares:Number(en.shares)||0,memo:en.memo||''})):[],
         currentPrice:null,priceTime:null
       })).filter(p=>p.name);
       // v2互換
@@ -579,6 +583,49 @@ async function addExitToSheets(planId,exit){
 }
 async function removeExitFromSheets(planId,eid){
   try{await gasGet({action:'removeExit',planId,eid,planStatus:plans.find(p=>p.id===planId).status});setSyncStatus('✓','#1a7a4a');}catch(e){setSyncStatus('⚠','#c02020');}
+}
+async function addEntryToSheets(planId,entry){
+  const p=plans.find(p=>p.id===planId);
+  try{await gasGet({action:'addEntry',planId,planName:(p&&p.name)||'',eid:entry.eid,date:entry.date,price:entry.price,shares:entry.shares,memo:entry.memo||''});setSyncStatus('✓ 追加購入保存','#1a7a4a');}catch(e){setSyncStatus('⚠ オフライン','#c02020');}
+}
+async function removeEntryFromSheets(planId,eid){
+  try{await gasGet({action:'removeEntry',planId,eid});setSyncStatus('✓','#1a7a4a');}catch(e){setSyncStatus('⚠','#c02020');}
+}
+function startAddEntry(planId){addingEntry[planId]=true;render();}
+function cancelAddEntry(planId){delete addingEntry[planId];render();}
+async function confirmAddEntry(planId){
+  const p=plans.find(x=>x.id===planId);if(!p)return;
+  const date=(document.getElementById('addEntD_'+planId)||{}).value||'';
+  const price=parseFloat((document.getElementById('addEntP_'+planId)||{}).value);
+  const shares=parseInt((document.getElementById('addEntS_'+planId)||{}).value);
+  const memo=(document.getElementById('addEntM_'+planId)||{}).value||'';
+  if(!date){alert('購入日を入力してください');return;}
+  if(!price||price<=0){alert('購入価格を入力してください');return;}
+  if(!shares||shares<=0){alert('株数を入力してください');return;}
+  // 初回購入のentriesが空なら、initレコードを補完してから追加する
+  if(!p.entries||!p.entries.length){
+    p.entries=[{eid:Date.now()-1,date:p.date||date,price:Number(p.en)||0,shares:Number(p.qty)||0,memo:''}];
+    // 初回をSheetにも記録
+    await addEntryToSheets(planId,p.entries[0]);
+  }
+  const entry={eid:Date.now(),date,price,shares,memo};
+  p.entries.push(entry);
+  // p.qtyは合計株数として更新
+  p.qty=totalEntryShares(p);
+  delete addingEntry[planId];
+  persistLocal();render();
+  await addEntryToSheets(planId,entry);
+  await saveToSheets(p);  // p.qty更新を反映
+}
+async function removeEntry(planId,eid){
+  if(!confirm('この購入記録を取り消しますか？'))return;
+  const p=plans.find(x=>x.id===planId);if(!p)return;
+  p.entries=(p.entries||[]).filter(e=>e.eid!==eid);
+  // entriesが空になっても初回相当を残すため、p.qtyは合計株数として再計算
+  p.qty=totalEntryShares(p);
+  persistLocal();render();
+  await removeEntryFromSheets(planId,eid);
+  await saveToSheets(p);
 }
 async function deletePlanFromSheets(id){
   try{await gasGet({action:'delete',id});setSyncStatus('✓ 削除','#1a7a4a');}catch(e){setSyncStatus('⚠','#c02020');}
@@ -646,7 +693,7 @@ async function savePlan(){
     const plan={id:Date.now(),date:new Date().toISOString().slice(0,10),name,
       pat:document.getElementById('f_pat').value,patMemo:document.getElementById('f_patMemo').value.trim(),
       score:document.getElementById('f_score').value,en,qty,tp,sl,
-      checks:[false,false,false],status:'draft',exits:[],currentPrice:null,priceTime:null};
+      checks:[false,false,false],status:'draft',exits:[],entries:[],currentPrice:null,priceTime:null};
     plans.push(plan);persistLocal();render();
     await saveToSheets(plan);
   }
@@ -681,8 +728,22 @@ function editPlan(id){
 }
 
 // ===== HELPERS =====
+// 合計購入株数：entriesがあればその合計、無ければp.qty（後方互換）
+function totalEntryShares(p){
+  if(p.entries&&p.entries.length)return p.entries.reduce((s,e)=>s+(Number(e.shares)||0),0);
+  return Number(p.qty)||0;
+}
+// 平均取得単価：entriesがあれば加重平均、無ければp.en（後方互換）
+function avgEntryPrice(p){
+  if(p.entries&&p.entries.length){
+    let totalCost=0,totalShares=0;
+    p.entries.forEach(e=>{const sh=Number(e.shares)||0;const pr=Number(e.price)||0;totalCost+=sh*pr;totalShares+=sh;});
+    return totalShares>0?(totalCost/totalShares):(Number(p.en)||0);
+  }
+  return Number(p.en)||0;
+}
 function exitedShares(p){return p.exits.reduce((s,e)=>s+e.shares,0);}
-function remainShares(p){return p.qty-exitedShares(p);}
+function remainShares(p){return totalEntryShares(p)-exitedShares(p);}
 function totalPnl(p){return p.exits.reduce((s,e)=>s+e.pnl,0);}
 function gradeOpts(sel){return '<option value="">—</option>'+GRADES.map(g=>`<option${sel===g?' selected':''}>${g}</option>`).join('');}
 function calcExPnl(id){
@@ -821,7 +882,47 @@ function renderPlanCard(p,isClosed){
   if(!closed&&rem>0){
     let pi='現在値を取得してください';
     if(p.currentPrice){pi=`${rem}株 × 現在値 ${curOfPlan(p)}${fmt(p.currentPrice)}`;}
+    const avg=avgEntryPrice(p);
+    const total=totalEntryShares(p);
+    const cur=curOfPlan(p);
+    // 購入記録の一覧（初回購入＋追加購入。entriesが空なら初回分を仮想的に表示）
+    let entryRows='';
+    const showEntries=(p.entries&&p.entries.length)?p.entries.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))):[
+      {eid:'init',date:p.date,price:p.en,shares:p.qty,memo:'（初回購入）',isInit:true}
+    ];
+    if(showEntries.length){
+      entryRows=showEntries.map((e,i)=>{
+        const isInit=e.isInit||e.eid==='init';
+        const delBtn=isInit?'':`<button class="ex-del" onclick="removeEntry(${p.id},${e.eid})">取消</button>`;
+        return `<div class="ex-row">
+          <span class="ex-date">${fmtDate(e.date)||'—'}</span>
+          <span class="ex-shares">${e.shares}株</span>
+          <span class="ex-price">${cur}${fmt(e.price)}</span>
+          ${delBtn}
+          ${e.memo?`<div class="ex-detail">${isInit?'':'追加購入時の思惑：'}${e.memo}</div>`:''}
+        </div>`;
+      }).join('');
+    }
+    const entriesList=`<div class="ex-list"><div class="cg-t">購入記録（${showEntries.length}回）</div>${entryRows}<div class="ex-summary">合計 ${total}株 ・ 平均取得単価 ${cur}${fmt(Math.round(avg))}</div></div>`;
+    // 追加購入フォーム（表示／非表示）
+    const showAddForm=addingEntry[p.id];
+    const todayStr=new Date().toISOString().slice(0,10);
+    const addForm=showAddForm?`<div class="ex-input" style="margin-top:8px;">
+        <div class="ct">追加購入の入力</div>
+        <div class="grid3">
+          <div class="field"><label>購入日</label><input type="date" id="addEntD_${p.id}" value="${todayStr}"></div>
+          <div class="field"><label>購入価格</label><input type="number" id="addEntP_${p.id}" inputmode="decimal" placeholder="単価"></div>
+          <div class="field"><label>株数</label><input type="number" id="addEntS_${p.id}" inputmode="numeric" placeholder="株数"></div>
+        </div>
+        <div class="field" style="margin-bottom:8px;"><label>追加購入時の思惑（メモ）</label><textarea id="addEntM_${p.id}" rows="2" placeholder="なぜこのタイミングで追加購入するのか"></textarea></div>
+        <div style="display:flex;gap:8px;">
+          <button class="ex-confirm-btn" style="flex:1;" onclick="confirmAddEntry(${p.id})">追加購入を保存</button>
+          <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelAddEntry(${p.id})">キャンセル</button>
+        </div>
+      </div>`:`<button class="add-entry-btn" onclick="startAddEntry(${p.id})">＋ 追加購入</button>`;
     holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>
+    ${entriesList}
+    ${addForm}
     <div class="field" style="margin-top:8px;"><label>感情（保有中の心理状態を自由記述）</label><textarea id="feel_${p.id}" rows="2" placeholder="例）含み益が増えて早く利確したい焦りがある／予定通りで落ち着いている" onblur="saveFeeling(${p.id})">${p.feeling||''}</textarea></div>`;
   }
 
@@ -846,7 +947,7 @@ function renderPlanCard(p,isClosed){
         <div class="ct">「${selType}」の詳細を入力</div>
         <div class="grid3">
           <div class="field"><label>実際のEN日付</label><input type="date" id="exEnD_${p.id}" value="${p.date}"></div>
-          <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${p.en}" oninput="calcExPnl(${p.id})"></div>
+          <div class="field"><label>実際のEN価格</label><input type="number" id="exEnP_${p.id}" inputmode="decimal" value="${Math.round(avgEntryPrice(p))}" oninput="calcExPnl(${p.id})"></div>
           <div class="field"><label>EX日付</label><input type="date" id="exd_${p.id}" value="${today}"></div>
         </div>
         <div class="grid3">
