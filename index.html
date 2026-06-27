@@ -53,7 +53,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .mtx td.rr{cursor:pointer;font-weight:700;font-size:13px}
 .rr.g{color:#1a7a4a}.rr.a{color:#b5851a}.rr.r{color:#c02020}
 .mtx .sub{display:block;font-weight:400;color:#444;font-size:12px;line-height:1.4}
-.readout{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:4px 0 12px}
+.readout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin:4px 0 12px}
 .stat{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:9px 10px;text-align:center}
 .stat .k{font-size:12px;color:#444;letter-spacing:0.1em;margin-bottom:3px}
 .stat .v{font-size:17px;font-weight:700;color:#1a1a1a}
@@ -92,7 +92,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .pill.armed{background:#e3f1ea;color:#1a7a4a}
 .pill.partial{background:#fef3e0;color:#b5851a}
 .pill.done{background:#f0e9d8;color:#8a6d1a}
-.plan-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;font-size:12px}
+.plan-nums{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;font-size:12px}
 .plan-nums div{background:#f7f6f2;border-radius:6px;padding:6px 8px}
 .plan-nums .lbl{font-size:12px;color:#444}.plan-nums .val{font-size:13px;font-weight:600;color:#1a1a1a}
 .checks{border-top:0.5px solid #eee;padding-top:10px;margin-bottom:4px}
@@ -210,7 +210,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .reload-btn{font-size:12px;color:#444;background:none;border:0.5px solid #ccc;border-radius:6px;padding:3px 8px;cursor:pointer;margin-left:8px}
 @media(max-width:600px){
   .grid,.grid3,.grid4,.readout{grid-template-columns:1fr 1fr}
-  .plan-nums,.monthly-stats{grid-template-columns:1fr 1fr}
+  .plan-nums{grid-template-columns:repeat(3,1fr)}.monthly-stats{grid-template-columns:1fr 1fr}
 }
 .ana-chartlink{cursor:pointer;color:#1a1a1a;font-weight:700}
 .ana-chartbtn{display:inline-flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;font-weight:700;color:#2a5599;background:#e8eef7;border:0.5px solid #c5d4ea;border-radius:6px;padding:2px 8px;margin-left:6px;white-space:nowrap;vertical-align:middle}
@@ -230,6 +230,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .chart-legend .lg{display:flex;align-items:center;gap:5px}
 .chart-legend .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
 .chart-loading{padding:40px;text-align:center;color:#888;font-size:13px}
+
+.ptp-toggle{font-size:12px;font-weight:700;color:#1a1a1a;cursor:pointer;background:#fafaf6;border:0.5px solid #e5e3db;border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.ptp-toggle:active{background:#f0efe9}
+.ptp-body{display:none;margin-bottom:10px;}
+.ptp-body.show{display:block;}
+.ptp-card{background:#fafaf6;border:0.5px solid #e5e3db;border-radius:8px;padding:8px 10px;margin-bottom:6px;}
+.ptp-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;font-size:12px;}
+.ptp-summary .ps{background:#fff;border:0.5px solid #ddd;border-radius:6px;padding:5px 7px;text-align:center;}
+.ptp-summary .ps .k{color:#444;font-size:11px;}.ptp-summary .ps .v{font-weight:700;font-size:13px;}
+.plan-nums .val{font-weight:700}
 </style>
 </head>
 <body>
@@ -275,29 +285,110 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
         <option value="10">10 楽勝・不安なし</option><option value="8">8 ほぼ不安なし</option>
         <option value="6">6 懸念あるが自信</option><option value="2">2 悩みどころ</option>
         <option value="0">0 正直難しい</option></select></div>
-    <div class="field"><label>株数</label><input id="f_qty" type="number" inputmode="numeric" placeholder="100" oninput="recalc()"></div>
+    <div class="field"><label>株数</label><input id="f_qty" type="number" inputmode="numeric" placeholder="100" step="100" oninput="recalc()"></div>
   </div>
   <div class="field" style="margin-bottom:10px;"><label>エントリー理由（任意）</label><textarea id="f_patMemo" rows="2" placeholder="なぜこの銘柄・このタイミングでエントリーするのか"></textarea></div>
   <div class="grid3">
     <div class="field"><label>EN価格 <button type="button" class="chart-btn-sm" onclick="openChartFromForm()">📈 チャート</button></label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
-    <div class="field"><label>TP価格</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">②なら二倍価格。</div></div>
-    <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">命綱としてのSL。</div></div>
+    <div class="field"><label>TP価格（期待値・RR3〜5）</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">高値付近の節目。RR3〜5を目安に。</div></div>
+    <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">命綱としてのSL。利確後はENをSLに。</div></div>
   </div>
   <div id="candPanel" style="display:none;">
-    <div class="candgrp"><div class="cg-t">TP候補（タップで入力）</div><div class="chips" id="tpChips"></div></div>
+    <div class="candgrp"><div class="cg-t">TP候補・直近の意識される高値（タップで入力）</div><div class="chips" id="tpChips"></div></div>
     <div class="candgrp"><div class="cg-t">SL候補（タップで入力）</div><div class="chips" id="slChips"></div></div>
     <div class="cg-t" style="margin-top:10px;">TP×SL 比較マトリクス</div>
     <div class="mtxwrap"><table class="mtx" id="mtxTable"></table></div>
   </div>
   <div class="readout">
+    <div class="stat"><div class="k">建代金</div><div class="v" id="o_tatekin">—</div><div class="u">EN×株数</div></div>
     <div class="stat"><div class="k">RR 比</div><div class="v" id="o_rr">—</div><div class="u">(TP−EN)/(EN−SL)</div></div>
     <div class="stat"><div class="k">想定利益</div><div class="v green" id="o_gain">—</div><div class="u">円</div></div>
     <div class="stat"><div class="k">想定損失</div><div class="v red" id="o_loss">—</div><div class="u">円</div></div>
   </div>
   <div class="splitline" id="o_split" style="display:none;"><div class="t">分割EXプラン</div><span id="o_split_txt"></span></div>
+  <div id="simPanel" style="display:none;margin-bottom:10px;padding:12px 14px;background:#f0f4f8;border:1px solid #c5d4ea;border-radius:10px;">
+    <div style="font-size:12px;font-weight:700;color:#2a5599;margin-bottom:8px;">📊 保有株 + この計画のシミュレーション</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-size:12px;">
+      <div style="background:#fff;border-radius:8px;padding:8px;"><div style="color:#666;">建代金合計</div><div style="font-size:16px;font-weight:700;" id="sim_tatekin">—</div></div>
+      <div style="background:#fff;border-radius:8px;padding:8px;"><div style="color:#666;">想定損失合計</div><div style="font-size:16px;font-weight:700;color:#c02020;" id="sim_loss">—</div></div>
+      <div style="background:#fff;border-radius:8px;padding:8px;"><div style="color:#666;">合計RR比</div><div style="font-size:16px;font-weight:700;color:#2a5599;" id="sim_rr">—</div></div>
+    </div>
+  </div>
+  <div class="ptp-toggle" onclick="document.getElementById('ptpBody').classList.toggle('show');this.querySelector('.arr').textContent=document.getElementById('ptpBody').classList.contains('show')?'▼':'▶'">
+    <span><span class="arr">▶</span> 部分利確TP①〜④（意識される高値でRR1〜2で刻む）</span>
+  </div>
+  <div id="ptpBody" class="ptp-body">
+    <div class="ptp-card">
+      <div style="font-size:12px;font-weight:700;color:#b5851a;margin-bottom:4px;">TP①</div>
+      <div class="grid3">
+        <div class="field"><label>TP①価格</label><input id="f_ptp1" type="number" inputmode="decimal" placeholder="候補をタップ" oninput="recalc()"></div>
+        <div class="field"><label>EX株数</label><input id="f_pqs1" type="number" inputmode="numeric" placeholder="株数" step="100" oninput="recalc()"></div>
+        <div class="field"><label>保有期間</label><select id="f_hp1"><option value="">— 選択 —</option><option>当日中（デイトレ）</option><option>1〜3日</option><option>3〜5日</option><option>1週間以内</option><option>2週間以内</option><option>1ヶ月以内</option><option>1〜3ヶ月</option><option>3ヶ月超（スイング）</option></select></div>
+      </div>
+      <div id="ptpChips_1" style="margin-top:4px;"></div>
+      <div id="ptpSlBtns_1" style="margin-top:4px;"></div>
+      <div class="ptp-summary">
+        <div class="ps"><div class="k">RR比</div><div class="v" id="ptp_rr_1">—</div></div>
+        <div class="ps"><div class="k">想定利益</div><div class="v" style="color:#1a7a4a;" id="ptp_gain_1">—</div></div>
+        <div class="ps"><div class="k">想定損失</div><div class="v" style="color:#c02020;" id="ptp_loss_1">—</div></div>
+      </div>
+    </div>
+    <div class="ptp-card">
+      <div style="font-size:12px;font-weight:700;color:#b5851a;margin-bottom:4px;">TP②</div>
+      <div class="grid3">
+        <div class="field"><label>TP②価格</label><input id="f_ptp2" type="number" inputmode="decimal" placeholder="候補をタップ" oninput="recalc()"></div>
+        <div class="field"><label>EX株数</label><input id="f_pqs2" type="number" inputmode="numeric" placeholder="株数" step="100" oninput="recalc()"></div>
+        <div class="field"><label>保有期間</label><select id="f_hp2"><option value="">— 選択 —</option><option>当日中（デイトレ）</option><option>1〜3日</option><option>3〜5日</option><option>1週間以内</option><option>2週間以内</option><option>1ヶ月以内</option><option>1〜3ヶ月</option><option>3ヶ月超（スイング）</option></select></div>
+      </div>
+      <div id="ptpChips_2" style="margin-top:4px;"></div>
+      <div id="ptpSlBtns_2" style="margin-top:4px;"></div>
+      <div class="ptp-summary">
+        <div class="ps"><div class="k">RR比</div><div class="v" id="ptp_rr_2">—</div></div>
+        <div class="ps"><div class="k">想定利益</div><div class="v" style="color:#1a7a4a;" id="ptp_gain_2">—</div></div>
+        <div class="ps"><div class="k">想定損失</div><div class="v" style="color:#c02020;" id="ptp_loss_2">—</div></div>
+      </div>
+    </div>
+    <div class="ptp-card">
+      <div style="font-size:12px;font-weight:700;color:#b5851a;margin-bottom:4px;">TP③</div>
+      <div class="grid3">
+        <div class="field"><label>TP③価格</label><input id="f_ptp3" type="number" inputmode="decimal" placeholder="候補をタップ" oninput="recalc()"></div>
+        <div class="field"><label>EX株数</label><input id="f_pqs3" type="number" inputmode="numeric" placeholder="株数" step="100" oninput="recalc()"></div>
+        <div class="field"><label>保有期間</label><select id="f_hp3"><option value="">— 選択 —</option><option>当日中（デイトレ）</option><option>1〜3日</option><option>3〜5日</option><option>1週間以内</option><option>2週間以内</option><option>1ヶ月以内</option><option>1〜3ヶ月</option><option>3ヶ月超（スイング）</option></select></div>
+      </div>
+      <div id="ptpChips_3" style="margin-top:4px;"></div>
+      <div id="ptpSlBtns_3" style="margin-top:4px;"></div>
+      <div class="ptp-summary">
+        <div class="ps"><div class="k">RR比</div><div class="v" id="ptp_rr_3">—</div></div>
+        <div class="ps"><div class="k">想定利益</div><div class="v" style="color:#1a7a4a;" id="ptp_gain_3">—</div></div>
+        <div class="ps"><div class="k">想定損失</div><div class="v" style="color:#c02020;" id="ptp_loss_3">—</div></div>
+      </div>
+    </div>
+    <div class="ptp-card">
+      <div style="font-size:12px;font-weight:700;color:#b5851a;margin-bottom:4px;">TP④</div>
+      <div class="grid3">
+        <div class="field"><label>TP④価格</label><input id="f_ptp4" type="number" inputmode="decimal" placeholder="候補をタップ" oninput="recalc()"></div>
+        <div class="field"><label>EX株数</label><input id="f_pqs4" type="number" inputmode="numeric" placeholder="株数" step="100" oninput="recalc()"></div>
+        <div class="field"><label>保有期間</label><select id="f_hp4"><option value="">— 選択 —</option><option>当日中（デイトレ）</option><option>1〜3日</option><option>3〜5日</option><option>1週間以内</option><option>2週間以内</option><option>1ヶ月以内</option><option>1〜3ヶ月</option><option>3ヶ月超（スイング）</option></select></div>
+      </div>
+      <div id="ptpChips_4" style="margin-top:4px;"></div>
+      <div id="ptpSlBtns_4" style="margin-top:4px;"></div>
+      <div class="ptp-summary">
+        <div class="ps"><div class="k">RR比</div><div class="v" id="ptp_rr_4">—</div></div>
+        <div class="ps"><div class="k">想定利益</div><div class="v" style="color:#1a7a4a;" id="ptp_gain_4">—</div></div>
+        <div class="ps"><div class="k">想定損失</div><div class="v" style="color:#c02020;" id="ptp_loss_4">—</div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="flag warn" id="flag_score">点数が6未満。ENを見送るか、ロットを大きく落とす場面。</div>
   <div class="flag bad" id="flag_rr">RRが2未満。プロスペクト理論の閾値を下回る＝原則は見送り検討。</div>
   <input type="hidden" id="f_editId" value="">
+  <div style="margin:10px 0;padding:10px 14px;background:#fff5f5;border:1.5px solid #e88;border-radius:10px;color:#c02020;font-size:13px;font-weight:700;line-height:1.6;">
+    ⚠ 一度に大きなポジションを取らない。何日かに分けて購入すること。<br>
+    購入の翌日大きく下げる場合があることを考慮しろ！<br>
+    2026年6月26日の324万円の損切を忘れるな。購入した翌日の暴落で。<br>
+    たった2日で324万円の損だぞ！
+  </div>
   <button class="save-btn" id="saveBtn" onclick="savePlan()">この計画を保存する</button>
 </div>
 
@@ -308,6 +399,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 
 <div class="sec">
   <p class="sec-title"><span class="step">保有株</span> 3つチェック完了・場中は触らない</p>
+  <div id="holdingSummary" style="display:none;"></div>
   <div id="armedList"><div class="empty">保有株はありません。</div></div>
 </div>
 
@@ -345,6 +437,15 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 <div class="sec">
   <p class="sec-title"><span class="step">EX分布・月次集計</span></p>
   <div id="tally"><div class="empty">計画を「終了」させると、ここに集計が出ます。</div></div>
+  <div id="pastMonthLinks" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;"></div>
+  <div style="margin-top:14px;background:#fafaf6;border:1px solid #e5e3db;border-radius:10px;padding:14px;">
+    <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:10px;">📝 月次振り返り</div>
+    <div class="field" style="margin-bottom:8px;"><label style="font-weight:700;">今月の反省点</label><textarea id="monthReflect" rows="3" placeholder="今月のトレードで反省すべき点…" style="width:100%;font-size:13px;"></textarea></div>
+    <div class="field" style="margin-bottom:8px;"><label style="font-weight:700;">今月の改善点・来月の目標</label><textarea id="monthImprove" rows="3" placeholder="来月に活かす改善点…" style="width:100%;font-size:13px;"></textarea></div>
+    <div class="field" style="margin-bottom:10px;"><label style="font-weight:700;">良かった点・成長</label><textarea id="monthGood" rows="3" placeholder="良かったトレード、成長した点…" style="width:100%;font-size:13px;"></textarea></div>
+    <button type="button" style="width:100%;padding:10px;font-size:14px;font-weight:700;color:#fff;background:#2a5599;border:none;border-radius:8px;cursor:pointer;" onclick="saveMonthlyReview()">月の記録を保存する</button>
+    <div id="monthSaveStatus" style="margin-top:6px;font-size:12px;text-align:center;color:#1a7a4a;display:none;"></div>
+  </div>
 </div>
 
 <div class="sec">
@@ -369,7 +470,7 @@ const GAS_URL='https://script.google.com/macros/s/AKfycbxLLf5YuIhTuhQPa4C5OKgv8K
 const KEY='cleartrade_plans_v3';
 let plans=[];let quote=null;
 const GRADES=['◎','○','△','×'];
-const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'全撤退',cls:'warn'}];
+const EX_TYPES=[{k:'銘柄切替',cls:'good'},{k:'分散EX',cls:'good'},{k:'撤退(弱くなった)',cls:'good'},{k:'SL撤退',cls:'warn'},{k:'逆指値狩り',cls:'warn'},{k:'逆指値（逃げ遅れ）',cls:'warn'},{k:'全撤退',cls:'warn'}];
 const CHECK_LABELS=['TPの指値（分割・半分）を発注した','撤退ラインの逆指値SLを発注した','これらを場中に動かさないと決めた'];
 let editingExit=null;
 let addingEntry={};  // {planId: true} で追加購入フォーム表示中
@@ -429,6 +530,7 @@ async function fetchQuote(){
     document.getElementById('f_code').value=code;
     document.getElementById('f_name').value=code+' '+cleanName;
     document.getElementById('f_en').value=d.price;
+    if(!document.getElementById('f_qty').value)document.getElementById('f_qty').value=100;
     document.getElementById('quoteInfo').style.display='block';
     document.getElementById('quoteInfo').innerHTML=
       `<b>${cleanName||code}</b>　現在値 <b>${cur}${fmt(d.price)}</b>（前日終値 ${cur}${fmt(d.prevClose)}）<br>`+
@@ -476,12 +578,17 @@ async function onCodeInput(){
   if(v.length<2){closeSuggest();return;}
   searchTimer=setTimeout(()=>searchByName(v),350);
 }
+function toHalfAlnum(s){return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));}
+function isKatakana(s){return /^[ァ-ヶー　\s]+$/.test(s.trim());}
 async function searchByName(q){
   const el=document.getElementById('suggestList');
   el.innerHTML='<div class="suggest-item" style="color:#444;cursor:default;">検索中…</div>';
   el.classList.add('show');
+  // カタカナ入力はJP市場の日本語検索として扱う
+  const searchQ=toHalfAlnum(q);
+  const searchMarket=isKatakana(q)?'JP':currentMarket;
   try{
-    const d=await gasGet({action:'search',q,market:currentMarket});
+    const d=await gasGet({action:'search',q:searchQ,market:searchMarket});
     if(d.result==='ok'&&d.items&&d.items.length>0){
       el.innerHTML=d.items.map(it=>{
         const safeName=(it.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
@@ -516,28 +623,126 @@ function tpCands(en){
 function slCands(en){
   const c=[];
   const tp=numVal('f_tp');
-  if(tp&&tp>en){const sl2=Math.round(en-(tp-en)/2);if(sl2>0&&sl2<en)c.push({label:'RR=2.0',v:sl2});}
+  if(tp&&tp>en){
+    [2.0,2.5,3.0,3.5].forEach(rr=>{
+      const sl=Math.round(en-(tp-en)/rr);
+      if(sl>0&&sl<en)c.push({label:'RR='+rr.toFixed(1),v:sl,rrBased:true});
+    });
+  }
+  // 現在株価からの%-SL候補
+  [4,5,6,7].forEach(pct=>{const v=Math.round(en*(1-pct/100));if(v>0)c.push({label:'-'+pct+'%',v});});
   if(quote){
     if(quote.atrW)c.push({label:'週足ATR-SL',v:en-quote.atrW});
     if(quote.atrD)c.push({label:'日足ATR-SL',v:en-quote.atrD});
     if(quote.prevDayLow)c.push({label:'前日安値',v:quote.prevDayLow});
     if(quote.low5)c.push({label:'5日安値',v:quote.low5});
   }
+  // 固定損失額からSL逆算（-10万/-15万/-20万）
+  const qty2=numVal('f_qty');
+  if(qty2&&qty2>0){
+    [100000,150000,200000].forEach(loss=>{
+      const sl=Math.round(en-loss/qty2);
+      if(sl>0&&sl<en)c.push({label:'-'+Math.round(loss/10000)+'万円',v:sl,lossAmt:true});
+    });
+  }
   return c.map(x=>({...x,v:Math.round(x.v)}));
 }
 function setVal(id,v){document.getElementById(id).value=v;recalc();}
 function setBoth(tp,sl){document.getElementById('f_tp').value=tp;document.getElementById('f_sl').value=sl;recalc();}
+
+// 部分利確TP候補（EN・SLからRR1.0/1.25/1.5/2.0/2.5/3.0の価格を算出）
+function ptpCands(en,sl){
+  if(!en||!sl||sl>=en)return [];
+  const risk=en-sl;
+  const cands=[];
+  [1.0,1.25,1.5,2.0,2.5,3.0].forEach(rr=>{
+    const v=Math.round(en+risk*rr);
+    cands.push({label:'RR='+rr.toFixed(2),v,rr});
+  });
+  if(quote&&quote.high3m&&quote.high3m>en)cands.push({label:'直近高値',v:Math.round(quote.high3m)});
+  return cands;
+}
+
+// 部分TP表示の動的更新（候補チップ・RR表示・SL逆算ボタンのみ更新。入力欄は壊さない）
+function updatePtpDisplays(){
+  const en=numVal('f_en'),sl=numVal('f_sl'),qty=numVal('f_qty');
+  const cands=ptpCands(en||0,sl||0);
+  for(let i=1;i<=4;i++){
+    const fid='f_ptp'+i;
+    const tpV=numVal(fid);
+    // 候補チップ
+    const chipEl=document.getElementById('ptpChips_'+i);
+    if(chipEl){
+      chipEl.innerHTML=cands.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;">'+
+        cands.map(cd=>`<span class="chip ${cd.rr?'rrc':'tpc'}" style="font-size:11px;padding:4px 7px;" onclick="setPtpVal('${fid}',${cd.v})">${cd.label} <b>${cd.v.toLocaleString()}</b></span>`).join('')+
+        '</div>':'';
+    }
+    // RR→SL逆算ボタン
+    const slBtnEl=document.getElementById('ptpSlBtns_'+i);
+    if(slBtnEl){
+      slBtnEl.innerHTML=(!isNaN(tpV)&&tpV>0&&en&&tpV>en)?
+        '<div style="display:flex;gap:4px;flex-wrap:wrap;">'+
+        [2.0,2.5,3.0,3.5].map(rr=>{
+          const slV=Math.round(en-(tpV-en)/rr);
+          return slV>0&&slV<en?`<button type="button" class="chip rrc" style="font-size:11px;padding:4px 7px;cursor:pointer;" onclick="setSLfromTP(${slV})">RR${rr.toFixed(1)}→SL ¥${slV.toLocaleString()}</button>`:'';
+        }).join('')+
+        '</div>':'';
+    }
+    // RR・損益表示
+    const rrEl=document.getElementById('ptp_rr_'+i);
+    const gainEl=document.getElementById('ptp_gain_'+i);
+    const lossEl=document.getElementById('ptp_loss_'+i);
+    if(rrEl){
+      let rrTxt='—';
+      if(en&&!isNaN(tpV)&&tpV>0&&sl&&sl<en){
+        const risk=en-sl;
+        const rr=(tpV-en)/risk;
+        rrTxt=rr.toFixed(2);
+        rrEl.style.color=rr>=2?'#1a7a4a':rr>=1?'#b5851a':'#c02020';
+      }else{rrEl.style.color='#1a1a1a';}
+      rrEl.textContent=rrTxt;
+    }
+    if(gainEl){
+      const pqsV=parseInt((document.getElementById('f_pqs'+i)||{}).value)||0;
+      const useQty=pqsV>0?pqsV:(!isNaN(qty)?qty:0);
+      if(en&&!isNaN(tpV)&&tpV>0&&useQty>0){
+        gainEl.textContent=yen(Math.abs((tpV-en)*useQty));
+      }else{gainEl.textContent='—';}
+    }
+    if(lossEl){
+      const pqsV=parseInt((document.getElementById('f_pqs'+i)||{}).value)||0;
+      const useQty=pqsV>0?pqsV:(!isNaN(qty)?qty:0);
+      if(en&&sl&&sl<en&&useQty>0){
+        lossEl.textContent=yen(Math.abs((en-sl)*useQty));
+      }else{lossEl.textContent='—';}
+    }
+  }
+}
+function setPtpVal(id,v){const el=document.getElementById(id);if(el){el.value=v;}recalc();}
+
+// PnL符号切替（iPhoneでマイナス入力用）
+function togglePnlSign(id){
+  const el=document.getElementById(id);if(!el)return;
+  let v=el.value.trim();
+  if(!v||v==='0')return;
+  if(v.startsWith('-'))el.value=v.slice(1);
+  else if(v.startsWith('+'))el.value='-'+v.slice(1);
+  else el.value='-'+v;
+}
+function setSLfromTP(slV){const el=document.getElementById('f_sl');if(el)el.value=slV;recalc();}
 function renderCandidates(){
   const panel=document.getElementById('candPanel');
-  const en=numVal('f_en'),tp=numVal('f_tp'),qty=numVal('f_qty');
+  const en=numVal('f_en'),tp=numVal('f_tp'),qty=numVal('f_qty'),sl=numVal('f_sl');
   const tps=tpCands(en||0),sls=slCands(en||0);
   if(!en&&!quote){panel.style.display='none';return;}
   const enV=en||0;
   document.getElementById('tpChips').innerHTML=tps.map(t=>`<span class="chip tpc" onclick="setVal('f_tp',${t.v})">${t.label} <b>${t.v.toLocaleString()}</b>${qty&&t.v>enV?`<span class="sub2"> +${fmt((t.v-enV)*qty)}円</span>`:''}</span>`).join('');
   document.getElementById('slChips').innerHTML=sls.map(s=>{
-    const cls=s.label==='RR=2.0'?'rrc':'slc';
+    const cls=s.rrBased?'rrc':s.lossAmt?'rrc':'slc';
     return `<span class="chip ${cls}" onclick="setVal('f_sl',${s.v})">${s.label} <b>${s.v.toLocaleString()}</b>${qty&&s.v<enV?`<span class="sub2"> −${fmt((enV-s.v)*qty)}円</span>`:''}</span>`;
   }).join('');
+  // 部分TP表示の動的更新（候補チップ・RR表示・SL逆算ボタン）
+  updatePtpDisplays();
   if(tps.length&&sls.length){
     let h='<tr><th>TP＼SL</th>'+sls.map(s=>`<th>${s.label}<span class="sub">${s.v.toLocaleString()}</span></th>`).join('')+'</tr>';
     for(const t of tps){h+=`<tr><th>${t.label}<span class="sub">${t.v.toLocaleString()}</span></th>`;for(const s of sls){if(t.v>enV&&s.v<enV){const rr=(t.v-enV)/(enV-s.v);h+=`<td class="rr ${rr>=2?'g':rr>=1?'a':'r'}" onclick="setBoth(${t.v},${s.v})">${rr.toFixed(2)}</td>`;}else h+='<td>—</td>';}h+='</tr>';}
@@ -553,6 +758,9 @@ async function loadFromSheets(){
     const d=await gasGet({action:'load'});
     if(d.result==='ok'&&Array.isArray(d.plans)){
       plans=d.plans.map(p=>({...p,id:Number(p.id),en:Number(p.en),qty:Number(p.qty),tp:Number(p.tp),sl:Number(p.sl),
+        ptp1:p.ptp1?Number(p.ptp1):null,ptp2:p.ptp2?Number(p.ptp2):null,ptp3:p.ptp3?Number(p.ptp3):null,ptp4:p.ptp4?Number(p.ptp4):null,
+        pqs1:Number(p.pqs1)||0,pqs2:Number(p.pqs2)||0,pqs3:Number(p.pqs3)||0,pqs4:Number(p.pqs4)||0,
+        hp1:p.hp1||'',hp2:p.hp2||'',hp3:p.hp3||'',hp4:p.hp4||'',
         checks:p.status==='armed'?[true,true,true]:[false,false,false],
         patMemo:p.patMemo||'',feeling:p.feeling||'',status:p.status||'draft',
         exits:Array.isArray(p.exits)?p.exits.map(e=>({...e,shares:Number(e.shares),price:Number(e.price),pnl:Number(e.pnl),enPrice:e.enPrice?Number(e.enPrice):null,enDate:e.enDate||'',improve:e.improve||'',good:e.good||''})):[],
@@ -573,7 +781,7 @@ async function saveToSheets(plan){
   try{
     const en=plan.en,sl=plan.sl,tp=plan.tp;
     const rrVal=(en!==sl)?((tp-en)/(en-sl)).toFixed(2):'0';
-    await gasGet({action:'save',id:plan.id,date:plan.date,name:plan.name,pat:plan.pat,patMemo:plan.patMemo||'',feeling:plan.feeling||'',score:plan.score,en:plan.en,qty:plan.qty,tp:plan.tp,sl:plan.sl,rr:rrVal,status:plan.status});
+    await gasGet({action:'save',id:plan.id,date:plan.date,name:plan.name,pat:plan.pat,patMemo:plan.patMemo||'',feeling:plan.feeling||'',score:plan.score,en:plan.en,qty:plan.qty,tp:plan.tp,sl:plan.sl,rr:rrVal,status:plan.status,ptp1:plan.ptp1||'',ptp2:plan.ptp2||'',ptp3:plan.ptp3||'',ptp4:plan.ptp4||'',pqs1:plan.pqs1||0,pqs2:plan.pqs2||0,pqs3:plan.pqs3||0,pqs4:plan.pqs4||0,hp1:plan.hp1||'',hp2:plan.hp2||'',hp3:plan.hp3||'',hp4:plan.hp4||''});
     setSyncStatus('✓ 保存','#1a7a4a');
   }catch(e){setSyncStatus('⚠ ローカルのみ','#c02020');}
 }
@@ -646,7 +854,7 @@ async function saveFeeling(id){
 const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
 // 損益用：プラスは「+¥」、マイナスは「−¥」を付ける
 const pnlStr=n=>(n>=0?'+¥':'−¥')+fmt(Math.abs(n));
-const numVal=id=>parseFloat(document.getElementById(id).value);
+const numVal=id=>{const el=document.getElementById(id);return el?parseFloat(el.value):NaN;};
 function recalc(){
   const en=numVal('f_en'),qty=numVal('f_qty'),tp=numVal('f_tp'),sl=numVal('f_sl');
   const score=document.getElementById('f_score').value;
@@ -659,10 +867,62 @@ function recalc(){
     rrEl.className='v '+(rr>=2?'green':rr>=1?'amber':'red');
     showFlag('flag_rr',rr>0&&rr<2);
   }else{rrEl.textContent='—';rrEl.className='v';showFlag('flag_rr',false);}
+  const tatekinEl=document.getElementById('o_tatekin');
+  if(tatekinEl)tatekinEl.textContent=(en&&qty)?yen(Math.round(en*qty)):'—';
   gEl.textContent=(en&&tp&&qty)?yen(Math.abs((tp-en)*qty)):'—';
   lEl.textContent=(en&&sl&&qty)?yen(Math.abs((en-sl)*qty)):'—';
   const sw=document.getElementById('o_split');
-  if(qty&&tp&&en&&tp>en){const h2=Math.min(Math.max(100,Math.round(qty/2/100)*100),qty);document.getElementById('o_split_txt').innerHTML=`TP <b>${tp}</b> で <b>${h2}株</b> を利確 → 残り <b>${qty-h2}株</b> はトレーリング。`;sw.style.display='block';}else{sw.style.display='none';}
+  if(qty&&tp&&en&&tp>en&&sl&&sl<en){
+    const risk=en-sl;
+    // 部分TP価格（入力済みのもの、昇順）
+    const ptpData=['f_ptp1','f_ptp2','f_ptp3','f_ptp4'].map((id,i)=>{
+      const v=numVal(id);
+      const sq=parseInt((document.getElementById('f_pqs'+(i+1))||{}).value)||0;
+      return(!isNaN(v)&&v>en)?{v,shares:sq}:null;
+    }).filter(Boolean).sort((a,b)=>a.v-b.v);
+    const ptps=ptpData.map(x=>x.v);
+    const rr=(tp-en)/risk;
+    let splitTxt='';
+    if(ptps.length){
+      const totalPartialShares=ptpData.reduce((s,x)=>s+(x.shares||0),0);
+      const autoPerShare=Math.floor(qty/(ptpData.length+1)/100)*100||Math.floor(qty/(ptpData.length+1));
+      let usedShares=0;
+      const steps=ptpData.map((pd,i)=>{
+        const rrHere=((pd.v-en)/risk).toFixed(2);
+        const sh=pd.shares>0?pd.shares:autoPerShare;
+        usedShares+=sh;
+        return `RR<b>${rrHere}</b>（¥${pd.v.toLocaleString()}）で<b>${sh}株</b>`;
+      }).join(' → ');
+      const remainSh=Math.max(0,qty-(totalPartialShares>0?totalPartialShares:usedShares));
+      splitTxt=steps+` → 残り<b>${remainSh}株</b>はEN(¥${en.toLocaleString()})をSLに乗せ切る`;
+    } else {
+      const h2=Math.min(Math.max(100,Math.round(qty/2/100)*100),qty);
+      splitTxt=`TP <b>${tp.toLocaleString()}</b>（RR${rr.toFixed(1)}）で <b>${h2}株</b> を利確 → 残り <b>${qty-h2}株</b> はENをSLに乗せ切る`;
+    }
+    document.getElementById('o_split_txt').innerHTML=splitTxt;
+    sw.style.display='block';
+  }else{sw.style.display='none';}
+  // シミュレーション（保有株 + この計画）
+  const simPnl=document.getElementById('simPanel');
+  if(simPnl){
+    if(en&&sl&&qty&&sl<en){
+      const newTateKin=Math.round(en*qty);
+      const newLoss=Math.abs((en-sl)*qty);
+      const newGain=tp&&tp>en?Math.abs((tp-en)*qty):0;
+      let hTateKin=0,hLoss=0,hGain=0;
+      plans.filter(p=>(p.status==='armed'||p.status==='partial')&&remainShares(p)>0).forEach(p=>{
+        const avg=avgEntryPrice(p);const rm=Math.max(0,remainShares(p));
+        hTateKin+=Math.round(avg*rm);
+        if(p.sl&&p.sl<avg)hLoss+=Math.abs((avg-p.sl)*rm);
+        if(p.tp&&p.tp>avg)hGain+=Math.abs((p.tp-avg)*rm);
+      });
+      document.getElementById('sim_tatekin').textContent='¥'+Math.round(hTateKin+newTateKin).toLocaleString();
+      document.getElementById('sim_loss').textContent='¥'+Math.round(hLoss+newLoss).toLocaleString();
+      const cRR=(hLoss+newLoss)>0?((hGain+newGain)/(hLoss+newLoss)).toFixed(2):'—';
+      document.getElementById('sim_rr').textContent=cRR;
+      simPnl.style.display='block';
+    }else{simPnl.style.display='none';}
+  }
   renderCandidates();
 }
 function showFlag(id,on){document.getElementById(id).classList.toggle('show',on);}
@@ -680,6 +940,16 @@ async function savePlan(){
     const p=plans.find(x=>x.id===Number(editId));
     if(p){
       p.name=name;p.pat=document.getElementById('f_pat').value;p.patMemo=document.getElementById('f_patMemo').value.trim();p.score=document.getElementById('f_score').value;p.en=en;p.qty=qty;p.tp=tp;p.sl=sl;
+      const ep1=numVal('f_ptp1'),ep2=numVal('f_ptp2'),ep3=numVal('f_ptp3'),ep4=numVal('f_ptp4');
+      p.ptp1=isNaN(ep1)?null:ep1;p.ptp2=isNaN(ep2)?null:ep2;p.ptp3=isNaN(ep3)?null:ep3;p.ptp4=isNaN(ep4)?null:ep4;
+      p.pqs1=parseInt((document.getElementById('f_pqs1')||{}).value)||0;
+      p.pqs2=parseInt((document.getElementById('f_pqs2')||{}).value)||0;
+      p.pqs3=parseInt((document.getElementById('f_pqs3')||{}).value)||0;
+      p.pqs4=parseInt((document.getElementById('f_pqs4')||{}).value)||0;
+      p.hp1=(document.getElementById('f_hp1')||{}).value||'';
+      p.hp2=(document.getElementById('f_hp2')||{}).value||'';
+      p.hp3=(document.getElementById('f_hp3')||{}).value||'';
+      p.hp4=(document.getElementById('f_hp4')||{}).value||'';
       const rem=remainShares(p);
       const closedNow=rem<=0&&p.exits.length>0;
       scrollTargetId=closedNow?'closedList':(p.status==='partial'?'partialList':(p.status==='armed'?'armedList':'draftList'));
@@ -690,9 +960,19 @@ async function savePlan(){
     // upsert保存（既存行を上書き。delete+saveだとEX記録が消え重複も発生するため廃止）
     if(p)await saveToSheets(p);
   }else{
+    const ptp1=numVal('f_ptp1'),ptp2=numVal('f_ptp2'),ptp3=numVal('f_ptp3'),ptp4=numVal('f_ptp4');
     const plan={id:Date.now(),date:new Date().toISOString().slice(0,10),name,
       pat:document.getElementById('f_pat').value,patMemo:document.getElementById('f_patMemo').value.trim(),
       score:document.getElementById('f_score').value,en,qty,tp,sl,
+      ptp1:isNaN(ptp1)?null:ptp1,ptp2:isNaN(ptp2)?null:ptp2,ptp3:isNaN(ptp3)?null:ptp3,ptp4:isNaN(ptp4)?null:ptp4,
+      pqs1:parseInt((document.getElementById('f_pqs1')||{}).value)||0,
+      pqs2:parseInt((document.getElementById('f_pqs2')||{}).value)||0,
+      pqs3:parseInt((document.getElementById('f_pqs3')||{}).value)||0,
+      pqs4:parseInt((document.getElementById('f_pqs4')||{}).value)||0,
+      hp1:(document.getElementById('f_hp1')||{}).value||'',
+      hp2:(document.getElementById('f_hp2')||{}).value||'',
+      hp3:(document.getElementById('f_hp3')||{}).value||'',
+      hp4:(document.getElementById('f_hp4')||{}).value||'',
       checks:[false,false,false],status:'draft',exits:[],entries:[],currentPrice:null,priceTime:null};
     plans.push(plan);persistLocal();render();
     await saveToSheets(plan);
@@ -702,7 +982,8 @@ async function savePlan(){
   if(targetEl)window.scrollTo({top:targetEl.offsetTop-60,behavior:'smooth'});
 }
 function clearForm(){
-  ['f_code','f_name','f_en','f_qty','f_tp','f_sl'].forEach(id=>document.getElementById(id).value='');
+  ['f_code','f_name','f_en','f_qty','f_tp','f_sl','f_ptp1','f_ptp2','f_ptp3','f_ptp4','f_pqs1','f_pqs2','f_pqs3','f_pqs4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f_hp1','f_hp2','f_hp3','f_hp4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f_pat').value='';document.getElementById('f_score').value='';
   document.getElementById('f_patMemo').value='';document.getElementById('f_editId').value='';
   document.getElementById('saveBtn').textContent='この計画を保存する';
@@ -722,6 +1003,11 @@ function editPlan(id){
   document.getElementById('f_tp').value=p.tp;
   document.getElementById('f_sl').value=p.sl;
   document.getElementById('f_editId').value=p.id;
+  for(let i=1;i<=4;i++){
+    const te=document.getElementById('f_ptp'+i);if(te)te.value=p['ptp'+i]||'';
+    const he=document.getElementById('f_hp'+i);if(he)he.value=p['hp'+i]||'';
+    const se=document.getElementById('f_pqs'+i);if(se)se.value=p['pqs'+i]||'';
+  }
   document.getElementById('saveBtn').textContent='計画を更新する';
   recalc();
   window.scrollTo({top:document.getElementById('planForm').offsetTop-16,behavior:'smooth'});
@@ -829,6 +1115,39 @@ function render(){
   if(closedListEl)closedListEl.innerHTML=closedRecent.length?closedRecent.map(p=>renderPlanCard(p,true)).join(''):'<div class="empty">今月のEX完了銘柄はありません。</div>';
 
   renderTally();renderAnalysis();
+  // 保有株合計サマリー
+  renderHoldingSummary(armeds.concat(partials));
+}
+
+function renderHoldingSummary(holdingPlans){
+  const el=document.getElementById('holdingSummary');
+  if(!el)return;
+  if(!holdingPlans.length){el.style.display='none';return;}
+  let totalTateKin=0,totalLoss=0,totalGain=0;
+  holdingPlans.forEach(p=>{
+    const avg=avgEntryPrice(p);
+    const rem=Math.max(0,remainShares(p));
+    const posVal=Math.round(avg*rem);
+    totalTateKin+=posVal;
+    if(p.sl&&p.sl<avg&&rem>0)totalLoss+=Math.abs((avg-p.sl)*rem);
+    if(p.tp&&p.tp>avg&&rem>0)totalGain+=Math.abs((p.tp-avg)*rem);
+  });
+  const totalRR=totalLoss>0?(totalGain/totalLoss).toFixed(2):'—';
+  el.style.display='block';
+  el.innerHTML=`<div style="margin-top:10px;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;color:#fff;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px;color:#ffd700;">📊 保有株 合計サマリー</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+      <div><div style="font-size:11px;color:#aaa;">建代金合計</div><div style="font-size:20px;font-weight:700;color:#fff;">¥${Math.round(totalTateKin).toLocaleString()}</div></div>
+      <div><div style="font-size:11px;color:#aaa;">想定損失合計</div><div style="font-size:20px;font-weight:700;color:#ff6b6b;">¥${Math.round(totalLoss).toLocaleString()}</div></div>
+      <div><div style="font-size:11px;color:#aaa;">合計RR比</div><div style="font-size:20px;font-weight:700;color:#4ecdc4;">${totalRR}</div></div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#3a0000;border:1.5px solid #ff4444;border-radius:8px;color:#ff4444;font-size:16px;font-weight:700;line-height:1.5;text-align:center;">
+      ⚠ ポジション量を大きくし過ぎるな。<br>4000万円分買って、2026年6月26日、<br>1日で324万円の大損失を出したことを忘れるな！！
+    </div>
+    <div style="margin-top:10px;padding:10px;background:#1a2a1a;border:1px solid #4ecdc4;border-radius:8px;color:#4ecdc4;font-size:14px;font-weight:700;line-height:1.6;text-align:center;">
+      株価が上がりみんなが売りたくない時に売れ（利確）！<br>だれもが恐怖で買えない時に買え！
+    </div>
+  </div>`;
 }
 
 function renderPlanCard(p,isClosed){
@@ -838,11 +1157,32 @@ function renderPlanCard(p,isClosed){
   const exd=exitedShares(p),rem=remainShares(p);
   const closed=rem<=0&&p.exits.length>0;
 
-  const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val">${fmt(p.en)}円</div></div><div><div class="lbl">TP</div><div class="val">${fmt(p.tp)}円</div></div><div><div class="lbl">SL</div><div class="val">${fmt(p.sl)}円</div></div><div><div class="lbl">RR</div><div class="val">${rr}</div></div></div>`;
+  // 想定損失額
+  const lossAmt=(en&&sl&&p.qty&&sl<en)?Math.abs((en-sl)*p.qty):null;
+  // 保有中の想定損失は平均取得単価ベース
+  const avg2=avgEntryPrice(p);
+  const remShares2=remainShares(p);
+  const holdingLoss=(avg2&&p.sl&&remShares2>0&&p.sl<avg2)?Math.abs((avg2-p.sl)*remShares2):null;
+  // 部分TPリスト
+  const ptpList=[p.ptp1,p.ptp2,p.ptp3,p.ptp4].filter(v=>v&&v>0);
+  const ptpKeys=[1,2,3,4];
+  const ptpHtml=ptpKeys.filter(i=>p['ptp'+i]&&p['ptp'+i]>0).map(i=>{
+    const v=p['ptp'+i],pqs=p['pqs'+i]||0,hp=p['hp'+i]||'';
+    const risk2=(en&&p.sl&&p.sl<en)?en-p.sl:0;
+    const rrH=risk2>0?((v-en)/risk2).toFixed(2):'—';
+    const useS=pqs>0?pqs:totalEntryShares(p);
+    const profitAmt=(v>en&&useS>0)?'+¥'+fmt(Math.abs((v-en)*useS)):'';
+    return `<div><div class="lbl">部分EX${['①','②','③','④'][i-1]}${pqs?'('+pqs+'株)':''}</div><div class="val" style="color:#b5851a;font-weight:700;"><span style="background:#b5851a;color:#fff;padding:1px 4px;border-radius:3px;font-size:10px;margin-right:3px;">TP</span>${fmt(v)}円</div><div class="lbl">RR${rrH}${profitAmt?' <span style="color:#1a7a4a;font-weight:700;">'+profitAmt+'</span>':''}${hp?' ・'+hp:''}</div></div>`;
+  }).join('');
+  const tateShares=totalEntryShares(p);
+  const tateKin=Math.round(avgEntryPrice(p)*tateShares);
+  const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val" style="font-weight:700;">${fmt(p.en)}円</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">TP（期待値）</div><div class="val" style="font-weight:700;">${fmt(p.tp)}円</div></div><div><div class="lbl" style="background:#c02020;color:#fff;display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">SL</div><div class="val" style="font-weight:700;color:#c02020;font-size:16px;">${fmt(p.sl)}円</div></div><div><div class="lbl">建代金</div><div class="val" style="font-weight:700;">¥${fmt(tateKin)}</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">RR</div><div class="val" style="font-weight:700;">${rr}</div></div>${ptpHtml}</div>`;
   const patMemo=`<div class="review-box">
     <div class="review-row"><span class="review-k">該当パターン</span><span class="review-v">${p.pat||'－'}</span></div>
     <div class="review-row"><span class="review-k">点数</span><span class="review-v">${p.score!==undefined&&p.score!==null&&p.score!==''?p.score+'点':'－'}</span></div>
     <div class="review-row"><span class="review-k">EN理由</span><span class="review-v">${p.patMemo||'－'}</span></div>
+    ${[1,2,3,4].map(i=>{const hp=p['hp'+i];const ptp=p['ptp'+i];return hp&&ptp?`<div class="review-row"><span class="review-k">TP${['①','②','③','④'][i-1]}保有期間</span><span class="review-v">${hp}</span></div>`:''}).join('')}
+    ${lossAmt?`<div style="margin-top:6px;padding:6px 10px;background:#fff0f0;border:1px solid #e8c0c0;border-radius:8px;font-size:14px;color:#c02020;font-weight:700;">⚠ 想定損失（計画時）：¥${Math.round(lossAmt).toLocaleString()}</div>`:''}
   </div>`;
 
   // ── EX済みリスト ──
@@ -851,7 +1191,7 @@ function renderPlanCard(p,isClosed){
     const cp=curOfPlan(p);
     const sortedExits=p.exits.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||(Number(b.eid)||0)-(Number(a.eid)||0));
     const rows=sortedExits.map(e=>{
-      const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
+      const pCls=e.pnl>=0?'profit':'loss';const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='逆指値（逃げ遅れ）'||e.exitType==='全撤退')?'warn':'';
       const isEditing=editingExit&&editingExit.planId===p.id&&editingExit.eid===e.eid;
       const holdD=e.date&&(e.enDate||p.date)?Math.round((new Date(e.date)-new Date(e.enDate||p.date))/864e5):null;
       let row=`<div class="ex-row">
@@ -861,8 +1201,7 @@ function renderPlanCard(p,isClosed){
         <span class="ex-type ${tCls}">${e.exitType}</span>
         <span class="ex-pnl ${pCls}">${pnlStr(e.pnl)}</span>
         ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
-        <button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button>
-        <button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button>
+        <span style="display:inline-flex;gap:4px;margin-left:auto;"><button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button><button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button></span>
         ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
         <div class="ex-detail">良かった点：${e.good||'－'}</div>
         <div class="ex-detail">反省点：${e.memo||'－'}</div>
@@ -920,7 +1259,8 @@ function renderPlanCard(p,isClosed){
           <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelAddEntry(${p.id})">キャンセル</button>
         </div>
       </div>`:`<button class="add-entry-btn" onclick="startAddEntry(${p.id})">＋ 追加購入</button>`;
-    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}</div>
+    const hlossHtml=holdingLoss?`<div style="margin-top:4px;font-size:12px;color:#c02020;font-weight:700;">⚠ 想定損失：¥${Math.round(holdingLoss).toLocaleString()} （残${remShares2}株 × SL¥${fmt(p.sl)}）</div>`:'';
+    holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}${hlossHtml}</div>
     ${entriesList}
     ${addForm}
     <div class="field" style="margin-top:8px;"><label>感情（保有中の心理状態を自由記述）</label><textarea id="feel_${p.id}" rows="2" placeholder="例）含み益が増えて早く利確したい焦りがある／予定通りで落ち着いている" onblur="saveFeeling(${p.id})">${p.feeling||''}</textarea></div>`;
@@ -953,7 +1293,7 @@ function renderPlanCard(p,isClosed){
         <div class="grid3">
           <div class="field"><label>株数（残${rem}株）</label><input type="number" id="exs_${p.id}" inputmode="numeric" placeholder="${rem}" max="${rem}" oninput="calcExPnl(${p.id})"></div>
           <div class="field"><label>EX価格</label><input type="number" id="exp_${p.id}" inputmode="decimal" placeholder="約定単価" oninput="calcExPnl(${p.id})"></div>
-          <div class="field"><label>損益（自動／上書可）</label><input type="number" id="exPnlO_${p.id}" inputmode="decimal" placeholder="自動" step="100"></div>
+          <div class="field"><label>損益（自動／上書可）</label><div style="display:flex;gap:4px;align-items:center;"><button type="button" style="width:32px;height:32px;border:1px solid #ccc;border-radius:6px;background:#fff;font-size:16px;cursor:pointer;" onclick="togglePnlSign('exPnlO_${p.id}')">±</button><input type="text" id="exPnlO_${p.id}" inputmode="numeric" placeholder="自動" style="flex:1;"></div></div>
         </div>
         <div class="ex-calc" id="exCalc_${p.id}">損益（自動計算）: —</div>
         <div class="grid4">
@@ -1001,13 +1341,21 @@ function renderPlanCard(p,isClosed){
   const lastEx=p.exits&&p.exits.length?p.exits[p.exits.length-1]:null;
   const chartMarks=firstEx?`{enDate:'${firstEx.enDate||p.date||''}',enPrice:${Number(firstEx.enPrice||p.en)||'null'},exDate:'${lastEx.date||''}',exPrice:${Number(lastEx.price)||'null'}}`:`{}`;
   const chartCode=(codeStr||'').trim();
+  const dispShares=closed?totalEntryShares(p):Math.max(0,rem);
+  const holdLossDisp=(avg2&&p.sl&&dispShares>0&&p.sl<avg2)?Math.abs((avg2-p.sl)*dispShares):null;
+  const totalPnlClosed=closed?p.exits.reduce((s,e)=>s+(Number(e.pnl)||0),0):null;
+  const pnlLabel=closed?`<span style="font-size:12px;font-weight:700;color:${totalPnlClosed>=0?'#1a7a4a':'#c02020'};white-space:nowrap;">損益金額 ${pnlStr(totalPnlClosed)}</span>`:pnlHtml;
+  const lossLabel=(!closed&&holdLossDisp)?`<span style="font-size:11px;font-weight:700;color:#c02020;white-space:nowrap;">想定損失 ¥${fmt(Math.round(holdLossDisp))}</span>`:'';
   const summary=`<div class="plan-summary ${isOpen?'open':''}" onclick="togglePlan(${p.id})">
     <span class="ps-toggle">▶</span>
     <span class="ps-date">${fmtDate(dispDate)}</span>
     <span class="ps-code">${codeStr}</span>
     <span class="ps-name">${nameOnly||p.name}</span>
-    <button class="ps-chart" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈 チャート</button>
-    ${pnlHtml}
+    <span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">建代金 ¥${fmt(tateKin)}</span>
+    <span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">保有株 ${dispShares}株</span>
+    ${lossLabel}
+    ${pnlLabel}
+    <button class="ps-chart" style="margin-left:auto;" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈 チャート</button>
   </div>`;
 
   const fullBody=`<div class="plan-body-wrap">
@@ -1078,7 +1426,7 @@ function exitEditFormHtml(p,e){
           <div class="grid3">
             <div class="field"><label>株数</label><input type="number" id="ee_sh_${e.eid}" inputmode="numeric" value="${e.shares}"></div>
             <div class="field"><label>EX価格</label><input type="number" id="ee_exP_${e.eid}" inputmode="decimal" value="${e.price}" oninput="calcEditPnl(${e.eid})"></div>
-            <div class="field"><label>損益</label><input type="number" id="ee_pnl_${e.eid}" inputmode="decimal" value="${e.pnl}" step="100"></div>
+            <div class="field"><label>損益</label><div style="display:flex;gap:4px;align-items:center;"><button type="button" style="width:32px;height:32px;border:1px solid #ccc;border-radius:6px;background:#fff;font-size:16px;cursor:pointer;" onclick="togglePnlSign('ee_pnl_${e.eid}')">±</button><input type="text" id="ee_pnl_${e.eid}" inputmode="numeric" value="${e.pnl}"></div></div>
           </div>
           <div class="grid4">
             <div class="field"><label>EXタイプ</label><select id="ee_type_${e.eid}">${EX_TYPES.map(t=>`<option${e.exitType===t.k?' selected':''}>${t.k}</option>`).join('')}</select></div>
@@ -1153,6 +1501,57 @@ async function delPlan(id){
 }
 
 // ===== TALLY =====
+
+// ===== 月次振り返り =====
+function monthlyReviewKey(ym){return KEY+'_monthly_'+ym;}
+function getCurrentYM(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+
+function saveMonthlyReview(){
+  const ym=getCurrentYM();
+  const data={
+    reflect:document.getElementById('monthReflect').value,
+    improve:document.getElementById('monthImprove').value,
+    good:document.getElementById('monthGood').value,
+    savedAt:new Date().toISOString()
+  };
+  localStorage.setItem(monthlyReviewKey(ym),JSON.stringify(data));
+  const st=document.getElementById('monthSaveStatus');
+  st.textContent='✓ '+ym+' の記録を保存しました';st.style.display='block';
+  setTimeout(()=>st.style.display='none',3000);
+  renderPastMonthLinks();
+}
+
+function loadMonthlyReview(ym){
+  const key=monthlyReviewKey(ym||getCurrentYM());
+  const raw=localStorage.getItem(key);
+  if(!raw)return;
+  try{
+    const d=JSON.parse(raw);
+    document.getElementById('monthReflect').value=d.reflect||'';
+    document.getElementById('monthImprove').value=d.improve||'';
+    document.getElementById('monthGood').value=d.good||'';
+  }catch(e){}
+}
+
+function renderPastMonthLinks(){
+  const el=document.getElementById('pastMonthLinks');
+  if(!el)return;
+  const months=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    const prefix=KEY+'_monthly_';
+    if(k.startsWith(prefix)){
+      months.push(k.replace(prefix,''));
+    }
+  }
+  months.sort().reverse();
+  const curYM=getCurrentYM();
+  el.innerHTML=months.length?months.map(ym=>{
+    const[y,m]=ym.split('-');
+    const isCur=ym===curYM;
+    return `<button type="button" style="padding:5px 10px;font-size:12px;font-weight:700;border:1px solid ${isCur?'#2a5599':'#ccc'};border-radius:6px;background:${isCur?'#2a5599':'#fff'};color:${isCur?'#fff':'#1a1a1a'};cursor:pointer;" onclick="loadMonthlyReview('${ym}')">${y}年${parseInt(m)}月</button>`;
+  }).join(''):'';
+}
 function renderTally(){
   const el=document.getElementById('tally');
   const allExits=[];
@@ -1173,12 +1572,24 @@ function renderTally(){
     const avgHold=holdDays.length?Math.round(holdDays.reduce((s,d)=>s+d,0)/holdDays.length):null;
     const[y,m]=ym.split('-');const label=(y&&m)?y+'年'+parseInt(m)+'月':ym;
     const avgRR=mp.length?mp.reduce((s,e)=>s+(isFinite(e.planRR)?e.planRR:0),0)/mp.filter(e=>isFinite(e.planRR)).length:null;
+    // 勝ち・負け別の集計
+    const winT=mp.filter(e=>e.pnl>0),loseT=mp.filter(e=>e.pnl<0);
+    const avgWin=winT.length?Math.round(winT.reduce((s,e)=>s+e.pnl,0)/winT.length):0;
+    const avgLose=loseT.length?Math.round(loseT.reduce((s,e)=>s+e.pnl,0)/loseT.length):0;
+    const avgWinPct=winT.length?(winT.reduce((s,e)=>{const b=(Number(e.enPrice)||Number(e.planEn)||1)*e.shares;return s+(b>0?(e.pnl/b)*100:0);},0)/winT.length).toFixed(1):'0';
+    const avgLosePct=loseT.length?(loseT.reduce((s,e)=>{const b=(Number(e.enPrice)||Number(e.planEn)||1)*e.shares;return s+(b>0?(e.pnl/b)*100:0);},0)/loseT.length).toFixed(1):'0';
     const isOpen=!!expandedMonths[ym];
-    html+='<div class="monthly-sec"><div class="monthly-hdr"><span>'+label+'</span><span style="font-size:12px;font-weight:400;color:#444;">'+mn+'件EX</span></div><div class="monthly-stats">'
-      +'<div class="mstat"><div class="mk">勝率</div><div class="mv '+(winRate>=50?'green':'red')+'">'+winRate+'%</div></div>'
+    html+='<div class="monthly-sec"><div class="monthly-hdr"><span>'+label+'</span><span style="font-size:12px;font-weight:400;color:#444;">'+mn+'回取引</span></div><div class="monthly-stats">'
+      +'<div class="mstat"><div class="mk">取引回数</div><div class="mv">'+mn+'回</div></div>'
+      +'<div class="mstat"><div class="mk">勝率</div><div class="mv '+(winRate>=50?'green':'red')+'">'+winRate+'% ('+winT.length+'勝'+loseT.length+'敗)</div></div>'
       +'<div class="mstat"><div class="mk">合計損益</div><div class="mv '+(tp>=0?'green':'red')+'">'+fmtY(tp)+'</div></div>'
       +'<div class="mstat"><div class="mk">平均損益</div><div class="mv '+(avgPnl>=0?'green':'red')+'">'+fmtY(avgPnl)+'</div></div>'
       +'<div class="mstat"><div class="mk">平均保有</div><div class="mv">'+(avgHold!=null?avgHold+'日':'—')+'</div></div>'
+      +'</div><div class="monthly-stats" style="margin-top:6px;">'
+      +'<div class="mstat"><div class="mk">勝ち平均利益</div><div class="mv green">'+(winT.length?fmtY(avgWin):'—')+'</div><div class="mk" style="margin-top:2px;color:#1a7a4a;">'+(winT.length?'+'+avgWinPct+'%':'')+'</div></div>'
+      +'<div class="mstat"><div class="mk">負け平均損失</div><div class="mv red">'+(loseT.length?fmtY(avgLose):'—')+'</div><div class="mk" style="margin-top:2px;color:#c02020;">'+(loseT.length?avgLosePct+'%':'')+'</div></div>'
+      +'<div class="mstat"><div class="mk">勝ち合計</div><div class="mv green">'+(winT.length?fmtY(winT.reduce((s,e)=>s+e.pnl,0)):'—')+'</div></div>'
+      +'<div class="mstat"><div class="mk">負け合計</div><div class="mv red">'+(loseT.length?fmtY(loseT.reduce((s,e)=>s+e.pnl,0)):'—')+'</div></div>'
       +'<div class="mstat"><div class="mk">平均RR</div><div class="mv '+(avgRR!=null&&avgRR>=2?'green':avgRR!=null?'amber':'')+'">'+( avgRR!=null?avgRR.toFixed(2):'—')+'</div></div>'
       +'</div>'
       +'<button class="src-btn" onclick="toggleMonth(\''+ym+'\')">'+(isOpen?'▼ データ元を閉じる':'▶ データ元（参照している取引）')+'</button>';
@@ -1212,7 +1623,7 @@ function renderTally(){
   }
   const n=allExits.length;
   const cnt=t=>allExits.filter(e=>e.exitType===t).length;
-  const sw=cnt('銘柄切替')+cnt('分散EX')+cnt('撤退(弱くなった)'),sl=cnt('SL撤退')+cnt('逆指値狩り');
+  const sw=cnt('銘柄切替')+cnt('分散EX')+cnt('撤退(弱くなった)'),sl=cnt('SL撤退')+cnt('逆指値狩り')+cnt('逆指値（逃げ遅れ）');
   const swP=Math.round(sw/n*100),slP=Math.round(sl/n*100);
   const bar=(l,v,p2,c)=>'<div class="tally-bar"><div class="tl"><span>'+l+'</span><b>'+v+'件 / '+p2+'%</b></div><div class="track"><div class="fill '+c+'" style="width:'+p2+'%"></div></div></div>';
   html+='<div style="font-size:12px;letter-spacing:0.15em;color:#444;margin:14px 0 10px;">EX分布（全'+n+'件）</div>'
@@ -1247,27 +1658,31 @@ function renderAnalysis(){
   monthExits.forEach(e=>{
     const pCls=e.pnl>=0?'profit':'loss';
     const nameClean=(e.planName||'').replace(/^[0-9A-Za-z]+\s*/,'').replace(/Google Finance/ig,'').replace(/[-–—|｜].*$/,'').trim();
-    const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='全撤退')?'warn':'';
+    const tCls=(e.exitType==='SL撤退'||e.exitType==='逆指値狩り'||e.exitType==='逆指値（逃げ遅れ）'||e.exitType==='全撤退')?'warn':'';
     const grades=(e.enGrade||e.exGrade)?`<span class="ana-sep">|</span>EN${e.enGrade||'—'}/EX${e.exGrade||'—'}`:'';
+    const anaId='ana_'+e.eid;
     html+=`<div class="ana-card">
-      <div class="ana-line1">
+      <div class="ana-line1" style="cursor:pointer;" onclick="const b=document.getElementById('${anaId}');b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.ana-arr').textContent=b.style.display==='none'?'▶':'▼';">
+        <span class="ana-arr" style="font-size:11px;color:#888;">▶</span>
         <span class="ana-exdate">${fmtDate(e.date)}</span>
         <span class="ana-code">${e.code}</span>
         <span class="ana-name">${nameClean}</span>
-        <button class="ana-chartbtn" onclick="openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">📈 チャート</button>
-        <span class="ana-pnl ${pCls}">${pnlStr(e.pnl)}</span>
+        <span class="ana-pnl ${pCls}">損益金額 ${pnlStr(e.pnl)}</span>
+        <button class="ana-chartbtn" style="margin-left:auto;" onclick="event.stopPropagation();openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">📈 チャート</button>
       </div>
-      <div class="ana-line2">
-        <span class="ana-tag ${tCls}">${e.exitType}</span>
-        ${e.holdDays!=null?`${e.holdDays}日<span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>EN ${fmtDate(e.planDate)}${curOfName(e.planName)}${fmt(e.planEn)}→EX ${curOfName(e.planName)}${fmt(e.price)}${grades}
+      <div id="${anaId}" style="display:none;">
+        <div class="ana-line2">
+          <span class="ana-tag ${tCls}">${e.exitType}</span>
+          ${e.holdDays!=null?`${e.holdDays}日<span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>EN ${fmtDate(e.planDate)}${curOfName(e.planName)}${fmt(e.planEn)}→EX ${curOfName(e.planName)}${fmt(e.price)}${grades}
+        </div>
+        <div class="ana-memo">該当パターン：${e.pat||'－'}</div>
+        <div class="ana-memo">点数：${e.score!==undefined&&e.score!==null&&e.score!==''?e.score+'点':'－'}</div>
+        <div class="ana-memo">EN理由：${e.patMemo||'－'}</div>
+        <div class="ana-memo" style="color:#c02020;font-weight:700;">感情：${e.feeling||'－'}</div>
+        <div class="ana-memo">良かった点：${e.good||'－'}</div>
+        <div class="ana-memo" style="color:#c02020;font-weight:700;">反省点：${e.memo||'－'}</div>
+        <div class="ana-memo" style="color:#c02020;font-weight:700;">改善点：${e.improve||'－'}</div>
       </div>
-      ${`<div class="ana-memo">該当パターン：${e.pat||'－'}</div>`}
-      ${`<div class="ana-memo">点数：${e.score!==undefined&&e.score!==null&&e.score!==''?e.score+'点':'－'}</div>`}
-      ${`<div class="ana-memo">EN理由：${e.patMemo||'－'}</div>`}
-      ${`<div class="ana-memo">感情：${e.feeling||'－'}</div>`}
-      ${`<div class="ana-memo">良かった点：${e.good||'－'}</div>`}
-      ${`<div class="ana-memo">反省点：${e.memo||'－'}</div>`}
-      ${`<div class="ana-memo">改善点：${e.improve||'－'}</div>`}
     </div>`;
   });
   el.innerHTML=html;
@@ -1477,6 +1892,7 @@ function drawChart(bars,marks,cur){
 }
 
 recalc();loadFromSheets();
+loadMonthlyReview();renderPastMonthLinks();
 </script>
 </body>
 </html>
