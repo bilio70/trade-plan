@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trade plan - 93</title>
+<title>93 Trade plan</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,'Hiragino Sans','Yu Gothic',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:16px;max-width:900px;margin:0 auto;line-height:1.6}
@@ -244,10 +244,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </head>
 <body>
 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-  <h1>Trade plan - 93</h1>
+  <h1 style="font-size:28px;font-weight:900;letter-spacing:0.05em;">93 Trade plan</h1>
   <span><span id="syncStatus" style="font-size:12px;color:#444;">接続中…</span><button class="reload-btn" onclick="loadFromSheets()">再読込</button></span>
 </div>
-<p class="lede">利益確定は独立した技術ではなく<strong>「銘柄切替」</strong>の一形態。決めるのは「いくら乗ったか」ではなく<strong>点数とライン</strong>。場が引けた今夜のうちにTPと撤退ラインを数値で確定し、分割の指値・逆指値を発注しておく。場中の判断＝感情の引き金を、ここで先に消す。</p>
+<p class="lede" style="font-size:15px;font-weight:700;line-height:1.7;color:#c02020;"><strong>利益確定が大事！損切は早くが大事！1回のトレードで20万以上の損失は出すな！<br>1回で136万の損切となるようなポジションの取り方は2度とするな！<br>感情は捨てろ！ルールに従え！</strong></p>
 
 <div class="sec" id="planForm">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -290,7 +290,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   <div class="field" style="margin-bottom:10px;"><label>エントリー理由（任意）</label><textarea id="f_patMemo" rows="2" placeholder="なぜこの銘柄・このタイミングでエントリーするのか"></textarea></div>
   <div class="grid3">
     <div class="field"><label>EN価格 <button type="button" class="chart-btn-sm" onclick="openChartFromForm()">📈 チャート</button></label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
-    <div class="field"><label>TP価格（期待値・RR3〜5）</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">高値付近の節目。RR3〜5を目安に。</div></div>
+    <div class="field"><label>TP価格（期待値・RR3〜5）</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()" onkeydown="tpStepKey(event,'f_tp')" onblur="tpRound('f_tp')"><div class="hint">高値付近の節目。RR3〜5を目安に。</div></div>
     <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">命綱としてのSL。利確後はENをSLに。</div></div>
   </div>
   <div id="candPanel" style="display:none;">
@@ -390,6 +390,21 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
     たった2日で324万円の損だぞ！
   </div>
   <button class="save-btn" id="saveBtn" onclick="savePlan()">この計画を保存する</button>
+  <div style="margin-top:14px;padding:14px;background:#f8f6f0;border:1.5px solid #c9a84c;border-radius:10px;font-size:13px;line-height:1.7;color:#1a1a1a;">
+    <div style="font-size:14px;font-weight:700;color:#b5851a;margin-bottom:8px;">📐 相場とのずれを解消せよ。（マット氏）</div>
+    <div style="margin-bottom:8px;">
+      <div style="font-weight:700;">１．時間軸のずれ：日足だけで判断せよ</div>
+      <div style="margin-left:12px;">・環境認識からエントリー、利確、損切りまで、すべて日足を根拠にすること。<br>・5分足や15分足などの短期足は「ノイズ」であり、それを見ると感情が揺さぶられて判断がブレる原因になる。</div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div style="font-weight:700;">２．期間のずれ：狙う「波」を入口で決めろ</div>
+      <div style="margin-left:12px;">・エントリー前に、数日の「一波」を獲るスイングか、数ヶ月の「トレンド」を追うポジションかを明確に定めること。<br>・スイングなら、大きな押し目（逆行）が来る前に利益を確定させ、資金を回転させるのが仕事である。</div>
+    </div>
+    <div>
+      <div style="font-weight:700;">３．期待値のずれ：現実的なリターンを積み上げろ</div>
+      <div style="margin-left:12px;">・「満塁ホームラン」ではなく、3〜5R程度の「ベースヒット」を狙うのが現実的である。<br>・1〜1.5Rで部分利確を行い、精神的な安定（保険）を確保すること。これが長期的に生き残るための「ビジネス」としてのトレードである。</div>
+    </div>
+  </div>
 </div>
 
 <div class="sec">
@@ -414,9 +429,9 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">撤退トリガー</span> EXのタイミングはこの4つだけ</p>
+  <p class="sec-title"><span class="step">撤退トリガー</span> EXのタイミング！直近高値で押し目が来る前に細かく利確！</p>
   <div class="ref-item">① <strong>銘柄切替</strong>　より点数の高い銘柄が現れた → そちらへ資金移動</div>
-  <div class="ref-item">② <strong>分散EX</strong>　保有銘柄の点数が下がってきた → ポジションを軽くする</div>
+  <div class="ref-item">② <strong>分散EX</strong>　<span style="color:#c02020;font-weight:700;">直近高値で押し目が来る前に、利確！</span></div>
   <div class="ref-item">③ <strong>SL撤退</strong>　逆指値に当たって強制撤退（結果が利確でも損切りでも同じ）</div>
   <div class="ref-item">④ <strong>全撤退</strong>　異常事態が起きた → 全部降りる</div>
   <div class="signal">
@@ -427,7 +442,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 </div>
 
 <div class="sec">
-  <p class="sec-title"><span class="step">場中の鉄則</span> 計画を「働かせる」だけ</p>
+  <p class="sec-title"><span class="step">場中の鉄則</span> 分散利確！分散TPで売る。欲張らない！</p>
+  <div class="iron" style="color:#c02020;font-weight:700;">分散TPになったら売る！欲張らない！</div>
   <div class="iron">板を見て、その場で新しい判断をしない。</div>
   <div class="iron">含み益の<em>金額</em>を見ない。見ると本能が利確を急がせる。</div>
   <div class="iron">発注済みの指値・逆指値を、場中に動かさない・外さない。</div>
@@ -855,6 +871,29 @@ const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
 // 損益用：プラスは「+¥」、マイナスは「−¥」を付ける
 const pnlStr=n=>(n>=0?'+¥':'−¥')+fmt(Math.abs(n));
 const numVal=id=>{const el=document.getElementById(id);return el?parseFloat(el.value):NaN;};
+
+// TP/SL価格の動的ステップ（1万円未満→500円, 1万円以上→1000円）
+function tpStep(v){return (v>=10000)?1000:500;}
+function tpRound(id){
+  var el=document.getElementById(id);if(!el)return;
+  var v=parseFloat(el.value);if(isNaN(v)||v<=0)return;
+  var st=tpStep(v);
+  el.value=Math.round(v/st)*st;
+  recalc();
+}
+function tpStepKey(ev,id){
+  if(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown')return;
+  ev.preventDefault();
+  var el=document.getElementById(id);if(!el)return;
+  var v=parseFloat(el.value)||0;
+  var st=tpStep(v||10000);
+  if(ev.key==='ArrowUp')v+=st;
+  else v=Math.max(0,v-st);
+  // 切りの良い金額に丸め
+  v=Math.round(v/st)*st;
+  el.value=v;
+  recalc();
+}
 function recalc(){
   const en=numVal('f_en'),qty=numVal('f_qty'),tp=numVal('f_tp'),sl=numVal('f_sl');
   const score=document.getElementById('f_score').value;
@@ -1145,7 +1184,7 @@ function renderHoldingSummary(holdingPlans){
       ⚠ ポジション量を大きくし過ぎるな。<br>4000万円分買って、2026年6月26日、<br>1日で324万円の大損失を出したことを忘れるな！！
     </div>
     <div style="margin-top:10px;padding:10px;background:#1a2a1a;border:1px solid #4ecdc4;border-radius:8px;color:#4ecdc4;font-size:14px;font-weight:700;line-height:1.6;text-align:center;">
-      株価が上がりみんなが売りたくない時に売れ（利確）！<br>だれもが恐怖で買えない時に買え！
+      株価が上がりみんなが売りたくない時に売れ（利確）！<br>だれもが恐怖で買えない時に買え！押し目が来る前に分散EXターゲットプライスで売れ！
     </div>
   </div>`;
 }
@@ -1201,6 +1240,7 @@ function renderPlanCard(p,isClosed){
         <span class="ex-type ${tCls}">${e.exitType}</span>
         <span class="ex-pnl ${pCls}">${pnlStr(e.pnl)}</span>
         ${holdD!=null?`<span class="ex-grade">${holdD}日</span>`:''}
+        ${e.price&&p.sl?(e.price>=p.sl?'<div style="width:100%;font-size:14px;font-weight:700;color:#1a1a1a;margin-top:3px;">SLに対してEX 〇</div>':'<div style="width:100%;font-size:14px;font-weight:700;color:#c02020;margin-top:3px;">SLに対してEX ✕</div>'):''}
         <span style="display:inline-flex;gap:4px;margin-left:auto;"><button class="ex-edit" onclick="startEditExit(${p.id},${e.eid})">EX修正</button><button class="ex-del" onclick="removeExit(${p.id},${e.eid})">取消</button></span>
         ${e.enGrade||e.exGrade?`<span class="ex-grade">EN${e.enGrade} EX${e.exGrade}</span>`:''}
         <div class="ex-detail">良かった点：${e.good||'－'}</div>
@@ -1342,6 +1382,10 @@ function renderPlanCard(p,isClosed){
   const chartMarks=firstEx?`{enDate:'${firstEx.enDate||p.date||''}',enPrice:${Number(firstEx.enPrice||p.en)||'null'},exDate:'${lastEx.date||''}',exPrice:${Number(lastEx.price)||'null'}}`:`{}`;
   const chartCode=(codeStr||'').trim();
   const dispShares=closed?totalEntryShares(p):Math.max(0,rem);
+  // 保有期間（最初のEN日〜最後のEX日）
+  const firstEnDate=p.entries&&p.entries.length?p.entries[0].date:(p.exits&&p.exits.length&&p.exits[0].enDate?p.exits[0].enDate:p.date);
+  const lastExDate=p.exits&&p.exits.length?p.exits[p.exits.length-1].date:null;
+  const holdDaysDisp=(firstEnDate&&lastExDate)?Math.round((new Date(lastExDate)-new Date(firstEnDate))/864e5):null;
   const holdLossDisp=(avg2&&p.sl&&dispShares>0&&p.sl<avg2)?Math.abs((avg2-p.sl)*dispShares):null;
   const totalPnlClosed=closed?p.exits.reduce((s,e)=>s+(Number(e.pnl)||0),0):null;
   const pnlLabel=closed?`<span style="font-size:12px;font-weight:700;color:${totalPnlClosed>=0?'#1a7a4a':'#c02020'};white-space:nowrap;">損益金額 ${pnlStr(totalPnlClosed)}</span>`:pnlHtml;
@@ -1352,7 +1396,8 @@ function renderPlanCard(p,isClosed){
     <span class="ps-code">${codeStr}</span>
     <span class="ps-name">${nameOnly||p.name}</span>
     <span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">建代金 ¥${fmt(tateKin)}</span>
-    <span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">保有株 ${dispShares}株</span>
+    <span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">${closed?'取引株数':'保有株'} ${closed?exitedShares(p):dispShares}株</span>
+    ${closed&&holdDaysDisp!=null?`<span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">保有日数 ${holdDaysDisp}日間</span>`:''}
     ${lossLabel}
     ${pnlLabel}
     <button class="ps-chart" style="margin-left:auto;" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈 チャート</button>
@@ -1555,7 +1600,7 @@ function renderPastMonthLinks(){
 function renderTally(){
   const el=document.getElementById('tally');
   const allExits=[];
-  plans.forEach(p=>{const rr=(p.en!==p.sl)?((p.tp-p.en)/(p.en-p.sl)):0;p.exits.forEach(e=>{allExits.push({...e,planId:p.id,planName:p.name,planDate:e.enDate||p.date,planEn:e.enPrice||p.en,planRR:rr});});});
+  plans.forEach(p=>{const rr=(p.en!==p.sl)?((p.tp-p.en)/(p.en-p.sl)):0;p.exits.forEach(e=>{allExits.push({...e,planId:p.id,planName:p.name,planDate:e.enDate||p.date,planEn:e.enPrice||p.en,planRR:rr,planSl:p.sl});});});
   if(!allExits.length){el.innerHTML='<div class="empty">EX記録がありません。</div>';return;}
   const byMonth={};
   allExits.forEach(e=>{const ym=(e.date||'').slice(0,7)||'不明';if(!byMonth[ym])byMonth[ym]=[];byMonth[ym].push(e);});
@@ -1591,7 +1636,8 @@ function renderTally(){
       +'<div class="mstat"><div class="mk">勝ち合計</div><div class="mv green">'+(winT.length?fmtY(winT.reduce((s,e)=>s+e.pnl,0)):'—')+'</div></div>'
       +'<div class="mstat"><div class="mk">負け合計</div><div class="mv red">'+(loseT.length?fmtY(loseT.reduce((s,e)=>s+e.pnl,0)):'—')+'</div></div>'
       +'<div class="mstat"><div class="mk">平均RR</div><div class="mv '+(avgRR!=null&&avgRR>=2?'green':avgRR!=null?'amber':'')+'">'+( avgRR!=null?avgRR.toFixed(2):'—')+'</div></div>'
-      +'</div>'
+      +'<div class="mstat"><div class="mk">最大利益（1回）</div><div class="mv green">'+(winT.length?fmtY(Math.max(...winT.map(e=>e.pnl))):'—')+'</div></div>'
+      +'<div class="mstat"><div class="mk">最大損失（1回）</div><div class="mv red">'+(loseT.length?fmtY(Math.min(...loseT.map(e=>e.pnl))):'—')+'</div></div>'      +(function(){var ok=mp.filter(function(x){return x.planSl&&x.price&&x.price>=x.planSl;}).length;var pct=mn>0?Math.round(ok/mn*100):0;var clr=pct>=70?'#1a7a4a':'#c02020';return '<div class="mstat"><div class="mk">SLに対してEX〇率</div><div class="mv" style="font-weight:700;color:'+clr+';">'+pct+'%</div><div class="mk" style="margin-top:2px;">（'+ok+' / '+mn+'回）</div></div>';}())      +'</div>'
       +'<button class="src-btn" onclick="toggleMonth(\''+ym+'\')">'+(isOpen?'▼ データ元を閉じる':'▶ データ元（参照している取引）')+'</button>';
     if(isOpen){
       html+='<div class="src-list">';
@@ -1630,7 +1676,68 @@ function renderTally(){
     +bar('①②③ 銘柄切替＋分散EX＋撤退（目標7割以上）',sw,swP,'green')
     +bar('③④ SL撤退＋逆指値狩り（目標3割以下）',sl,slP,'red')
     +(swP>=70&&slP<=30?'<div class="tally-note ok">理想形。</div>':'<div class="tally-note ng">①②が7割に届かない／SLが3割超→改善すべきはEXではなくEN。</div>');
+  // 大きな損失トレード（20万円以上）を全期間から列挙
+  const bigLosses=allExits
+    .filter(e=>e.pnl<=-200000)
+    .sort((a,b)=>a.pnl-b.pnl); // 損失の大きい順
+  if(bigLosses.length){
+    html+='<div style="margin-top:16px;">';
+    var totalBigAmt=bigLosses.reduce(function(s,e){return s+e.pnl;},0);
+    html+='<div style="font-size:16px;font-weight:900;color:#c02020;margin-bottom:8px;line-height:1.5;">⚠ 大損失トレード！！（20万円以上）— 全'+bigLosses.length+'件　合計損失：'+fmtY(totalBigAmt)+'</div>';
+    html+='<div style="background:#fff0f0;border:1.5px solid #e8c0c0;border-radius:10px;overflow:hidden;">';
+    bigLosses.forEach(function(e,i){
+      const nm2=(e.planName||'').split(/\s+/).slice(1).join(' ').replace(/Google Finance/ig,'').trim();
+      const cd2=(e.planName||'').match(/^([0-9A-Za-z]+)/);
+      const bg2=i%2===0?'#fff0f0':'#ffe8e8';
+      const holdD2=(e.planDate&&e.date)?Math.round((new Date(e.date)-new Date(e.planDate))/864e5):null;
+      const lossDisp=fmtY(e.pnl);
+      html+='<div style="padding:9px 12px;background:'+bg2+';border-bottom:0.5px solid #f0c0c0;">'
+        +'<div class="bigloss-link" data-pid="'+e.planId+'" style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;">'        +'<span style="font-size:12px;font-weight:700;color:#1a1a1a;white-space:nowrap;">'+fmtDate(e.date)+'</span>'        +'<span style="font-size:13px;font-weight:700;color:#1a1a1a;text-decoration:underline;">'+(cd2?cd2[1]+' ':'')+nm2+'</span>'        +'</div>'        +'<span style="font-size:14px;font-weight:700;color:#c02020;margin-left:auto;">'+lossDisp+'</span>'        +'</div>'
+        +'<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+        +'<span style="font-size:12px;font-weight:700;color:#1a1a1a;">撤退理由：'+(e.exitType||'—')+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:#1a1a1a;">取引株数：'+e.shares+'株</span>'
+        +(holdD2!=null?'<span style="font-size:12px;font-weight:700;color:#1a1a1a;">保有期間：'+holdD2+'日間</span>':'')        +(e.price&&e.planSl?(e.price>=e.planSl?'<span style="font-size:14px;font-weight:700;color:#1a1a1a;">SLに対してEX 〇</span>':'<span style="font-size:14px;font-weight:700;color:#c02020;">SLに対してEX ✕</span>'):'')        +'</div>'        +'</div>';
+    });
+    html+='</div></div>';
+  }
   el.innerHTML=html;
+  // 大損失銘柄名クリック → EX一覧にジャンプ
+  el.querySelectorAll('.bigloss-link[data-pid]').forEach(function(divEl){
+    divEl.addEventListener('click',function(){
+      jumpToPlan(Number(divEl.getAttribute('data-pid')));
+    });
+  });
+}
+
+// 大損失リストから該当EX一覧planへジャンプ
+function jumpToPlan(planId){
+  if(!expandedPlans[planId]){
+    expandedPlans[planId]=true;
+    persistLocal();
+    renderAll();
+  }
+  setTimeout(function(){
+    var closedEl=document.getElementById('closedList');
+    if(!closedEl)return;
+    var allSummaries=closedEl.querySelectorAll('.plan-summary');
+    var targetEl=null;
+    allSummaries.forEach(function(el){
+      var oc=el.getAttribute('onclick')||'';
+      var search='togglePlan('+planId+')';
+      if(oc.indexOf(search)>=0){
+        targetEl=el.closest('.plan')||el;
+      }
+    });
+    if(targetEl){
+      targetEl.scrollIntoView({behavior:'smooth',block:'start'});
+      targetEl.style.outline='3px solid #c02020';
+      var clrFn=function(){targetEl.style.outline='';targetEl.removeEventListener('mouseover',clrFn);targetEl.removeEventListener('click',clrFn);};
+      targetEl.addEventListener('mouseover',clrFn);
+      targetEl.addEventListener('click',clrFn);
+    } else {
+      if(closedEl)closedEl.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  },200);
 }
 
 // ===== 今月のEX分析 =====
@@ -1644,7 +1751,7 @@ function renderAnalysis(){
       const code=(p.name||'').match(/^([0-9A-Za-z]+)/);
       const enDate=e.enDate||p.date;
       const holdD=e.date&&enDate?Math.round((new Date(e.date)-new Date(enDate))/864e5):null;
-      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:enDate,planEn:e.enPrice||p.en,holdDays:holdD,patMemo:p.patMemo||'',feeling:p.feeling||'',pat:p.pat||'',score:p.score});
+      monthExits.push({...e,code:code?code[1]:'',planName:p.name,planDate:enDate,planEn:e.enPrice||p.en,holdDays:holdD,patMemo:p.patMemo||'',feeling:p.feeling||'',pat:p.pat||'',score:p.score,planSl:p.sl});
     }
   });});
   if(!monthExits.length){el.innerHTML='<div class="empty">今月（'+parseInt(curYM.split('-')[1])+'月）のEX記録がありません。</div>';return;}
@@ -1667,13 +1774,15 @@ function renderAnalysis(){
         <span class="ana-exdate">${fmtDate(e.date)}</span>
         <span class="ana-code">${e.code}</span>
         <span class="ana-name">${nameClean}</span>
+        ${e.holdDays!=null?`<span style="font-size:12px;color:#1a1a1a;font-weight:700;">保有日数 ${e.holdDays}日間</span>`:''}
         <span class="ana-pnl ${pCls}">損益金額 ${pnlStr(e.pnl)}</span>
+        ${e.price&&e.planSl?(e.price>=e.planSl?'<span style="font-size:14px;font-weight:700;color:#1a1a1a;">SLに対してEX 〇</span>':'<span style="font-size:14px;font-weight:700;color:#c02020;">SLに対してEX ✕</span>'):''}
         <button class="ana-chartbtn" style="margin-left:auto;" onclick="event.stopPropagation();openChart('${e.code}','${nameClean.replace(/'/g,"\\'")}',{enDate:'${e.planDate||''}',enPrice:${Number(e.planEn)||'null'},exDate:'${e.date||''}',exPrice:${Number(e.price)||'null'}})">📈 チャート</button>
       </div>
       <div id="${anaId}" style="display:none;">
         <div class="ana-line2">
           <span class="ana-tag ${tCls}">${e.exitType}</span>
-          ${e.holdDays!=null?`${e.holdDays}日<span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>EN ${fmtDate(e.planDate)}${curOfName(e.planName)}${fmt(e.planEn)}→EX ${curOfName(e.planName)}${fmt(e.price)}${grades}
+          ${e.holdDays!=null?`<span style="font-weight:700;">保有日数 ${e.holdDays}日間</span><span class="ana-sep">|</span>`:''}${e.shares}株<span class="ana-sep">|</span>EN ${fmtDate(e.planDate)}${curOfName(e.planName)}${fmt(e.planEn)}→EX ${curOfName(e.planName)}${fmt(e.price)}${grades}
         </div>
         <div class="ana-memo">該当パターン：${e.pat||'－'}</div>
         <div class="ana-memo">点数：${e.score!==undefined&&e.score!==null&&e.score!==''?e.score+'点':'－'}</div>
