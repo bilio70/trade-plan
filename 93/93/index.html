@@ -69,7 +69,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .plan{background:#fff;border:0.5px solid #ddd;border-radius:10px;padding:0;margin-bottom:10px;overflow:hidden}
 .plan.armed{border:1px solid #1a7a4a;box-shadow:0 0 0 3px rgba(26,122,74,0.07)}
 .plan.closed{opacity:0.85}
-.plan-summary{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
+.plan-summary{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;flex-wrap:wrap;row-gap:4px}
 .plan-summary:hover{background:#fafaf8}
 .plan-summary .ps-toggle{font-size:13px;color:#666;transition:transform 0.2s;flex-shrink:0}
 .plan-summary.open .ps-toggle{transform:rotate(90deg)}
@@ -210,6 +210,9 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .reload-btn{font-size:12px;color:#444;background:none;border:0.5px solid #ccc;border-radius:6px;padding:3px 8px;cursor:pointer;margin-left:8px}
 @media(max-width:600px){
   .grid,.grid3,.grid4,.readout{grid-template-columns:1fr 1fr}
+  .plan-summary{font-size:12px;gap:4px;padding:8px 10px}
+  .plan-summary .ps-name{min-width:60px;max-width:140px}
+  .ex-row{font-size:11px;gap:4px;padding:4px 6px}
   .plan-nums{grid-template-columns:repeat(3,1fr)}.monthly-stats{grid-template-columns:1fr 1fr}
 }
 .ana-chartlink{cursor:pointer;color:#1a1a1a;font-weight:700}
@@ -231,8 +234,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .chart-legend .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
 .chart-loading{padding:40px;text-align:center;color:#888;font-size:13px}
 
-.ptp-toggle{font-size:12px;font-weight:700;color:#1a1a1a;cursor:pointer;background:#fafaf6;border:0.5px solid #e5e3db;border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.ptp-toggle:active{background:#f0efe9}
+.ptp-toggle{font-size:13px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#b5851a,#c9a84c);border:none;border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(181,133,26,0.3);}
+.ptp-toggle:active{background:linear-gradient(135deg,#8a6010,#b5851a)}
 .ptp-body{display:none;margin-bottom:10px;}
 .ptp-body.show{display:block;}
 .ptp-card{background:#fafaf6;border:0.5px solid #e5e3db;border-radius:8px;padding:8px 10px;margin-bottom:6px;}
@@ -240,14 +243,22 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
 .ptp-summary .ps{background:#fff;border:0.5px solid #ddd;border-radius:6px;padding:5px 7px;text-align:center;}
 .ptp-summary .ps .k{color:#444;font-size:11px;}.ptp-summary .ps .v{font-weight:700;font-size:13px;}
 .plan-nums .val{font-weight:700}
+
+.price-input-wrap{display:flex;align-items:center;gap:0;}
+.price-input-wrap input{flex:1;border-radius:6px 0 0 6px!important;}
+.price-step-btn{width:36px;height:36px;border:1px solid #ccc;background:#f5f5f5;cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.price-step-btn:active{background:#e0e0e0;}
+.price-step-btn.up{border-left:none;border-radius:0;}
+.price-step-btn.dn{border-left:none;border-radius:0 6px 6px 0;}
 </style>
 </head>
 <body>
 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-  <h1 style="font-size:28px;font-weight:900;letter-spacing:0.05em;">93 Trade plan</h1>
+  <h1 style="font-size:28px;font-weight:900;letter-spacing:0.05em;">93 Trade plan <span id="currentMonth" style="font-size:16px;font-weight:700;color:#c9a84c;"></span></h1>
   <span><span id="syncStatus" style="font-size:12px;color:#444;">接続中…</span><button class="reload-btn" onclick="loadFromSheets()">再読込</button></span>
 </div>
 <p class="lede" style="font-size:15px;font-weight:700;line-height:1.7;color:#c02020;"><strong>利益確定が大事！損切は早くが大事！1回のトレードで20万以上の損失は出すな！<br>1回で136万の損切となるようなポジションの取り方は2度とするな！<br>感情は捨てろ！ルールに従え！</strong></p>
+<p style="font-size:14px;font-weight:700;color:#2a5599;line-height:1.6;margin-bottom:12px;">大口の進む方向に便乗しろ！大口の流れが変わったらしかたない。どんな状況でもEX（撤退）！</p>
 
 <div class="sec" id="planForm">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -271,6 +282,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   <div class="grid3">
     <div class="field"><label>鉄板パターン</label>
       <select id="f_pat"><option value="">— 選択 —</option>
+        <option>⓪押し目でウェッジを形成</option>
         <option>①出来高倍増高値抜き</option><option>②株価二倍急騰</option><option>③陽線フィーバー</option>
         <option>④出来高復活再急騰</option><option>⑤タンジェント急騰</option><option>⑥発展タンジェント急騰</option>
         <option>⑦暴騰後38.2%押し</option><option>⑧Super Cup with Handle</option><option>⑨直線上昇</option>
@@ -290,8 +302,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   <div class="field" style="margin-bottom:10px;"><label>エントリー理由（任意）</label><textarea id="f_patMemo" rows="2" placeholder="なぜこの銘柄・このタイミングでエントリーするのか"></textarea></div>
   <div class="grid3">
     <div class="field"><label>EN価格 <button type="button" class="chart-btn-sm" onclick="openChartFromForm()">📈 チャート</button></label><input id="f_en" type="number" inputmode="decimal" placeholder="6000" oninput="recalc()"></div>
-    <div class="field"><label>TP価格（期待値・RR3〜5）</label><input id="f_tp" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()" onkeydown="tpStepKey(event,'f_tp')" onblur="tpRound('f_tp')"><div class="hint">高値付近の節目。RR3〜5を目安に。</div></div>
-    <div class="field"><label>撤退ライン（SL）</label><input id="f_sl" type="number" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()"><div class="hint">命綱としてのSL。利確後はENをSLに。</div></div>
+    <div class="field"><label>TP価格（期待値・RR3〜5）</label><div class="price-input-wrap">
+          <input id="f_tp" type="text" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()" onblur="tpRound('f_tp')">
+          <button type="button" class="price-step-btn up" onclick="priceStep('f_tp','tp',1)">＋</button>
+          <button type="button" class="price-step-btn dn" onclick="priceStep('f_tp','tp',-1)">－</button>
+        </div><div class="hint">高値付近の節目。RR3〜5を目安に。</div></div>
+    <div class="field"><label>撤退ライン（SL）</label><div class="price-input-wrap">
+          <input id="f_sl" type="text" inputmode="decimal" placeholder="下の候補をタップ" oninput="recalc()" onblur="slRound('f_sl')">
+          <button type="button" class="price-step-btn up" onclick="priceStep('f_sl','sl',1)">＋</button>
+          <button type="button" class="price-step-btn dn" onclick="priceStep('f_sl','sl',-1)">－</button>
+        </div><div class="hint">命綱としてのSL。利確後はENをSLに。</div></div>
   </div>
   <div id="candPanel" style="display:none;">
     <div class="candgrp"><div class="cg-t">TP候補・直近の意識される高値（タップで入力）</div><div class="chips" id="tpChips"></div></div>
@@ -315,7 +335,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
     </div>
   </div>
   <div class="ptp-toggle" onclick="document.getElementById('ptpBody').classList.toggle('show');this.querySelector('.arr').textContent=document.getElementById('ptpBody').classList.contains('show')?'▼':'▶'">
-    <span><span class="arr">▶</span> 部分利確TP①〜④（意識される高値でRR1〜2で刻む）</span>
+    <span>📌 <span class="arr">▶</span> 部分利確TP①〜④（意識される高値でRR1〜2で刻む）</span>
   </div>
   <div id="ptpBody" class="ptp-body">
     <div class="ptp-card">
@@ -383,6 +403,60 @@ h1{font-size:15px;font-weight:600;margin-bottom:4px}
   <div class="flag warn" id="flag_score">点数が6未満。ENを見送るか、ロットを大きく落とす場面。</div>
   <div class="flag bad" id="flag_rr">RRが2未満。プロスペクト理論の閾値を下回る＝原則は見送り検討。</div>
   <input type="hidden" id="f_editId" value="">
+  <div style="margin:12px 0;background:#f8f6f0;border:1.5px solid #c9a84c;border-radius:12px;overflow:hidden;">
+    <div style="padding:10px 14px;background:#c9a84c;color:#fff;font-size:14px;font-weight:700;cursor:pointer;" onclick="const b=document.getElementById('scoreChecklist');b.style.display=b.style.display==='none'?'block':'none';this.querySelector('span').textContent=b.style.display==='none'?'▶':'▼'"><span>▶</span> 銘柄タイミング評価スコアリング表（36点満点）</div>
+    <div id="scoreChecklist" style="display:none;padding:12px 14px;font-size:13px;line-height:1.7;">
+
+      <div style="font-weight:700;color:#b5851a;margin-bottom:6px;">1. 予想の的中率（18点満点）</div>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> マグネット効果が期待できる（節目が20%以内に存在）<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 過去の大成功パターンに酷似（鉄板パターン）<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">押し目でウェッジを形成しているか</strong><span style="color:#c02020;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">相対的強さ（RS）がある（市場・セクター比較で強い動き）</strong><span style="color:#c02020;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 規律可能性が高い（綺麗な形、節目価格が機能）<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">値幅の収縮が起きているか（実体が縮小、出来高減少）</strong><span style="color:#c02020;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">主要トレンドは上向きか（高値・安値の切り上げ）</strong><span style="color:#c02020;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">出来高は枯渇しているか（押し目中に弱まっている）</strong><span style="color:#c02020;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> <strong style="color:#c02020;">売買代金ランキング上位50位以内か</strong><span style="color:#c02020;"> +2</span></label>
+
+      <div style="font-weight:700;color:#b5851a;margin:10px 0 6px;">2. 伸び代の大きさ（10点満点）</div>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 似た動きをしている銘柄が複数ある<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 先導株だと思われる<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 出来高が明確に増加傾向にある<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 社会的変化・政策転換に付随<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 観客がさらに増加する仕組みがある<span style="color:#888;"> +2</span></label>
+
+      <div style="font-weight:700;color:#b5851a;margin:10px 0 6px;">3. リスクの低さ（8点満点）</div>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> SLを置く場所が明確<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 予想RR比率が大きい<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 初動20%以内と思われる<span style="color:#888;"> +2</span></label>
+      <label style="display:block;margin-bottom:4px;"><input type="checkbox" class="sc-ck"> 過去に大きな窓を開けて逆に動いていない<span style="color:#888;"> +2</span></label>
+
+      <div style="margin-top:12px;text-align:center;">
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button type="button" style="padding:10px 28px;font-size:14px;font-weight:700;background:#c9a84c;color:#fff;border:none;border-radius:8px;cursor:pointer;" onclick="calcScoreChecklist()">スコアを計算（36点満点）</button>
+          <button type="button" style="padding:10px 20px;font-size:14px;font-weight:700;background:#888;color:#fff;border:none;border-radius:8px;cursor:pointer;" onclick="clearScoreChecklist()">クリア</button>
+        </div>
+        <div id="scoreResult" style="margin-top:10px;font-size:16px;font-weight:700;"></div>
+      </div>
+
+      <div style="margin-top:12px;padding:10px;background:#1a1a2e;border-radius:8px;color:#fff;font-size:12px;">
+        <div style="font-weight:700;margin-bottom:4px;">スコア→直感的な自信（自動判定）</div>
+        <div>30〜36点：楽勝！不安なし</div>
+        <div>25〜29点：たぶんイケる。ほぼ不安なし</div>
+        <div>19〜24点：懸念はあるが自信もある</div>
+        <div>10〜18点：悩みどころ</div>
+        <div>9点以下：正直、難しい</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin:12px 0;padding:12px 14px;background:#fff5f5;border:1.5px solid #c02020;border-radius:10px;">
+    <div style="font-size:14px;font-weight:700;color:#c02020;margin-bottom:8px;">⚠ 計画を保存する前のチェックリスト</div>
+    <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:#c02020;"><input type="checkbox" id="preck1"> 市場全体の地合いは良好か？（主要指数が50日移動平均線の上）</label>
+    <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:#c02020;"><input type="checkbox" id="preck2"> 損切り位置はテクニカル的に妥当か？（直近安値や主要MA）</label>
+    <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:#c02020;"><input type="checkbox" id="preck3"> リスクリワードは3〜5Rを見込めるか？</label>
+    <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:#c02020;"><input type="checkbox" id="preck4"> ポジションサイズは適切か？（1トレードのリスクを口座資産の0.25〜0.5%以内）</label>
+    <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:#c02020;"><input type="checkbox" id="preck5"> 損失を事前に受け入れたか？「このトレードは損切りで終わる可能性がある」という現実を100%受け入れた上で注文を出すか</label>
+  </div>
   <div style="margin:10px 0;padding:10px 14px;background:#fff5f5;border:1.5px solid #e88;border-radius:10px;color:#c02020;font-size:13px;font-weight:700;line-height:1.6;">
     ⚠ 一度に大きなポジションを取らない。何日かに分けて購入すること。<br>
     購入の翌日大きく下げる場合があることを考慮しろ！<br>
@@ -729,7 +803,7 @@ function updatePtpDisplays(){
       const pqsV=parseInt((document.getElementById('f_pqs'+i)||{}).value)||0;
       const useQty=pqsV>0?pqsV:(!isNaN(qty)?qty:0);
       if(en&&sl&&sl<en&&useQty>0){
-        lossEl.textContent=yen(Math.abs((en-sl)*useQty));
+        lossEl.textContent='−'+yen(Math.abs((en-sl)*useQty));
       }else{lossEl.textContent='—';}
     }
   }
@@ -872,27 +946,66 @@ const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
 const pnlStr=n=>(n>=0?'+¥':'−¥')+fmt(Math.abs(n));
 const numVal=id=>{const el=document.getElementById(id);return el?parseFloat(el.value):NaN;};
 
-// TP/SL価格の動的ステップ（1万円未満→500円, 1万円以上→1000円）
-function tpStep(v){return (v>=10000)?1000:500;}
+// TP/SL価格のステップ制御
+function getStep(type,v){
+  if(type==='sl')return 100;           // SL: 常に100円
+  return (v>=10000)?1000:500;          // TP: 1万以上→1000, 未満→500
+}
+function priceStep(id,type,dir){
+  var el=document.getElementById(id);if(!el)return;
+  var v=parseFloat(el.value)||0;
+  var st=getStep(type,v||10000);
+  v=v+(dir*st);
+  if(v<0)v=0;
+  v=Math.round(v/st)*st;              // 切りの良い金額に丸め
+  el.value=v;
+  recalc();
+}
 function tpRound(id){
   var el=document.getElementById(id);if(!el)return;
   var v=parseFloat(el.value);if(isNaN(v)||v<=0)return;
-  var st=tpStep(v);
+  var st=getStep('tp',v);
   el.value=Math.round(v/st)*st;
   recalc();
 }
-function tpStepKey(ev,id){
-  if(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown')return;
-  ev.preventDefault();
+function slRound(id){
   var el=document.getElementById(id);if(!el)return;
-  var v=parseFloat(el.value)||0;
-  var st=tpStep(v||10000);
-  if(ev.key==='ArrowUp')v+=st;
-  else v=Math.max(0,v-st);
-  // 切りの良い金額に丸め
-  v=Math.round(v/st)*st;
-  el.value=v;
+  var v=parseFloat(el.value);if(isNaN(v)||v<=0)return;
+  el.value=Math.round(v/100)*100;
   recalc();
+}
+
+// スコアリング表のスコア計算（36点満点 + 直感10点）
+
+function clearScoreChecklist(){
+  document.querySelectorAll('#scoreChecklist .sc-ck').forEach(function(cb){cb.checked=false;});
+  var r=document.getElementById('scoreResult');if(r)r.innerHTML='';
+}
+function calcScoreChecklist(){
+  var pts=[2,2,2,2,2,2,2,2,2, 2,2,2,2,2, 2,2,2,2];
+  var baseScore=0;
+  var checks=document.querySelectorAll('#scoreChecklist .sc-ck');
+  checks.forEach(function(cb,i){if(cb.checked&&pts[i])baseScore+=pts[i];});
+  // 直感的な自信を自動判定（点数）
+  var confLabel,confPts;
+  if(baseScore>=30){confLabel='楽勝！不安なし（30〜36点）';confPts=10;}
+  else if(baseScore>=25){confLabel='たぶんイケる。ほぼ不安なし（25〜29点）';confPts=8;}
+  else if(baseScore>=19){confLabel='懸念はあるが自信もある（19〜24点）';confPts=6;}
+  else if(baseScore>=10){confLabel='悩みどころ（10〜18点）';confPts=2;}
+  else{confLabel='正直、難しい（9点以下）';confPts=0;}
+  // f_score欄（直感点 10/8/6/2/0）に自動入力
+  var scoreEl=document.getElementById('f_score');
+  if(scoreEl){scoreEl.value=String(confPts);recalc();}
+  var col=confPts>=8?'#1a7a4a':confPts>=6?'#b5851a':'#c02020';
+  var entryMsg=confPts>=8?'エントリー推奨':confPts>=6?'要検討':'見送り推奨';
+  document.getElementById('scoreResult').innerHTML=
+    '<div style="font-size:18px;color:'+col+';font-weight:700;">ベーススコア: '+baseScore+' / 36点</div>'
+    +'<div style="color:'+col+';font-weight:700;margin-top:4px;">'+entryMsg+'</div>'
+    +'<div style="background:#f0f0f0;border-radius:8px;padding:8px;margin-top:8px;font-size:13px;">'
+    +'<div style="font-weight:700;">直感的な自信（自動判定）</div>'
+    +'<div style="color:'+col+';font-weight:700;font-size:15px;">'+confPts+'点 — '+confLabel+'</div>'
+    +'</div>'
+    +'<div style="margin-top:6px;font-size:12px;color:#1a7a4a;font-weight:700;">→ 点数欄に「'+confPts+'点（'+confLabel.split('（')[0].trim()+'）」を自動入力しました</div>';
 }
 function recalc(){
   const en=numVal('f_en'),qty=numVal('f_qty'),tp=numVal('f_tp'),sl=numVal('f_sl');
@@ -909,7 +1022,7 @@ function recalc(){
   const tatekinEl=document.getElementById('o_tatekin');
   if(tatekinEl)tatekinEl.textContent=(en&&qty)?yen(Math.round(en*qty)):'—';
   gEl.textContent=(en&&tp&&qty)?yen(Math.abs((tp-en)*qty)):'—';
-  lEl.textContent=(en&&sl&&qty)?yen(Math.abs((en-sl)*qty)):'—';
+  lEl.textContent=(en&&sl&&qty)?'−'+yen(Math.abs((en-sl)*qty)):'—';
   const sw=document.getElementById('o_split');
   if(qty&&tp&&en&&tp>en&&sl&&sl<en){
     const risk=en-sl;
@@ -956,7 +1069,7 @@ function recalc(){
         if(p.tp&&p.tp>avg)hGain+=Math.abs((p.tp-avg)*rm);
       });
       document.getElementById('sim_tatekin').textContent='¥'+Math.round(hTateKin+newTateKin).toLocaleString();
-      document.getElementById('sim_loss').textContent='¥'+Math.round(hLoss+newLoss).toLocaleString();
+      document.getElementById('sim_loss').textContent='−¥'+Math.round(hLoss+newLoss).toLocaleString();
       const cRR=(hLoss+newLoss)>0?((hGain+newGain)/(hLoss+newLoss)).toFixed(2):'—';
       document.getElementById('sim_rr').textContent=cRR;
       simPnl.style.display='block';
@@ -1215,13 +1328,13 @@ function renderPlanCard(p,isClosed){
   }).join('');
   const tateShares=totalEntryShares(p);
   const tateKin=Math.round(avgEntryPrice(p)*tateShares);
-  const nums=`<div class="plan-nums"><div><div class="lbl">EN</div><div class="val" style="font-weight:700;">${fmt(p.en)}円</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">TP（期待値）</div><div class="val" style="font-weight:700;">${fmt(p.tp)}円</div></div><div><div class="lbl" style="background:#c02020;color:#fff;display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">SL</div><div class="val" style="font-weight:700;color:#c02020;font-size:16px;">${fmt(p.sl)}円</div></div><div><div class="lbl">建代金</div><div class="val" style="font-weight:700;">¥${fmt(tateKin)}</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">RR</div><div class="val" style="font-weight:700;">${rr}</div></div>${ptpHtml}</div>`;
+  const nums=`<div style="border:2px solid #2a5599;border-radius:12px;margin-bottom:10px;overflow:hidden;"><div style="background:#2a5599;padding:7px 12px;"><span style="font-size:15px;font-weight:900;color:#fff;">計画概要</span></div><div style="padding:10px 12px;"><div class="plan-nums"><div><div class="lbl">EN</div><div class="val" style="font-weight:700;">${fmt(p.en)}円</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">TP（期待値）</div><div class="val" style="font-weight:700;">${fmt(p.tp)}円</div></div><div><div class="lbl" style="background:#c02020;color:#fff;display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">SL</div><div class="val" style="font-weight:700;color:#c02020;font-size:16px;">${fmt(p.sl)}円</div></div><div><div class="lbl">建代金</div><div class="val" style="font-weight:700;">¥${fmt(tateKin)}</div><div class="lbl">${tateShares}株</div></div><div><div class="lbl">RR</div><div class="val" style="font-weight:700;">${rr}</div></div>${ptpHtml}</div></div></div>`;
   const patMemo=`<div class="review-box">
     <div class="review-row"><span class="review-k">該当パターン</span><span class="review-v">${p.pat||'－'}</span></div>
     <div class="review-row"><span class="review-k">点数</span><span class="review-v">${p.score!==undefined&&p.score!==null&&p.score!==''?p.score+'点':'－'}</span></div>
     <div class="review-row"><span class="review-k">EN理由</span><span class="review-v">${p.patMemo||'－'}</span></div>
     ${[1,2,3,4].map(i=>{const hp=p['hp'+i];const ptp=p['ptp'+i];return hp&&ptp?`<div class="review-row"><span class="review-k">TP${['①','②','③','④'][i-1]}保有期間</span><span class="review-v">${hp}</span></div>`:''}).join('')}
-    ${lossAmt?`<div style="margin-top:6px;padding:6px 10px;background:#fff0f0;border:1px solid #e8c0c0;border-radius:8px;font-size:14px;color:#c02020;font-weight:700;">⚠ 想定損失（計画時）：¥${Math.round(lossAmt).toLocaleString()}</div>`:''}
+    ${lossAmt?`<div style="margin-top:6px;padding:6px 10px;background:#fff0f0;border:1px solid #e8c0c0;border-radius:8px;font-size:14px;color:#c02020;font-weight:700;">⚠ 想定損失（計画時）：−¥${Math.round(lossAmt).toLocaleString()}</div>`:''}
   </div>`;
 
   // ── EX済みリスト ──
@@ -1299,7 +1412,7 @@ function renderPlanCard(p,isClosed){
           <button class="ex-confirm-btn" style="flex:0;background:#888;" onclick="cancelAddEntry(${p.id})">キャンセル</button>
         </div>
       </div>`:`<button class="add-entry-btn" onclick="startAddEntry(${p.id})">＋ 追加購入</button>`;
-    const hlossHtml=holdingLoss?`<div style="margin-top:4px;font-size:12px;color:#c02020;font-weight:700;">⚠ 想定損失：¥${Math.round(holdingLoss).toLocaleString()} （残${remShares2}株 × SL¥${fmt(p.sl)}）</div>`:'';
+    const hlossHtml=holdingLoss?`<div style="margin-top:4px;font-size:12px;color:#c02020;font-weight:700;">⚠ 想定損失：−¥${Math.round(holdingLoss).toLocaleString()} （残${remShares2}株 × SL¥${fmt(p.sl)}）</div>`:'';
     holdingHtml=`<div class="holding"><div class="h-title">保有中 ${rem}株</div><div class="h-body">${pi}<span class="h-update" onclick="refreshPrice(${p.id})">株価更新</span></div>${p.priceTime?`<div class="h-time">${p.priceTime} 時点</div>`:''}${hlossHtml}</div>
     ${entriesList}
     ${addForm}
@@ -1390,6 +1503,8 @@ function renderPlanCard(p,isClosed){
   const totalPnlClosed=closed?p.exits.reduce((s,e)=>s+(Number(e.pnl)||0),0):null;
   const pnlLabel=closed?`<span style="font-size:12px;font-weight:700;color:${totalPnlClosed>=0?'#1a7a4a':'#c02020'};white-space:nowrap;">損益金額 ${pnlStr(totalPnlClosed)}</span>`:pnlHtml;
   const lossLabel=(!closed&&holdLossDisp)?`<span style="font-size:11px;font-weight:700;color:#c02020;white-space:nowrap;">想定損失 ¥${fmt(Math.round(holdLossDisp))}</span>`:'';
+  const slJudgeTxt=closed&&p.exits.length?(function(){const allOk=p.exits.every(function(ex){return ex.price&&p.sl&&ex.price>=p.sl;});return allOk?'SLに対してEX 〇':'SLに対してEX ✕';})():'';
+  const slJudgeCol=slJudgeTxt.includes('〇')?'#1a1a1a':'#c02020';
   const summary=`<div class="plan-summary ${isOpen?'open':''}" onclick="togglePlan(${p.id})">
     <span class="ps-toggle">▶</span>
     <span class="ps-date">${fmtDate(dispDate)}</span>
@@ -1400,11 +1515,26 @@ function renderPlanCard(p,isClosed){
     ${closed&&holdDaysDisp!=null?`<span style="font-size:12px;color:#1a1a1a;font-weight:700;white-space:nowrap;">保有日数 ${holdDaysDisp}日間</span>`:''}
     ${lossLabel}
     ${pnlLabel}
+    ${closed&&slJudgeTxt?`<span style="font-size:13px;font-weight:700;color:${slJudgeCol};white-space:nowrap;">${slJudgeTxt}</span>`:''}
     <button class="ps-chart" style="margin-left:auto;" onclick="event.stopPropagation();openChart('${chartCode}','${(nameOnly||'').replace(/'/g,"\\'")}',${chartMarks})">📈 チャート</button>
   </div>`;
 
+  // EX一覧用: 主要数値を大きく表示するパネル
+  const exSummaryPanel=closed?`<div style="border:2px solid #1a7a4a;border-radius:12px;margin-bottom:10px;overflow:hidden;">
+    <div style="background:#1a7a4a;padding:7px 12px;"><span style="font-size:15px;font-weight:900;color:#fff;">EX概要</span></div>
+    <div style="padding:10px 12px;background:#f4fbf7;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">EN価格</div><div style="font-size:16px;font-weight:700;">${fmt(p.en)}円</div><div style="color:#1a1a1a;font-weight:700;font-size:12px;">${fmtDate(firstEnDate)}</div></div>
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">EX価格</div><div style="font-size:16px;font-weight:700;">${lastEx?fmt(lastEx.price)+'円':'—'}</div><div style="color:#1a1a1a;font-weight:700;font-size:12px;">${lastExDate?fmtDate(lastExDate):'—'}</div></div>
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">損益金額</div><div style="font-size:18px;font-weight:700;color:${totalPnlClosed>=0?'#1a7a4a':'#c02020'};">${pnlStr(totalPnlClosed)}</div></div>
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">取引株数</div><div style="font-size:16px;font-weight:700;">${exitedShares(p)}株</div></div>
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">RR比</div><div style="font-size:16px;font-weight:700;">${rr}</div></div>
+        <div><div style="color:#1a1a1a;font-size:12px;font-weight:700;">保有日数</div><div style="font-size:16px;font-weight:700;">${holdDaysDisp!=null?holdDaysDisp+'日間':'—'}</div></div>
+      </div>
+    </div>
+  </div>`:'';
   const fullBody=`<div class="plan-body-wrap">
-    ${patMemo}${nums}${body}
+    ${nums}${closed?exSummaryPanel:''}${patMemo}${body}
   </div>`;
 
   return `<div class="plan ${armed&&!closed?'armed':''} ${closed?'closed':''}">${summary}${isOpen?fullBody:''}</div>`;
@@ -2000,6 +2130,13 @@ function drawChart(bars,marks,cur){
   document.getElementById('chartLegend').innerHTML=lg;
 }
 
+
+// 現在月表示
+(function(){
+  var d=new Date();
+  var el=document.getElementById('currentMonth');
+  if(el)el.textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月';
+})();
 recalc();loadFromSheets();
 loadMonthlyReview();renderPastMonthLinks();
 </script>
